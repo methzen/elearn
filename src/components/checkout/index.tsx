@@ -6,6 +6,34 @@ import {
   useElements
 } from "@stripe/react-stripe-js";
 import { StripeError, StripePaymentElementOptions } from "@stripe/stripe-js";
+import { LoadingButton } from "@mui/lab";
+
+const appearance = {
+    theme: 'stripe'
+  };
+
+
+
+var style = {
+      base: {
+        iconColor: '#c4f0ff',
+        color: '#fff',
+        fontWeight: '500',
+        fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        ':-webkit-autofill': {
+          color: '#fce883',
+        },
+        '::placeholder': {
+          color: '#87BBFD',
+        },
+      },
+      invalid: {
+        iconColor: '#FFC7EE',
+        color: '#FFC7EE',
+      },
+    }
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -79,8 +107,8 @@ export default function CheckoutForm() {
     setIsLoading(false);
   };
 
-  const paymentElementOptions = {
-    layout: "tabs"
+  const paymentElementOptions :StripePaymentElementOptions = {
+
   }
 
   const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
@@ -92,14 +120,36 @@ export default function CheckoutForm() {
         id="link-authentication-element"
         onChange={handleChange as any}
       />
-      <PaymentElement id="payment-element" options={paymentElementOptions as StripePaymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
+      <PaymentElement id="payment-element" options={paymentElementOptions} />
+
+      <LoadingButton
+        fullWidth
+        color="inherit"
+        size="large"
+        type="submit"
+        variant="contained"
+        loading={isLoading}
+        sx={{
+          bgcolor: 'text.primary',
+          color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+          '&:hover': {
+            bgcolor: 'text.primary',
+            color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+          },
+        }}
+      >
+        Pay now
+      </LoadingButton>
+
+      {/* <button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
           {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
         </span>
-      </button>
+      </button> */}
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>
   );
 }
+
+
