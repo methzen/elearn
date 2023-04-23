@@ -27,6 +27,8 @@
     "@mui/lab": "^5.0.0-alpha.116",
     "@mui/material": "^5.11.5",
     "@next/font": "^13.1.2",
+    "@stripe/react-stripe-js": "^2.1.0",
+    "@stripe/stripe-js": "^1.52.1",
     "autosuggest-highlight": "^3.3.4",
     "axios": "^1.2.3",
     "change-case": "^4.1.2",

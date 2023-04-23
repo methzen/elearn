@@ -5,6 +5,7 @@ import { PATH_DASHBOARD } from './routes/paths';
 // ----------------------------------------------------------------------
 
 export const HOST_API_KEY = process.env.HOST_API_KEY || '';
+export const STRP_PK = process.env.STRIPE_PUBLIC_KEY;
 
 export const FIREBASE_API = {
   apiKey: process.env.FIREBASE_API_KEY,
