@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
-import axios from '../utils/axios';
+import axios from '../api/axios';
 import localStorageAvailable from '../utils/localStorageAvailable';
 //
 import { isValidToken, setSession } from './utils';
@@ -99,9 +99,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await axios.get('/api/account/my-account');
+        const response = await axios.get('/users/authenticate/v2');
 
         const { user } = response.data;
+        user.displayName = `${user.firstname} ${user.lastname}`
 
         dispatch({
           type: Types.INITIAL,
@@ -137,13 +138,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // LOGIN
   const login = useCallback(async (email: string, password: string) => {
-    const response = await axios.post('/api/account/login', {
+    const response = await axios.post('/users/login/v2', {
       email,
       password,
     });
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
+    const user = response.data
+    user.displayName = `${user.firstname} ${user.lastname}` 
+    setSession(response.headers["x-auth-token"] as string);
 
     dispatch({
       type: Types.LOGIN,
@@ -156,17 +157,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // REGISTER
   const register = useCallback(
     async (email: string, password: string, firstName: string, lastName: string) => {
-      const response = await axios.post('/api/account/register', {
+      const response = await axios.post('/users/create/user', {
         email,
         password,
         firstName,
         lastName,
-      });
-      const { accessToken, user } = response.data;
-
-      localStorage.setItem('accessToken', accessToken);
-
-      dispatch({
+      },
+      {
+        withCredentials: true
+    });
+    const user = response.data
+    user.displayName = `${user.firstname} ${user.lastname}` 
+    localStorage.setItem('x-auth-token', response.headers["x-auth-token"] as string);
+    dispatch({
         type: Types.REGISTER,
         payload: {
           user,
