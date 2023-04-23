@@ -23,7 +23,9 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 export default function NavAccount() {
   const { user } = useAuthContext();
-
+  if (user) {
+    user.displayName = `${user.firstname} ${user.lastname}` 
+}
   return (
     <Link underline="none" color="inherit">
       <StyledRoot>
@@ -35,7 +37,7 @@ export default function NavAccount() {
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            {user?.role}
+            {user?.job}
           </Typography>
         </Box>
       </StyledRoot>

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
-import axios from '../api/axios';
+import axios from '../utils/axios';
 import localStorageAvailable from '../utils/localStorageAvailable';
 //
 import { isValidToken, setSession } from './utils';
@@ -31,6 +31,7 @@ type Payload = {
   };
   [Types.REGISTER]: {
     user: AuthUserType;
+    isAuthenticated: boolean;
   };
   [Types.LOGOUT]: undefined;
 };
@@ -63,7 +64,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
   if (action.type === Types.REGISTER) {
     return {
       ...state,
-      isAuthenticated: true,
+      isAuthenticated: action.payload.isAuthenticated,
       user: action.payload.user,
     };
   }
@@ -94,15 +95,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = storageAvailable ? localStorage.getItem('accessToken') : '';
+      const accessToken = storageAvailable ? localStorage.getItem('x-auth-token') : '';
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
-
         const response = await axios.get('/users/authenticate/v2');
 
-        const { user } = response.data;
-        user.displayName = `${user.firstname} ${user.lastname}`
+        const user = response.data;
+        user.displayName = `${user.firstname} ${user.lastname}` 
 
         dispatch({
           type: Types.INITIAL,
@@ -156,26 +156,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // REGISTER
   const register = useCallback(
-    async (email: string, password: string, firstName: string, lastName: string) => {
-      const response = await axios.post('/users/create/user', {
-        email,
-        password,
-        firstName,
-        lastName,
-      },
-      {
-        withCredentials: true
-    });
-    const user = response.data
-    user.displayName = `${user.firstname} ${user.lastname}` 
-    localStorage.setItem('x-auth-token', response.headers["x-auth-token"] as string);
-    dispatch({
-        type: Types.REGISTER,
-        payload: {
-          user,
+    async (email: string, password: string, firstname: string, lastname: string) => {
+
+        const response = await axios.post('/users/create/user', 
+        {
+          email,
+          password,
+          firstname,
+          lastname,
         },
+        {
+          withCredentials: true
       });
-    },
+        const user = response.data
+        user.displayName = `${user.firstname} ${user.lastname}` 
+        localStorage.setItem('x-auth-token', response.headers["x-auth-token"] as string);
+        dispatch({
+          type: Types.REGISTER,
+          payload: {
+            user,
+            isAuthenticated : true,
+          },
+        });
+      },
     []
   );
 
@@ -194,9 +197,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user: state.user,
       method: 'jwt',
       login,
-      loginWithGoogle: () => {},
-      loginWithGithub: () => {},
-      loginWithTwitter: () => {},
       register,
       logout,
     }),
