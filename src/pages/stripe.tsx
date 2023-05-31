@@ -6,6 +6,7 @@ import CheckoutForm from 'src/components/checkout';
 import checkout from 'src/api/checkout';
 import Head from 'next/head';
 import { useTheme } from '@mui/material/styles';
+import { LoadingButton } from "@mui/lab";
 
 
 // @mui
@@ -13,13 +14,13 @@ import { Box, Grid, Container, Typography } from '@mui/material';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 import LoginLayout from 'src/layouts/login/LoginLayout';
+import subscibe from 'src/api/subscribe';
 // layouts
 
 // sections
 // import { PaymentSummary, PaymentMethods, PaymentBillingAddress } from '../sections/payment';
 
 // ----------------------------------------------------------------------
-
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -33,33 +34,24 @@ export default function PaymentPage() {
   const isDesktop = useResponsive('up', 'md');
   const [clientSecret, setClientSecret] = useState("");
 
-  useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
-    const data = JSON.stringify({ items: [{ id: "xl-tshirt" }] })
-    checkout(data)
-      .then((res) => res.data)
-      .then((data) => setClientSecret(data.clientSecret));
-  }, []);
-console.log('client data', clientSecret);
-  const appearance : Appearance = {
-    theme: 'stripe',
+  const CustomerId="pi_3N0fqnLpx5FbhsTK0SCtdq6O_secret_X1ANhP0nGgUDt0DrDS7iV1iZ5"
+  const PriceId="price_1N03yCLpx5FbhsTKx2OdoWIq"
 
-  variables: {
-    colorPrimary: theme.palette.primary.main,
-    colorBackground: theme.palette.background.paper,
-    colorText: theme.palette.text.primary,
-    colorDanger: theme.palette.error.main,
-    fontFamily: 'Ideal Sans, system-ui, sans-serif',
-    spacingUnit: '5px',
-    borderRadius: '4px',
-    // See all possible variables below
+//   useEffect(() => {
+//     // Create PaymentIntent as soon as the page loads
+//     const data = JSON.stringify({ CustomerId, PriceId })
+//     subscibe(data)
+//       .then((res) => res.data)
+//       .then((data) => setClientSecret(data.clientSecret));
+//   }, []);
+
+
+  const handleSubmit = async () => {
+    console.log('submitted')
+    const data = JSON.stringify({ CustomerId, PriceId })
+    const response = await subscibe(data);
+    console.log("response: " + response)
   }
-  };
-  const options : StripeElementsOptions = {
-    clientSecret,
-    appearance,
-  };
-
   return (
 
 
@@ -68,13 +60,29 @@ console.log('client data', clientSecret);
   <title> Checkout</title>
 </Head>
 
-<LoginLayout>
-      {clientSecret && (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
-      )}
-</LoginLayout>
+<form id="payment-form" onSubmit={handleSubmit}>
+
+      <LoadingButton
+        fullWidth
+        color="inherit"
+        size="large"
+        type="submit"
+        variant="contained"
+
+        sx={{
+          mt: '30px',
+          bgcolor: 'text.primary',
+          color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+          '&:hover': {
+            bgcolor: 'text.primary',
+            color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+          },
+        }}
+      >
+        Pay now
+      </LoadingButton>
+
+    </form>
 </>
   );
 }

@@ -6,6 +6,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import '../styles/quill.css';
 
 // ----------------------------------------------------------------------
 

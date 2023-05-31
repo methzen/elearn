@@ -116,10 +116,10 @@ export default function CheckoutForm() {
   }
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <LinkAuthenticationElement
+      {/* <LinkAuthenticationElement
         id="link-authentication-element"
         onChange={handleChange as any}
-      />
+      /> */}
       <PaymentElement id="payment-element" options={paymentElementOptions} />
 
       <LoadingButton
@@ -129,7 +129,9 @@ export default function CheckoutForm() {
         type="submit"
         variant="contained"
         loading={isLoading}
+        disabled={isLoading || !stripe || !elements}
         sx={{
+          mt: '30px',
           bgcolor: 'text.primary',
           color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
           '&:hover': {
@@ -140,13 +142,6 @@ export default function CheckoutForm() {
       >
         Pay now
       </LoadingButton>
-
-      {/* <button disabled={isLoading || !stripe || !elements} id="submit">
-        <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-        </span>
-      </button> */}
-      {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>
   );

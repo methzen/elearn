@@ -1,7 +1,7 @@
 import axios from './axios'
 
-export default async function checkout(data:any){
-    return await axios("/payment/create-payment-intent", {
+export default async function subscibe(data:any){
+    return await axios("/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         data: data,
