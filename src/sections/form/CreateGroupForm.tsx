@@ -21,6 +21,7 @@ import FormProvider, {
 } from '../../components/hook-form';
 //
 import { FormSchema } from './schema';
+import createGroup from 'src/api/createGroup';
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +49,8 @@ type Props = {
 
 export default function ReactHookForm() {
 
+  const [fileData, setFileData] = useState<File | null>(null)
+
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(FormSchema),
     defaultValues,
@@ -64,10 +67,14 @@ export default function ReactHookForm() {
 
   const values = watch();
 
-  console.log("values", values);
-
   const onSubmit = async (data: FormValuesProps) => {
-    console.log('DATA', data);
+    try {
+      await createGroup(data, fileData)
+      reset();
+    }catch (err) {
+      console.error(err);
+    }
+
   };
 
   const handleDropSingleFile = useCallback(
@@ -79,6 +86,7 @@ export default function ReactHookForm() {
       });
 
       if (newFile) {
+        setFileData(file)
         setValue('singleUpload', newFile, { shouldValidate: true });
       }
     },

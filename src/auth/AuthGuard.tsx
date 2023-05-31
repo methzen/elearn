@@ -32,7 +32,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   if (!isInitialized) {
     return <LoadingScreen />;
   }
-console.log("isAuthenticated", isAuthenticated)
+  
   if (!isAuthenticated) {
     if (pathname !== requestedLocation) {
       setRequestedLocation(pathname);
