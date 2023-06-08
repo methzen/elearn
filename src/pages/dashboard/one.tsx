@@ -41,6 +41,12 @@ enum add {
   STRUCTURE = 'STRUCTURE',
 }
 
+enum Structure {
+  STRUCTURED = 'STRUCTURED',
+  UNSTRUCTURED = 'UNSTRUCTURED',
+}
+
+
 const Lesson = () =>{
   const { themeStretch } = useSettingsContext();
   return (
@@ -85,7 +91,11 @@ const Module = () =>{
   );
 }
 
-const StructurePage = () =>{
+interface StructureProps {
+  handleCourseStructure:(value : string )=>void;
+}
+
+const StructurePage = ({handleCourseStructure} : StructureProps) =>{
   const { themeStretch } = useSettingsContext();
   return (
     <>
@@ -117,7 +127,8 @@ const StructurePage = () =>{
                 <TreeItem nodeId="11" label="..." />
                 <TreeItem nodeId="12" label="Chapter N" />
             </StyledTreeView>
-            <Button size="large" color="warning" variant="contained" sx={{ mt: 5, mb: 2 }}>
+            <Button size="large" color="warning" variant="contained" sx={{ mt: 5, mb: 2 }} 
+            onClick={()=>handleCourseStructure(Structure.UNSTRUCTURED)}>
             Piling my chapters is ok
             </Button>
           </Block>
@@ -139,7 +150,8 @@ const StructurePage = () =>{
                 <StyledTreeItem nodeId="c10" label="Chapter N"/>
               </StyledTreeItem>
             </StyledTreeView>
-            <Button size="large" color="primary" variant="contained" sx={{ mt: 5, mb: 2 }}>
+            <Button size="large" color="primary" variant="contained" sx={{ mt: 5, mb: 2 }} 
+              onClick={()=>handleCourseStructure(Structure.STRUCTURED)}>
               I want to structure my chapters in modules
             </Button>
           </Block>
@@ -153,9 +165,17 @@ export default function PageOne() {
   
   const [format, setFormat] = useState(add.STRUCTURE)
 
+  const handleCourseStructure = (value : string) => {
+    if (value === Structure.STRUCTURED) {
+      setFormat(add.MODULE)
+    }
+    if (value === Structure.UNSTRUCTURED) {
+      setFormat(add.LESSON)
+    }
+  }
   switch (format){
     case add.STRUCTURE:
-      return <StructurePage />
+      return <StructurePage handleCourseStructure={handleCourseStructure}/>
     case add.MODULE: 
       return <Module/>
     case add.LESSON:
