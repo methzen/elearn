@@ -19,6 +19,10 @@ export const PATH_DASHBOARD = {
   one: path(ROOTS_DASHBOARD, '/one'),
   two: path(ROOTS_DASHBOARD, '/two'),
   three: path(ROOTS_DASHBOARD, '/three'),
+  group: {
+    list : path(ROOTS_DASHBOARD, '/group/list'),
+    create : path(ROOTS_DASHBOARD, '/group/create'),
+  },
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
     four: path(ROOTS_DASHBOARD, '/user/four'),

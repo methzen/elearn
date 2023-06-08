@@ -27,7 +27,15 @@ const navConfig = [
       { title: 'Three', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
     ],
   },
-
+  // GROUP
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'groups',
+    items: [
+      { title: 'list of group', path: PATH_DASHBOARD.group.list, icon: ICONS.dashboard },
+      { title: 'create', path: PATH_DASHBOARD.group.create, icon: ICONS.analytics },
+    ],
+  },
   // MANAGEMENT
   // ----------------------------------------------------------------------
   {

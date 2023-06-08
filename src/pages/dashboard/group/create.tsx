@@ -1,9 +1,9 @@
 // next
 import Head from 'next/head';
 // layouts
-import DashboardLayout from '../../layouts/dashboard';
+import DashboardLayout from '../../../layouts/dashboard';
 // components
-import { useSettingsContext } from '../../components/settings';
+import { useSettingsContext } from '../../../components/settings';
 
 import { useState } from 'react';
 // @mui
@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 
 // sections
-import { CreateGroupForm } from '../../sections/form';
+import { CreateGroupForm } from '../../../sections/form';
 
 // ----------------------------------------------------------------------
 

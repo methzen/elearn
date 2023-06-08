@@ -1,20 +1,48 @@
 // next
 import Head from 'next/head';
-import { Container, Typography } from '@mui/material';
+import { Box, Button, Container, Divider, Typography } from '@mui/material';
+import { TreeView, TreeItem, TreeItemProps, treeItemClasses } from '@mui/lab';
+import { alpha, styled } from '@mui/material/styles';
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
+import { useState } from 'react';
+import { Block } from 'src/components/block/Block';
+import Iconify from 'src/components/iconify/Iconify';
 
+const StyledTreeView = styled(TreeView)({
+  height: 240,
+  flexGrow: 1,
+  maxWidth: 400,
+});
+
+const StyledTreeItem = styled((props: TreeItemProps) => <TreeItem {...props} />)(({ theme }) => ({
+  [`& .${treeItemClasses.iconContainer}`]: {
+    '& .close': {
+      opacity: 0.3,
+    },
+  },
+  [`& .${treeItemClasses.group}`]: {
+    marginLeft: 15,
+    paddingLeft: 18,
+    borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
+  },
+}));
 // ----------------------------------------------------------------------
 
 PageOne.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 // ----------------------------------------------------------------------
 
-export default function PageOne() {
-  const { themeStretch } = useSettingsContext();
+enum add {
+  MODULE = 'MODULE',
+  LESSON = 'LESSON',
+  STRUCTURE = 'STRUCTURE',
+}
 
+const Lesson = () =>{
+  const { themeStretch } = useSettingsContext();
   return (
     <>
       <Head>
@@ -23,27 +51,115 @@ export default function PageOne() {
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Typography variant="h3" component="h1" paragraph>
-          Page One
+          Lesson
         </Typography>
 
         <Typography gutterBottom>
-          Curabitur turpis. Vestibulum facilisis, purus nec pulvinar iaculis, ligula mi congue nunc,
-          vitae euismod ligula urna in dolor. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit
-          id, lorem. Phasellus blandit leo ut odio. Vestibulum ante ipsum primis in faucibus orci
-          luctus et ultrices posuere cubilia Curae; Fusce id purus. Aliquam lorem ante, dapibus in,
-          viverra quis, feugiat a, tellus. In consectetuer turpis ut velit. Aenean posuere, tortor
-          sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus.
-          Vestibulum suscipit nulla quis orci. Nam commodo suscipit quam. Sed a libero.
+          Please add a Lesson
         </Typography>
 
-        <Typography>
-          Praesent ac sem eget est egestas volutpat. Phasellus viverra nulla ut metus varius
-          laoreet. Curabitur ullamcorper ultricies nisi. Ut non enim eleifend felis pretium feugiat.
-          Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Fusce vel dui. Quisque
-          libero metus, condimentum nec, tempor a, commodo mollis, magna. In enim justo, rhoncus ut,
-          imperdiet a, venenatis vitae, justo. Cras dapibus.
-        </Typography>
       </Container>
     </>
   );
+}
+
+const Module = () =>{
+  const { themeStretch } = useSettingsContext();
+  return (
+    <>
+      <Head>
+        <title> Page One | Minimal UI</title>
+      </Head>
+
+      <Container maxWidth={themeStretch ? false : 'xl'}>
+        <Typography variant="h3" component="h1" paragraph>
+          Module
+        </Typography>
+
+        <Typography gutterBottom>
+          Please add a Module
+        </Typography>
+
+      </Container>
+    </>
+  );
+}
+
+const StructurePage = () =>{
+  const { themeStretch } = useSettingsContext();
+  return (
+    <>
+      <Container maxWidth={themeStretch ? false : 'xl'} sx={{ my: 10 }}>
+      <Typography variant="h3" component="h1" paragraph>
+          How do you want to structure your course ?
+      </Typography>
+      <Divider sx={{ my: 5 }} />
+      <Box
+          gap={2}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            md: 'repeat(2, 1fr)',
+          }}
+        >
+          <Block title="A pile of chapters">
+            <StyledTreeView
+              defaultCollapseIcon={<Iconify icon="eva:chevron-down-fill" />}
+              defaultExpandIcon={<Iconify icon="eva:chevron-right-fill" />}
+              defaultEndIcon={null}
+            >
+                <TreeItem nodeId="1" label="Chapter 1"/>
+                <TreeItem nodeId="2" label="Chapter 2" />
+                <TreeItem nodeId="3" label="Chapter 3"/>
+                <TreeItem nodeId="4" label="Chapter 4" />
+                <TreeItem nodeId="5" label="Chapter 5" />
+                <TreeItem nodeId="10" label="Chapter 6" />
+                <TreeItem nodeId="11" label="..." />
+                <TreeItem nodeId="12" label="Chapter N" />
+            </StyledTreeView>
+            <Button size="large" color="warning" variant="contained" sx={{ mt: 5, mb: 2 }}>
+            Piling my chapters is ok
+            </Button>
+          </Block>
+
+          <Block title="Chapters are grouped in modules">
+            <StyledTreeView defaultExpanded={['m1', 'm2']}>
+              <StyledTreeItem nodeId="m1" label="Module 1">
+                <StyledTreeItem nodeId="c1" label="Chapter 1"/>
+                <StyledTreeItem nodeId="c2" label="Chapter 2"/>
+                <StyledTreeItem nodeId="c3" label="Chapter 3"/>
+                <StyledTreeItem nodeId="c7" label="..."/>
+                <StyledTreeItem nodeId="c8" label="Chapter N"/>
+              </StyledTreeItem>
+              <StyledTreeItem nodeId="m2" label="Module 2">
+                <StyledTreeItem nodeId="c4" label="Chapter 1"/>
+                <StyledTreeItem nodeId="c5" label="Chapter 2"/>
+                <StyledTreeItem nodeId="c6" label="Chapter 3"/>
+                <StyledTreeItem nodeId="c9" label="..."/>
+                <StyledTreeItem nodeId="c10" label="Chapter N"/>
+              </StyledTreeItem>
+            </StyledTreeView>
+            <Button size="large" color="primary" variant="contained" sx={{ mt: 5, mb: 2 }}>
+              I want to structure my chapters in modules
+            </Button>
+          </Block>
+        </Box>
+      </Container>
+    </>
+  );
+}
+
+export default function PageOne() {
+  
+  const [format, setFormat] = useState(add.STRUCTURE)
+
+  switch (format){
+    case add.STRUCTURE:
+      return <StructurePage />
+    case add.MODULE: 
+      return <Module/>
+    case add.LESSON:
+      return <Lesson/>
+  }
+
 }
