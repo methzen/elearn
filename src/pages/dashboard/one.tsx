@@ -10,7 +10,8 @@ import { useSettingsContext } from '../../components/settings';
 import { useState } from 'react';
 import { Block } from 'src/components/block/Block';
 import Iconify from 'src/components/iconify/Iconify';
-
+import { CreateGroupForm } from 'src/sections/form';
+import { FormSchema } from '../../sections/form/schema';
 const StyledTreeView = styled(TreeView)({
   height: 240,
   flexGrow: 1,
@@ -49,6 +50,11 @@ enum Structure {
 
 const Lesson = () =>{
   const { themeStretch } = useSettingsContext();
+  const nameLabel = "name"
+  const editorLabel = "Write something about your group."
+  const addLesson = () =>{
+
+  }
   return (
     <>
       <Head>
@@ -63,7 +69,12 @@ const Lesson = () =>{
         <Typography gutterBottom>
           Please add a Lesson
         </Typography>
-
+        <CreateGroupForm {...{
+          FormSchema, 
+          nameLabel, 
+          editorLabel, 
+          submitData : addLesson
+        }}  />
       </Container>
     </>
   );
@@ -164,6 +175,8 @@ const StructurePage = ({handleCourseStructure} : StructureProps) =>{
 export default function PageOne() {
   
   const [format, setFormat] = useState(add.STRUCTURE)
+  const [chapter, setChapter] = useState({name: "", content : "", video : ""})
+  const [module, setModule] = useState({name: "", chapters : []})
 
   const handleCourseStructure = (value : string) => {
     if (value === Structure.STRUCTURED) {

@@ -13,23 +13,15 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
-import Iconify from '../../components/iconify';
+
 import FormProvider, {
   RHFEditor,
   RHFUpload,
   RHFTextField,
 } from '../../components/hook-form';
-//
-import { FormSchema } from './schema';
-import createGroup from 'src/api/createGroup';
 
 // ----------------------------------------------------------------------
 
-
-type OptionType = {
-  value: string;
-  label: string;
-};
 
 type FormValuesProps = {
   name: string;
@@ -43,11 +35,18 @@ export const defaultValues = {
   singleUpload: null,
 };
 
-type Props = {
-  debug: boolean;
-};
+interface CreateForm {
+  FormSchema : any
+  nameLabel: string
+  editorLabel: string
+  submitData : (data : FormValuesProps) => void;
+}
 
-export default function ReactHookForm() {
+export default function ReactHookForm(
+  { FormSchema, 
+    nameLabel, 
+    editorLabel, 
+    submitData } : CreateForm) {
 
   const [fileData, setFileData] = useState<File | null>(null)
 
@@ -69,7 +68,7 @@ export default function ReactHookForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await createGroup(data, fileData)
+      await submitData(data)
       reset();
     }catch (err) {
       console.error(err);
@@ -106,10 +105,10 @@ export default function ReactHookForm() {
           <Grid item xs={12} md={6}>
             <Stack spacing={2}>
               <Block label="">
-                <RHFTextField name="name" label="Group Name" />
+                <RHFTextField name="name" label={nameLabel} />
               </Block>
 
-              <Block label="Right a short description">
+              <Block label={editorLabel}>
                 <RHFEditor simple name="editor"  showMedia={false}/>
               </Block>
             </Stack>
@@ -157,7 +156,7 @@ function Block({ label = 'RHFTextField', sx, children }: BlockProps) {
       <Typography
         variant="caption"
         sx={{
-          textAlign: 'right',
+          textAlign: 'left',
           fontStyle: 'italic',
           color: 'text.disabled',
         }}

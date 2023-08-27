@@ -1,3 +1,4 @@
+import { FormValuesProps } from "src/@types/create";
 import axios from "./axios";
 
 interface groupData {
@@ -5,12 +6,12 @@ interface groupData {
     description : string,
   }
 
-export default async function createGroup(data: any, inputData:File | null){
+export default async function createGroup(data: FormValuesProps){
   const newData = {name : data.name, description : data.editor} 
   const token = localStorage.getItem('x-auth-token')
     return await axios.post(`/groups/create/group`, {
       data: newData,
-      file: inputData
+      file: data.singleUpload
     }, {
       headers: {
         "x-auth-token" : token,
