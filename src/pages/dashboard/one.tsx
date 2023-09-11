@@ -1,12 +1,13 @@
 // next
 import Head from 'next/head';
-import { Box, Button, Container, Divider, Typography } from '@mui/material';
+import { Box, Button, Container, Divider, Typography, Grid} from '@mui/material';
 import { TreeView, TreeItem, TreeItemProps, treeItemClasses } from '@mui/lab';
 import { alpha, styled } from '@mui/material/styles';
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
+import AppWelcome from '../../components/appWelcome';
 import { useState } from 'react';
 import { Block } from 'src/components/block/Block';
 import Iconify from 'src/components/iconify/Iconify';
@@ -178,21 +179,29 @@ export default function PageOne() {
   const [chapter, setChapter] = useState({name: "", content : "", video : ""})
   const [module, setModule] = useState({name: "", chapters : []})
 
-  const handleCourseStructure = (value : string) => {
-    if (value === Structure.STRUCTURED) {
-      setFormat(add.MODULE)
-    }
-    if (value === Structure.UNSTRUCTURED) {
-      setFormat(add.LESSON)
-    }
-  }
-  switch (format){
-    case add.STRUCTURE:
-      return <StructurePage handleCourseStructure={handleCourseStructure}/>
-    case add.MODULE: 
-      return <Module/>
-    case add.LESSON:
-      return <Lesson/>
-  }
+  // const handleCourseStructure = (value : string) => {
+  //   if (value === Structure.STRUCTURED) {
+  //     setFormat(add.MODULE)
+  //   }
+  //   if (value === Structure.UNSTRUCTURED) {
+  //     setFormat(add.LESSON)
+  //   }
+  // }
+  // switch (format){
+  //   case add.STRUCTURE:
+  //     return <StructurePage handleCourseStructure={handleCourseStructure}/>
+  //   case add.MODULE: 
+  //     return <Module/>
+  //   case add.LESSON:
+  //     return <Lesson/>
+  // }
+
+  return (
+    <AppWelcome
+      title={`Welcome back! \n ${"user?.displayName"}`}
+      description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
+      action={<Button variant="contained">Create a course</Button>}
+    />
+  )
 
 }
