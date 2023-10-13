@@ -16,16 +16,16 @@ type Course={
 
 export default function CourseCard({id, name, cover, description}: Course) {
   return (
-    <Card sx={{ maxWidth: 445 }}>
+    <Card sx={{ maxWidth: 350, maxHeight:426 }}>
       <CardMedia
-        sx={{ height: 250 }}
+        sx={{ height: 187 }}
         title="green iguana"
       >
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div style={{ position: 'relative', width: '100%', height: '187px' }}>
             <Image src={cover} alt={name} fill />
       </div>
       </CardMedia>
-      <CardContent>
+      <CardContent sx={{ height:150, overflow: "hidden",textOverflow: "ellipsis"}}>
         <Typography gutterBottom variant="h5" component="div">
           {name}
         </Typography>
