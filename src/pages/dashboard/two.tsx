@@ -7,6 +7,9 @@ import DashboardLayout from '../../layouts/dashboard';
 import { useSettingsContext } from '../../components/settings';
 import CourseCard from '../../components/CourseCard';
 
+import {
+  _userGroups
+} from '../../_mock/arrays';
 // ----------------------------------------------------------------------
 
 PageTwo.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
@@ -18,7 +21,7 @@ Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Fusce vel dui.
 libero metus, condimentum nec, tempor a, commodo mollis, magna. In enim justo, rhoncus ut,
 imperdiet a, venenatis vitae, justo. Cras dapibus.`
 
-type Course={
+type Course = {
   name: string
   id: string
   cover: string
@@ -55,7 +58,7 @@ export default function PageTwo() {
         <title> Page Two | Minimal UI</title>
       </Head>
 
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <Typography variant="h3" component="h1" paragraph>
           Page Two
         </Typography>
@@ -79,8 +82,8 @@ export default function PageTwo() {
         lg: 'repeat(3, 1fr)',
       }}
     >
-      {Courses.map((course, index) =>
-          <CourseCard key={index} {...course}/>
+      {_userGroups.map((course) =>
+          <CourseCard key={course.id} {...course}/>
       )}
     </Box>
       </Container>

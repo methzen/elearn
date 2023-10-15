@@ -38,11 +38,19 @@ export const _userFriends = [...Array(18)].map((_, index) => ({
   role: _mock.role(index),
 }));
 
-export const _userGallery = [...Array(12)].map((_, index) => ({
+export const _userGallery = [...Array(3)].map((_, index) => ({
   id: _mock.id(index),
   title: _mock.text.title(index),
   postAt: _mock.time(index),
   imageUrl: _mock.image.cover(index),
+}));
+
+export const _userGroups = [...Array(3)].map((_, index) => ({
+  id: _mock.id(index),
+  name: _mock.course.name(index),
+  createdAt: _mock.time(index),
+  description: _mock.text.description(index),
+  imageUrl: _mock.course.cover(index),
 }));
 
 export const _userFeeds = [...Array(3)].map((_, index) => ({

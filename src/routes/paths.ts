@@ -28,5 +28,7 @@ export const PATH_DASHBOARD = {
     four: path(ROOTS_DASHBOARD, '/user/four'),
     five: path(ROOTS_DASHBOARD, '/user/five'),
     six: path(ROOTS_DASHBOARD, '/user/six'),
+    myprofile: path(ROOTS_DASHBOARD, `/user/myprofile`),
+    // profile: (name: string) => path(ROOTS_DASHBOARD, `/user/${name}/profile`),
   },
 };

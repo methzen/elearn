@@ -24,7 +24,7 @@ const navConfig = [
     items: [
       { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
       { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
+      { title: 'Library', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
     ],
   },
   // GROUP
@@ -49,10 +49,26 @@ const navConfig = [
           { title: 'Four', path: PATH_DASHBOARD.user.four },
           { title: 'Five', path: PATH_DASHBOARD.user.five },
           { title: 'Six', path: PATH_DASHBOARD.user.six },
+          { title: 'Account', path: PATH_DASHBOARD.user.myprofile },
         ],
       },
     ],
   },
 ];
 
-export default navConfig;
+const HomeNav = [
+  // GENERAL
+  // ----------------------------------------------------------------------
+  {
+    items: [
+      { title: 'Groups', path: PATH_DASHBOARD.two}
+    ],
+  },
+  {
+    items: [
+      { title: 'Account', path: PATH_DASHBOARD.user.myprofile}
+    ],
+  },
+];
+
+export default HomeNav;

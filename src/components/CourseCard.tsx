@@ -10,11 +10,12 @@ import Image from 'next/image'
 type Course={
     name: string
     id: string
-    cover: string
+    imageUrl: string
     description: string
 }
 
-export default function CourseCard({id, name, cover, description}: Course) {
+export default function CourseCard({id, name, imageUrl, description}: Course) {
+  console.log("imageUrl", imageUrl)
   return (
     <Card sx={{ maxWidth: 350, maxHeight:426 }}>
       <CardMedia
@@ -22,7 +23,7 @@ export default function CourseCard({id, name, cover, description}: Course) {
         title="green iguana"
       >
       <div style={{ position: 'relative', width: '100%', height: '187px' }}>
-            <Image src={cover} alt={name} fill />
+            <Image src={imageUrl} alt={name} fill />
       </div>
       </CardMedia>
       <CardContent sx={{ height:150, overflow: "hidden",textOverflow: "ellipsis"}}>
