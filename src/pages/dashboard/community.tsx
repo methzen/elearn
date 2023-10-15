@@ -71,7 +71,7 @@ export default function Community() {
         <Stack spacing={3}>
 
           {_userFeeds.map((post) => (
-            <ProfilePostCard key={post.id} post={post} />
+            <Post key={post.id} post={post} />
           ))}
         </Stack>
       </Box>
@@ -87,7 +87,7 @@ export default function Community() {
   );
 }
 
-function ProfilePostCard({ post }: Props) {
+function PostCard({ post }: Props) {
   const { user } = useAuthContext();
 
   const commentInputRef = useRef<HTMLInputElement>(null);
@@ -278,3 +278,116 @@ function ProfilePostCard({ post }: Props) {
     </Card>
   );
 }
+
+
+function Post({ post }: Props) {
+    const { user } = useAuthContext();
+  
+    const commentInputRef = useRef<HTMLInputElement>(null);
+  
+    const fileInputRef = useRef<HTMLInputElement>(null);
+  
+    const [isLiked, setLiked] = useState(post.isLiked);
+  
+    const [likes, setLikes] = useState(post.personLikes.length);
+  
+    const [message, setMessage] = useState('');
+  
+    const hasComments = post.comments.length > 0;
+  
+    const handleLike = () => {
+      setLiked(true);
+      setLikes((prevLikes) => prevLikes + 1);
+    };
+  
+    const handleUnlike = () => {
+      setLiked(false);
+      setLikes((prevLikes) => prevLikes - 1);
+    };
+  
+    const handleChangeMessage = (value: string) => {
+      setMessage(value);
+    };
+  
+    const handleClickAttach = () => {
+      const { current } = fileInputRef;
+      if (current) {
+        current.click();
+      }
+    };
+  
+    const handleClickComment = () => {
+      const { current } = commentInputRef;
+      if (current) {
+        current.focus();
+      }
+    };
+  
+    return (
+      <Card>
+        <CardHeader
+          disableTypography
+          avatar={
+            <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
+          }
+          title={
+            <Link color="inherit" variant="subtitle2">
+              {user?.displayName}
+            </Link>
+          }
+          subheader={
+            <Typography variant="caption" component="div" sx={{ color: 'text.secondary' }}>
+              {fDate(post.createdAt)}
+            </Typography>
+          }
+          action={
+            <IconButton>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          }
+        />
+  
+        <Typography
+          sx={{
+            p: (theme) => theme.spacing(3, 3, 2, 3),
+          }}
+        >
+          {post.message}
+        </Typography>
+  
+        {/* <Box sx={{ p: 1 }}>
+          <Image alt="post media" src={post.media} ratio="16/9" sx={{ borderRadius: 1 }} />
+        </Box> */}
+  
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            p: (theme) => theme.spacing(2, 3, 3, 3),
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="error"
+                checked={isLiked}
+                icon={<Iconify icon="eva:heart-fill" />}
+                checkedIcon={<Iconify icon="eva:heart-fill" />}
+                onChange={isLiked ? handleUnlike : handleLike}
+              />
+            }
+            label={fShortenNumber(likes)}
+          />
+  
+          <CustomAvatarGroup>
+            {post.personLikes.map((person) => (
+              <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} />
+            ))}
+          </CustomAvatarGroup>
+  
+          <Box sx={{ flexGrow: 1 }} />
+        </Stack>
+      </Card>
+    );
+  }
+  
