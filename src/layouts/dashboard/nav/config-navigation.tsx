@@ -23,8 +23,8 @@ const navConfig = [
     subheader: 'general v4.2.0',
     items: [
       { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
-      { title: 'Two', path: PATH_DASHBOARD.two, icon: ICONS.ecommerce },
-      { title: 'Library', path: PATH_DASHBOARD.three, icon: ICONS.analytics },
+      { title: 'Two', path: PATH_DASHBOARD.circles, icon: ICONS.ecommerce },
+      { title: 'Library', path: PATH_DASHBOARD.library, icon: ICONS.analytics },
     ],
   },
   // GROUP
@@ -56,12 +56,22 @@ const navConfig = [
   },
 ];
 
+const GroupNav = [
+  {
+    items: [
+      { title: 'Community', path: PATH_DASHBOARD.community},
+      { title: 'Library', path: PATH_DASHBOARD.library},
+      { title: 'Account', path: PATH_DASHBOARD.user.myprofile}
+    ],
+  },
+];
+
 const HomeNav = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
     items: [
-      { title: 'Groups', path: PATH_DASHBOARD.two}
+      { title: 'Groups', path: PATH_DASHBOARD.circles}
     ],
   },
   {
@@ -71,4 +81,4 @@ const HomeNav = [
   },
 ];
 
-export default HomeNav;
+export default GroupNav;

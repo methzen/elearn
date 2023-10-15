@@ -17,8 +17,9 @@ export const PATH_AUTH = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   one: path(ROOTS_DASHBOARD, '/one'),
-  two: path(ROOTS_DASHBOARD, '/two'),
-  three: path(ROOTS_DASHBOARD, '/three'),
+  circles: path(ROOTS_DASHBOARD, '/circles'),
+  library: path(ROOTS_DASHBOARD, '/library'),
+  community: path(ROOTS_DASHBOARD, '/community'),
   group: {
     list : path(ROOTS_DASHBOARD, '/group/list'),
     create : path(ROOTS_DASHBOARD, '/group/create'),

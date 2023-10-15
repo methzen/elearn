@@ -55,20 +55,48 @@ export type IUserProfileFriend = {
   role: string;
 };
 
+// export type IUserProfilePost = {
+//   id: string;
+//   by: {
+//     id: string;
+//     avatarUrl: string;
+//     name: string;
+//   };
+//   isLiked: boolean;
+//   likes: number;
+//   score: number;
+//   dead: boolean;
+//   rank: number;
+//   created: Date | string | number;
+//   commentCount: number;
+//   content: string;
+//   personLikes: {
+//     name: string;
+//     avatarUrl: string;
+//   }[];
+//   comments: {
+//     id: string;
+//     author: {
+//       id: string;
+//       avatarUrl: string;
+//       name: string;
+//     };
+//     createdAt: Date | string | number;
+//     message: string;
+//   }[];
+// };
+
 export type IUserProfilePost = {
   id: string;
-  by: {
+  author: {
     id: string;
     avatarUrl: string;
     name: string;
   };
-  likes: number;
-  score: number;
-  dead: boolean;
-  rank: number;
-  created: Date | string | number;
-  commentCount: number;
-  content: string;
+  isLiked: boolean;
+  createdAt: Date | string | number;
+  media: string;
+  message: string;
   personLikes: {
     name: string;
     avatarUrl: string;
@@ -84,7 +112,6 @@ export type IUserProfilePost = {
     message: string;
   }[];
 };
-
 // ----------------------------------------------------------------------
 
 export type IUserCard = {

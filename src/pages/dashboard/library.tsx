@@ -30,7 +30,7 @@ export default function PageThree() {
           <Grid item xs={12} md={6}>
         <Video  />
           </Grid>
-        </Grid>  
+        </Grid>
       </Container>
     </>
   );
