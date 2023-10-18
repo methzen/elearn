@@ -87,7 +87,10 @@ export const GroupName = [
 ];
 
 export const sentence = [
-  `Assumenda nam repudiandae rerum fugiat vel maxime.`,
+  `Reiciendis enim officiis cupiditate eaque distinctio laudantium modi similique consequatur.
+  Reiciendis enim officiis cupiditate eaque distinctio laudantium modi similique consequatur.
+  Reiciendis enim officiis cupiditate eaque distinctio laudantium modi similique consequatur.
+  Reiciendis enim officiis cupiditate eaque distinctio laudantium modi similique consequatur.`,
   `Quis veniam aut saepe aliquid nulla.`,
   `Reprehenderit ut voluptas sapiente ratione nostrum est.`,
   `Error ut sit vel molestias velit.`,

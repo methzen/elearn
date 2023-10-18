@@ -1,4 +1,11 @@
 import { useState, useRef } from 'react';
+
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import CloseIcon from '@mui/icons-material/Close';
 // @mui
 import { alpha } from '@mui/material/styles';
 import {
@@ -15,6 +22,8 @@ import {
   IconButton,
   InputAdornment,
   FormControlLabel,
+  Modal,
+  Button
 } from '@mui/material';
 import {
     _userFeeds,
@@ -28,7 +37,6 @@ import { Container } from '@mui/material';
 import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
-import CourseCard from '../../components/CourseCard';
 
 import {
   _userGroups
@@ -49,6 +57,7 @@ import { CustomAvatar, CustomAvatarGroup } from '../../components/custom-avatar'
 
 interface Props {
   post: IUserProfilePost;
+  onClick: () => void;
 }
 
 // ----------------------------------------------------------------------
@@ -57,6 +66,18 @@ Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 
 export default function Community() {
   const { themeStretch } = useSettingsContext();
+  const [open, setOpen] = useState<boolean>(false);
+  const [postToDisplay, setPostToDisplay] = useState<IUserProfilePost | null>(null)
+
+  const DisplayPost=(id:any)=>{
+    setOpen(true)
+    const post = _userFeeds.find(post=> post.id === id)
+    setPostToDisplay(post as IUserProfilePost)
+  }
+
+  const handleClose=()=>{
+    setOpen(false)
+  }
 
   return (
     <>
@@ -69,25 +90,31 @@ export default function Community() {
         <Grid item xs={12} md={8}>
         <Box>
         <Stack spacing={3}>
-
           {_userFeeds.map((post) => (
-            <Post key={post.id} post={post} />
+            <Post key={post.id} post={post} onClick={()=>DisplayPost(post.id)}/>
           ))}
         </Stack>
       </Box>
         </Grid>
-
           <Grid item xs={12} md={3}>
             <Box>Some box here with data</Box>
           </Grid>
         </Grid>
-
+      {
+        open && <CustomizedDialogs open={open}
+        post={postToDisplay}
+        handleClose={handleClose}
+        />
+      }
       </Container>
     </>
   );
 }
 
-function PostCard({ post }: Props) {
+interface Post {
+  post: IUserProfilePost;
+}
+function PostCard( { post }: Post) {
   const { user } = useAuthContext();
 
   const commentInputRef = useRef<HTMLInputElement>(null);
@@ -279,21 +306,19 @@ function PostCard({ post }: Props) {
   );
 }
 
+const CardSx = {
+  boxShadow: 5, 
+  cursor:"pointer",
+  "&:hover": {
+    boxShadow: 10,
+  },
+};
 
-function Post({ post }: Props) {
-    const { user } = useAuthContext();
-  
-    const commentInputRef = useRef<HTMLInputElement>(null);
-  
-    const fileInputRef = useRef<HTMLInputElement>(null);
-  
+function Post({ post, onClick }: Props) {
+    const { user } = useAuthContext();  
     const [isLiked, setLiked] = useState(post.isLiked);
   
     const [likes, setLikes] = useState(post.personLikes.length);
-  
-    const [message, setMessage] = useState('');
-  
-    const hasComments = post.comments.length > 0;
   
     const handleLike = () => {
       setLiked(true);
@@ -304,27 +329,9 @@ function Post({ post }: Props) {
       setLiked(false);
       setLikes((prevLikes) => prevLikes - 1);
     };
-  
-    const handleChangeMessage = (value: string) => {
-      setMessage(value);
-    };
-  
-    const handleClickAttach = () => {
-      const { current } = fileInputRef;
-      if (current) {
-        current.click();
-      }
-    };
-  
-    const handleClickComment = () => {
-      const { current } = commentInputRef;
-      if (current) {
-        current.focus();
-      }
-    };
-  
+
     return (
-      <Card>
+      <Card sx={CardSx} onClick={onClick}>
         <CardHeader
           disableTypography
           avatar={
@@ -340,11 +347,6 @@ function Post({ post }: Props) {
               {fDate(post.createdAt)}
             </Typography>
           }
-          action={
-            <IconButton>
-              <Iconify icon="eva:more-vertical-fill" />
-            </IconButton>
-          }
         />
   
         <Typography
@@ -354,10 +356,6 @@ function Post({ post }: Props) {
         >
           {post.message}
         </Typography>
-  
-        {/* <Box sx={{ p: 1 }}>
-          <Image alt="post media" src={post.media} ratio="16/9" sx={{ borderRadius: 1 }} />
-        </Box> */}
   
         <Stack
           direction="row"
@@ -384,10 +382,58 @@ function Post({ post }: Props) {
               <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} />
             ))}
           </CustomAvatarGroup>
-  
-          <Box sx={{ flexGrow: 1 }} />
         </Stack>
       </Card>
     );
   }
   
+
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+  }));
+
+  interface DialogCommands {
+    post: IUserProfilePost | null;
+    open: boolean;
+    handleClose: ()=> void;
+  }
+
+function CustomizedDialogs({post, open, handleClose}: DialogCommands) {  
+    return (
+      <div>
+        <BootstrapDialog
+          onClose={handleClose}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+        >
+          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+          <CloseIcon />
+          </IconButton>
+          <DialogContent dividers>
+            <PostCard post={post as IUserProfilePost}/>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose}>
+              Save changes
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
+      </div>
+    );
+  }

@@ -53,7 +53,7 @@ export const _userGroups = [...Array(3)].map((_, index) => ({
   imageUrl: _mock.course.cover(index),
 }));
 
-export const _userFeeds = [...Array(3)].map((_, index) => ({
+export const _userFeeds = [...Array(10)].map((_, index) => ({
   id: _mock.id(index),
   author: {
     id: _mock.id(8),
