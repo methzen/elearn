@@ -86,8 +86,12 @@ export default function Community() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
+       
       <Grid container justifyContent="center" spacing={3}>
         <Grid item xs={12} md={8}>
+        <Box sx={{ boxShadow:5, borderRadius:1, margin: "5px 0px 50px", cursor:"pointer", paddingTop:"20px"}}>
+        <WriteSomething />
+        </Box>
         <Box>
         <Stack spacing={3}>
           {_userFeeds.map((post) => (
@@ -96,8 +100,21 @@ export default function Community() {
         </Stack>
       </Box>
         </Grid>
+
           <Grid item xs={12} md={3}>
-            <Box>Some box here with data</Box>
+            <Box
+                sx={{
+                  pl: 1.5,
+                  height: 40,
+                  width: "100%",
+                  borderRadius: 1,
+                  border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+                  cursor:"pointer",
+                  color: "gray",
+                  display:"flex",
+                  alignItems: "center"
+                }}
+            >Some box here with data</Box>
           </Grid>
         </Grid>
       {
@@ -111,6 +128,35 @@ export default function Community() {
   );
 }
 
+function WriteSomething(){
+  const { user } = useAuthContext();
+  return (<Stack
+        spacing={2}
+        direction="row"
+        alignItems="center"
+        sx={{
+          p: (theme) => theme.spacing(0, 3, 3, 3),
+          cursor:"pointer",
+        }}
+      >
+        <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
+        <Box
+          sx={{
+            pl: 1.5,
+            height: 40,
+            width: "100%",
+            borderRadius: 1,
+            border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+            cursor:"pointer",
+            color: "gray",
+            display:"flex",
+            alignItems: "center"
+          }}
+        >
+          <b>Write something...</b>
+        </Box>
+      </Stack>)
+}
 interface Post {
   post: IUserProfilePost;
 }
