@@ -35,11 +35,14 @@ import {
 
 // next
 import Head from 'next/head';
+// next
+import { useRouter } from 'next/router';
 import { Container } from '@mui/material';
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../components/settings';
+import { useSnackbar } from '../../components/snackbar';
 
 import {
   _userGroups
@@ -54,8 +57,10 @@ import { fShortenNumber } from '../../utils/formatNumber';
 // components
 import Image from '../../components/image';
 import Iconify from '../../components/iconify';
+import submitNewPost from '../../api/submitNewPost';
 import { CustomAvatar, CustomAvatarGroup } from '../../components/custom-avatar';
-import WritePost from '../../sections/WritePost';
+import { PATH_DASHBOARD } from '../../routes/paths';
+
 
 // ----------------------------------------------------------------------
 
@@ -69,6 +74,9 @@ interface Props {
 Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default function Community() {
+  const { push } = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+
   const { themeStretch } = useSettingsContext();
   const [open, setOpen] = useState<boolean>(false);
   const [writeSomething, SetWriteSomething] = useState<boolean>(false);
@@ -89,13 +97,22 @@ export default function Community() {
     console.log("user want to add a post...")
     SetWriteSomething(true)
   }
+
   const cancelPost = () =>{
-    console.log("User want to cancel")
     SetWriteSomething(false)
   }
-  const sendPost = (message:any) =>{
-    console.log("User want to send Post...", message)
-  }
+
+  const sendPost = async (content: any) => {
+    try {
+      const response = await submitNewPost(content);
+      SetWriteSomething(false)
+      enqueueSnackbar(response.data);
+      push(PATH_DASHBOARD.community);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <Head>
