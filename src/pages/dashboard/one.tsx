@@ -175,33 +175,33 @@ const StructurePage = ({handleCourseStructure} : StructureProps) =>{
 
 export default function PageOne() {
   
-  const [format, setFormat] = useState(add.STRUCTURE)
+  const [format, setFormat] = useState(add.LESSON)
   const [chapter, setChapter] = useState({name: "", content : "", video : ""})
   const [module, setModule] = useState({name: "", chapters : []})
 
-  // const handleCourseStructure = (value : string) => {
-  //   if (value === Structure.STRUCTURED) {
-  //     setFormat(add.MODULE)
-  //   }
-  //   if (value === Structure.UNSTRUCTURED) {
-  //     setFormat(add.LESSON)
-  //   }
-  // }
-  // switch (format){
-  //   case add.STRUCTURE:
-  //     return <StructurePage handleCourseStructure={handleCourseStructure}/>
-  //   case add.MODULE: 
-  //     return <Module/>
-  //   case add.LESSON:
-  //     return <Lesson/>
-  // }
+  const handleCourseStructure = (value : string) => {
+    if (value === Structure.STRUCTURED) {
+      setFormat(add.MODULE)
+    }
+    if (value === Structure.UNSTRUCTURED) {
+      setFormat(add.LESSON)
+    }
+  }
+  switch (format){
+    case add.STRUCTURE:
+      return <StructurePage handleCourseStructure={handleCourseStructure}/>
+    case add.MODULE: 
+      return <Module/>
+    case add.LESSON:
+      return <Lesson/>
+  }
 
-  return (
-    <AppWelcome
-      title={`Welcome back! \n ${"user?.displayName"}`}
-      description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
-      action={<Button variant="contained">Create a course</Button>}
-    />
-  )
+  // return (
+  //   <AppWelcome
+  //     title={`Welcome back! \n ${"user?.displayName"}`}
+  //     description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
+  //     action={<Button variant="contained">Create a course</Button>}
+  //   />
+  // )
 
 }

@@ -1,3 +1,4 @@
+import '../../utils/highlight';
 // next
 import dynamic from 'next/dynamic';
 // @mui
@@ -6,29 +7,22 @@ import { Skeleton } from '@mui/material';
 import { EditorProps } from './types';
 import { StyledEditor } from './styles';
 import EditorToolbar, { formats } from './EditorToolbar';
-
-import hljs from 'highlight.js';
-import 'highlight.js/styles/monokai-sublime.css';
-
-// ----------------------------------------------------------------------
-
-declare global {
-  interface Window {
-    hljs: any;
-  }
+import { ReactQuillProps } from 'react-quill';
+import { useCallback, useMemo, useRef } from 'react';
+import uploadPostImage from '../../api/UploadPostImage';
+interface MyProps extends ReactQuillProps {
+  fowardRef : any
 }
 
-hljs.configure({
-  languages: ['javascript', 'jsx', 'sh', 'bash', 'html', 'scss', 'css', 'json'],
-});
+const ReactQuill = dynamic(
+  async () => {
+    const { default: RQ } = await import("react-quill");
 
-if (typeof window !== 'undefined') {
-  window.hljs = hljs;
-}
-
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => (
+    return ({ fowardRef, ...props } : MyProps) => <RQ ref={fowardRef} {...props} />;
+  },
+  {
+    ssr: false,
+    loading: () => (
     <Skeleton
       variant="rounded"
       sx={{
@@ -41,8 +35,8 @@ const ReactQuill = dynamic(() => import('react-quill'), {
       }}
     />
   ),
-});
-
+  }
+);
 // ----------------------------------------------------------------------
 
 export default function Editor({
@@ -56,9 +50,38 @@ export default function Editor({
   sx,
   ...other
 }: EditorProps) {
-  const modules = {
+  const quillRef = useRef<any>(null);
+
+  const selectLocalImage = useCallback(() =>{
+    const editor = quillRef.current.getEditor()
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.click();
+    // Listen upload local image and save to server
+    input.onchange = async () => {
+      const file = input.files ? input.files[0] : null;
+      // file type is only image.
+      if (/^image\//.test(file ? file.type: "")) {
+        try{
+          const response = await uploadPostImage(file)
+          const imgSrc = (response.status === 201) ? response.data : ""
+          const range = editor.getSelection()
+          editor.insertEmbed(range.index, 'image', imgSrc);
+          editor.setSelection(range.index + 1);
+        }catch(e){console.error(e)}
+      } else {
+        console.warn('You could only upload images.');
+      }
+    };
+  }, []);
+
+  
+  const modules = useMemo(()=>({
     toolbar: {
       container: `#${id}`,
+      handlers: { 
+        image: selectLocalImage 
+      },
     },
     history: {
       delay: 500,
@@ -69,7 +92,7 @@ export default function Editor({
     clipboard: {
       matchVisual: false,
     },
-  };
+  }), [])
 
   return (
     <>
@@ -84,6 +107,7 @@ export default function Editor({
         <EditorToolbar id={id} isSimple={simple} showMedia={showMedia}/>
 
         <ReactQuill
+          fowardRef={quillRef}
           value={value}
           onChange={onChange}
           modules={modules}

@@ -60,6 +60,7 @@ import Iconify from '../../components/iconify';
 import submitNewPost from '../../api/submitNewPost';
 import { CustomAvatar, CustomAvatarGroup } from '../../components/custom-avatar';
 import { PATH_DASHBOARD } from '../../routes/paths';
+import Markdown from '../../components/markdown/Markdown';
 
 
 // ----------------------------------------------------------------------
@@ -272,6 +273,14 @@ function PostCard( { post }: Post) {
       >
         {post.message}
       </Typography>
+
+      {/* <Markdown
+            key={post.id}
+            children={post.message}
+            sx={{
+              px: { md: 2 },
+              py: { md: 2 },
+            }} /> */}
 
       <Box sx={{ p: 1 }}>
         <Image alt="post media" src={post.media} ratio="16/9" sx={{ borderRadius: 1 }} />
