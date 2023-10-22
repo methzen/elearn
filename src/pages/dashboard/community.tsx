@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -8,6 +7,10 @@ import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 // @mui
 import { alpha } from '@mui/material/styles';
+// hooks
+import useResponsive from '../../hooks/useResponsive';
+// components
+import Editor from '../../components/editor';
 import {
   Box,
   Link,
@@ -22,7 +25,7 @@ import {
   IconButton,
   InputAdornment,
   FormControlLabel,
-  Modal,
+  Divider,
   Button
 } from '@mui/material';
 import {
@@ -52,6 +55,7 @@ import { fShortenNumber } from '../../utils/formatNumber';
 import Image from '../../components/image';
 import Iconify from '../../components/iconify';
 import { CustomAvatar, CustomAvatarGroup } from '../../components/custom-avatar';
+import WritePost from '../../sections/WritePost';
 
 // ----------------------------------------------------------------------
 
@@ -67,6 +71,7 @@ Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 export default function Community() {
   const { themeStretch } = useSettingsContext();
   const [open, setOpen] = useState<boolean>(false);
+  const [writeSomething, SetWriteSomething] = useState<boolean>(false);
   const [postToDisplay, setPostToDisplay] = useState<IUserProfilePost | null>(null)
 
   const DisplayPost=(id:any)=>{
@@ -79,6 +84,18 @@ export default function Community() {
     setOpen(false)
   }
 
+  const HandleCreatePost = (e:any)=> {
+    e.preventDefault()
+    console.log("user want to add a post...")
+    SetWriteSomething(true)
+  }
+  const cancelPost = () =>{
+    console.log("User want to cancel")
+    SetWriteSomething(false)
+  }
+  const sendPost = (message:any) =>{
+    console.log("User want to send Post...", message)
+  }
   return (
     <>
       <Head>
@@ -89,7 +106,7 @@ export default function Community() {
        
       <Grid container justifyContent="center" spacing={3}>
         <Grid item xs={12} md={8}>
-        <Box sx={{ boxShadow:5, borderRadius:1, margin: "5px 0px 50px", cursor:"pointer", paddingTop:"20px"}}>
+        <Box sx={{ boxShadow:5, borderRadius:1, margin: "5px 0px 50px", cursor:"pointer", paddingTop:"20px"}} onClick={HandleCreatePost}>
         <WriteSomething />
         </Box>
         <Box>
@@ -122,6 +139,10 @@ export default function Community() {
         post={postToDisplay}
         handleClose={handleClose}
         />
+      }
+      {
+        writeSomething &&
+        <CreateAPostDialog open={writeSomething} cancelPost={cancelPost} sendPost={sendPost}/>
       }
       </Container>
     </>
@@ -481,5 +502,115 @@ function CustomizedDialogs({post, open, handleClose}: DialogCommands) {
           </DialogActions>
         </BootstrapDialog>
       </div>
+    );
+  }
+
+  interface PostSomeThingDialogProps {
+    open: boolean;
+    cancelPost: ()=> void;
+    sendPost: (message :any)=> void;
+  }
+
+  interface PostContent {
+    title : string;
+    message : string;
+    attachment : string;
+  }
+
+  function CreateAPostDialog({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
+    const { user } = useAuthContext();
+
+    const isDesktop = useResponsive('up', 'sm');
+
+    const [content, setContent] = useState<PostContent>({title:'', message: '', attachment:''})
+    const [fullScreen, setFullScreen] = useState(false);
+  
+    const handleChangeMessage = (message: string) => {
+      setContent( value=> ({...value, message: message}));
+    };
+
+    const handleChangeTitle = (event: React.ChangeEvent) => {
+      const target = event.target as HTMLInputElement;
+      setContent( value => ({...value, title: target.value}));
+    };
+  
+    const fullWidth = isDesktop ?
+                        (fullScreen ? 90 : 40) : 90
+
+    return (
+        <BootstrapDialog
+          onClose={cancelPost}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+        >
+
+        <Paper
+          sx={{
+            width:`calc(${fullWidth}%)`,
+            top: 90,
+            right: `calc((100% - ${fullWidth}%)/2)`,
+            margin: "0px auto",
+            position: 'fixed',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              py: 2,
+              pl: 2.5,
+              pr: 1,
+            }}
+          >
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              What's on your mind {user?.displayName} ?
+            </Typography>
+
+            <IconButton onClick={() => setFullScreen(!fullScreen)}>
+              <Iconify icon={fullScreen ? 'eva:collapse-fill' : 'eva:expand-fill'} />
+            </IconButton>
+  
+            <IconButton onClick={cancelPost}>
+              <Iconify icon="eva:close-fill" />
+            </IconButton>
+          </Stack>
+  
+          <Divider />
+  
+          <InputBase placeholder="Title" 
+            sx={{ px: 2, height: 40 }} 
+            value={content.title}
+            onChange={handleChangeTitle}
+            />
+  
+          <Divider />
+  
+          <Editor
+            simple
+            id="compose-mail"
+            value={content.message}
+            onChange={handleChangeMessage}
+            placeholder="Type a message"
+            sx={{ flexGrow: 1, borderColor: 'transparent' }}
+          />
+  
+          <Divider />
+  
+          <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
+            <Button variant="contained" sx={{ mr: 2 }} onClick={() => sendPost(content)}>
+              Post
+            </Button>
+            <IconButton>
+              <Iconify icon="ic:round-add-photo-alternate" />
+            </IconButton>
+  
+            <IconButton>
+              <Iconify icon="eva:attach-2-fill" />
+            </IconButton>
+          </Stack>
+        </Paper>
+        </BootstrapDialog>
     );
   }
