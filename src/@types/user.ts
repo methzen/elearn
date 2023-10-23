@@ -88,18 +88,25 @@ export type IUserProfileFriend = {
 
 export type IUserProfilePost = {
   id: string;
-  author: {
+  by: {
     id: string;
     avatarUrl: string;
     name: string;
   };
+  likes: number;
   isLiked: boolean;
-  createdAt: Date | string | number;
+  score: number;
+  dead: boolean;
+  rank: number;
   media: string;
-  message: string;
+  createdAt: Date | string | number;
+  commentCount: number;
+  title: string;
+  content: string;
   personLikes: {
     name: string;
     avatarUrl: string;
+    id: string;
   }[];
   comments: {
     id: string;

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -35,6 +36,7 @@ import {
 
 // next
 import Head from 'next/head';
+import useSWR from 'swr';
 // next
 import { useRouter } from 'next/router';
 import { Container } from '@mui/material';
@@ -61,7 +63,9 @@ import submitNewPost from '../../api/submitNewPost';
 import { CustomAvatar, CustomAvatarGroup } from '../../components/custom-avatar';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import Markdown from '../../components/markdown/Markdown';
-
+import getAllPostsByPage from '../../api/getAllPostsByPage';
+import likeAPost from '../../api/likeAPost';
+import unlikeAPost from '../../api/unlikeAPost';
 
 // ----------------------------------------------------------------------
 
@@ -73,6 +77,7 @@ interface Props {
 // ----------------------------------------------------------------------
 
 Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+const fetcher = (url: string) => getAllPostsByPage(url);
 
 export default function Community() {
   const { push } = useRouter();
@@ -83,9 +88,15 @@ export default function Community() {
   const [writeSomething, SetWriteSomething] = useState<boolean>(false);
   const [postToDisplay, setPostToDisplay] = useState<IUserProfilePost | null>(null)
 
+  const [page, setPage] = useState<number>(1)
+  const { data , error } = useSWR(`/posts/get-all-posts?page=${page}`, fetcher)
+  if (error) return <div>Failed to load</div>
+  if (!data) return <div>Loading...</div>
+  const posts : IUserProfilePost[] = data.items;
+
   const DisplayPost=(id:any)=>{
     setOpen(true)
-    const post = _userFeeds.find(post=> post.id === id)
+    const post = posts.find(post=> post.id === id)
     setPostToDisplay(post as IUserProfilePost)
   }
 
@@ -129,8 +140,10 @@ export default function Community() {
         </Box>
         <Box>
         <Stack spacing={3}>
-          {_userFeeds.map((post) => (
-            <Post key={post.id} post={post} onClick={()=>DisplayPost(post.id)}/>
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} 
+            // onClick={()=>DisplayPost(post.id)}
+            />
           ))}
         </Stack>
       </Box>
@@ -205,23 +218,25 @@ function PostCard( { post }: Post) {
   const commentInputRef = useRef<HTMLInputElement>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const userHasLikedTheirPost = post?.personLikes.map(like => like.id===user?.id)
+  const [isLiked, setLiked] = useState(userHasLikedTheirPost? true: false);
 
-  const [isLiked, setLiked] = useState(post.isLiked);
-
-  const [likes, setLikes] = useState(post.personLikes.length);
+  const [likes, setLikes] = useState(post?.personLikes?.length);
 
   const [message, setMessage] = useState('');
 
-  const hasComments = post.comments.length > 0;
+  const hasComments = post?.comments?.length > 0;
 
-  const handleLike = () => {
+  const handleLike = async () => {
     setLiked(true);
     setLikes((prevLikes) => prevLikes + 1);
+    await likeAPost({postId: post.id})
   };
 
-  const handleUnlike = () => {
+  const handleUnlike = async () => {
     setLiked(false);
     setLikes((prevLikes) => prevLikes - 1);
+    await unlikeAPost({postId: post.id})
   };
 
   const handleChangeMessage = (value: string) => {
@@ -256,7 +271,7 @@ function PostCard( { post }: Post) {
         }
         subheader={
           <Typography variant="caption" component="div" sx={{ color: 'text.secondary' }}>
-            {fDate(post.createdAt)}
+            {fDate(post?.createdAt)}
           </Typography>
         }
         action={
@@ -268,24 +283,21 @@ function PostCard( { post }: Post) {
 
       <Typography
         sx={{
-          p: (theme) => theme.spacing(3, 3, 2, 3),
+          fontWeight:"bold",
+          px: { md: 2 },
+          py: { md: 2 },
         }}
       >
-        {post.message}
+        {post.title}
       </Typography>
 
-      {/* <Markdown
+      <Markdown
             key={post.id}
-            children={post.message}
+            children={post.content}
             sx={{
               px: { md: 2 },
               py: { md: 2 },
-            }} /> */}
-
-      <Box sx={{ p: 1 }}>
-        <Image alt="post media" src={post.media} ratio="16/9" sx={{ borderRadius: 1 }} />
-      </Box>
-
+            }} />
       <Stack
         direction="row"
         alignItems="center"
@@ -307,7 +319,7 @@ function PostCard( { post }: Post) {
         />
 
         <CustomAvatarGroup>
-          {post.personLikes.map((person) => (
+          {post?.personLikes?.map((person) => (
             <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} />
           ))}
         </CustomAvatarGroup>
@@ -411,7 +423,7 @@ function Post({ post, onClick }: Props) {
     const { user } = useAuthContext();  
     const [isLiked, setLiked] = useState(post.isLiked);
   
-    const [likes, setLikes] = useState(post.personLikes.length);
+    const [likes, setLikes] = useState(post?.personLikes?.length);
   
     const handleLike = () => {
       setLiked(true);
@@ -441,14 +453,23 @@ function Post({ post, onClick }: Props) {
             </Typography>
           }
         />
-  
         <Typography
           sx={{
-            p: (theme) => theme.spacing(3, 3, 2, 3),
+            fontWeight: "bold",
+            px: { md: 2 },
+            py: { md: 2 },
           }}
         >
-          {post.message}
+          {post?.title}
         </Typography>
+
+        <Markdown
+            key={post.id}
+            children={post.content}
+            sx={{
+              px: { md: 2 },
+              py: { md: 2 },
+            }} />
   
         <Stack
           direction="row"
@@ -471,7 +492,7 @@ function Post({ post, onClick }: Props) {
           />
   
           <CustomAvatarGroup>
-            {post.personLikes.map((person) => (
+            {post?.personLikes?.map((person) => (
               <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} />
             ))}
           </CustomAvatarGroup>

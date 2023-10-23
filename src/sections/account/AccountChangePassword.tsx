@@ -20,7 +20,7 @@ type FormValuesProps = IUserAccountChangePassword;
 export default function AccountChangePassword(props : any) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = props
-  console.log("props", props);
+
   const ChangePassWordSchema = Yup.object().shape({
     oldPassword: Yup.string().required('Old Password is required.'),
     newPassword: Yup.string()
