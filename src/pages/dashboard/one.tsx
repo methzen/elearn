@@ -175,7 +175,7 @@ const StructurePage = ({handleCourseStructure} : StructureProps) =>{
 
 export default function PageOne() {
   
-  const [format, setFormat] = useState(add.LESSON)
+  const [format, setFormat] = useState(add.STRUCTURE)
   const [chapter, setChapter] = useState({name: "", content : "", video : ""})
   const [module, setModule] = useState({name: "", chapters : []})
 

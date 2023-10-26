@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 // @mui
 import {
   Grid,
+  Box,
   Stack,
   Backdrop,
   Typography,
@@ -42,7 +43,7 @@ interface CreateForm {
   submitData : (data : FormValuesProps) => void;
 }
 
-export default function ReactHookForm(
+export default function CreateAgroup(
   { FormSchema, 
     nameLabel, 
     editorLabel, 
@@ -101,22 +102,20 @@ export default function ReactHookForm(
       )}
 
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={5}>
-          <Grid item xs={12} md={6}>
+        <Box 
+          sx={{
+            marginLeft:"auto",
+            marginRight:"auto",
+            marginBottom: "40px",
+            borderRadius: 1,
+            display:"flex",
+            flexDirection:"column",
+            gap: "15px",
+            padding:"0 20px",
+          }}
+        >
             <Stack spacing={2}>
-              <Block label="">
-                <RHFTextField name="name" label={nameLabel} />
-              </Block>
-
-              <Block label={editorLabel}>
-                <RHFEditor simple name="editor"  showMedia={false}/>
-              </Block>
-            </Stack>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Stack spacing={2}>
-              <Block label="">
+            <Block label="Select a banner">
                 <RHFUpload
                   name="singleUpload"
                   maxSize={3145728}
@@ -124,9 +123,18 @@ export default function ReactHookForm(
                   onDelete={() => setValue('singleUpload', null, { shouldValidate: true })}
                 />
               </Block>
+            </Stack>
+            <Stack spacing={2}>
+              <Block label="Give a name">
+                <RHFTextField name="name" label={nameLabel} />
+              </Block>
 
+              <Block label={editorLabel}>
+                <RHFEditor simple name="editor"  showMedia={false}/>
+              </Block>
+            </Stack>
+            <Stack spacing={3}>
               <LoadingButton
-                fullWidth
                 color="primary"
                 size="large"
                 type="submit"
@@ -136,8 +144,7 @@ export default function ReactHookForm(
                 Create
               </LoadingButton>
             </Stack>
-          </Grid>
-        </Grid>
+          </Box>
       </FormProvider>
     </>
   );

@@ -12,11 +12,12 @@ import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import { NavSectionVertical } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
+import {GroupNav, HomeNav} from './config-navigation';
 import NavAccount from './NavAccount';
 import NavToggleButton from './NavToggleButton';
-
+import { useAuthContext } from '../../../auth/useAuthContext';
 // ----------------------------------------------------------------------
+
 
 type Props = {
   openNav: boolean;
@@ -25,7 +26,9 @@ type Props = {
 
 export default function NavVertical({ openNav, onCloseNav }: Props) {
   const { pathname } = useRouter();
+  const { user } = useAuthContext();
 
+  const NavConfig = user?.selectedGroup ? GroupNav : HomeNav
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
         <NavAccount />
       </Stack>
 
-      <NavSectionVertical data={navConfig} />
+      <NavSectionVertical data={NavConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

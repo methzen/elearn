@@ -15,7 +15,7 @@ type Course={
 }
 
 export default function CourseCard({id, name, imageUrl, description}: Course) {
-  console.log("imageUrl", imageUrl)
+
   return (
     <Card sx={{ maxWidth: 350, maxHeight:426 }}>
       <CardMedia

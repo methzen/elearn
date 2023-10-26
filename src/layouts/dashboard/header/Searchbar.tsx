@@ -24,7 +24,7 @@ import { NavListProps } from '../../../components/nav-section';
 import { IconButtonAnimate } from '../../../components/animate';
 import SearchNotFound from '../../../components/search-not-found';
 //
-import NavConfig from '../nav/config-navigation';
+import {NavConfig} from '../nav/config-navigation';
 
 // ----------------------------------------------------------------------
 

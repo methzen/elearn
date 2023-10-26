@@ -9,12 +9,16 @@ import { bgBlur } from '../../../utils/cssStyles';
 // components
 import { NavSectionHorizontal } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
+import { useAuthContext } from '../../../auth/useAuthContext';
+import {GroupNav, HomeNav} from './config-navigation';
 
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
   const theme = useTheme();
+  const { user } = useAuthContext();
+
+  const NavConfig = user?.selectedGroup ? GroupNav : HomeNav
 
   return (
     <AppBar
@@ -32,7 +36,7 @@ function NavHorizontal() {
           }),
         }}
       >
-        <NavSectionHorizontal data={navConfig} />
+        <NavSectionHorizontal data={NavConfig} />
       </Toolbar>
 
       <Shadow />

@@ -2,10 +2,6 @@ import { useState, useRef } from 'react';
 
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import CloseIcon from '@mui/icons-material/Close';
 // @mui
 import { alpha } from '@mui/material/styles';
 // hooks
@@ -98,7 +94,8 @@ export default function Community() {
   const [postToDisplay, setPostToDisplay] = useState<IUserProfilePost | null>(null)
 
   const [page, setPage] = useState<number>(1)
-  const { data , error } = useSWR(`/posts/get-all-posts?page=${page}`, fetcher)
+  const { data , error, mutate } = useSWR(`/posts/get-all-posts?page=${page}`, fetcher)
+
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading...</div>
   const posts : IUserProfilePost[] = data.items;
@@ -150,7 +147,6 @@ export default function Community() {
     try{
       SetWriteAComment(v => ({...v, status: false}))
       const response = await commentAPost(data)
-      console.log("usr want to send a comment...", writeAComment.postId, comment)
       enqueueSnackbar(response.data);
       push(PATH_DASHBOARD.community);
     }catch(e){
@@ -175,6 +171,7 @@ export default function Community() {
           {posts.map((post) => (
             <PostCard key={post.id} post={post}
             addComment={()=>addComment(post.id)}
+            mutate={mutate}
             // onClick={()=>DisplayPost(post.id)}
             />
           ))}
@@ -249,15 +246,17 @@ function WriteSomething(){
 interface Post {
   post: IUserProfilePost;
   addComment: () => void;
+  mutate: () => void;
 }
-function PostCard( { post, addComment }: Post) {
+function PostCard( { post, addComment, mutate }: Post) {
   const { user } = useAuthContext();
 
   const commentInputRef = useRef<HTMLInputElement>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const userHasLikedTheirPost = post?.personLikes.map(like => like.id===user?.id)
-  const [isLiked, setLiked] = useState(userHasLikedTheirPost? true: false);
+  const userHasLikedTheirPost = post?.personLikes.filter(like => like.id === user?.id)
+
+  const [isLiked, setLiked] = useState(userHasLikedTheirPost.length >=1 ? true: false);
 
   const [likes, setLikes] = useState(post?.personLikes?.length);
 
@@ -269,12 +268,14 @@ function PostCard( { post, addComment }: Post) {
     setLiked(true);
     setLikes((prevLikes) => prevLikes + 1);
     await likeAPost({postId: post.id})
+    mutate()
   };
 
   const handleUnlike = async () => {
     setLiked(false);
     setLikes((prevLikes) => prevLikes - 1);
     await unlikeAPost({postId: post.id})
+    mutate()
   };
 
   const handleChangeMessage = (value: string) => {

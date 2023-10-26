@@ -16,7 +16,7 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
 };
 
-const navConfig = [
+const NavConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
@@ -81,4 +81,7 @@ const HomeNav = [
   },
 ];
 
-export default GroupNav;
+export {
+  HomeNav,
+  GroupNav,
+}

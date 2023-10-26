@@ -8,12 +8,17 @@ import { hideScrollbarX } from '../../../utils/cssStyles';
 import Logo from '../../../components/logo';
 import { NavSectionMini } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
+import {GroupNav, HomeNav} from './config-navigation';
 import NavToggleButton from './NavToggleButton';
+import { useAuthContext } from '../../../auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
+  const { user } = useAuthContext();
+
+  const NavConfig = user?.selectedGroup ? GroupNav : HomeNav
+
   return (
     <Box
       component="nav"
@@ -41,7 +46,7 @@ export default function NavMini() {
       >
         <Logo sx={{ mx: 'auto', my: 2 }} />
 
-        <NavSectionMini data={navConfig} />
+        <NavSectionMini data={NavConfig} />
       </Stack>
     </Box>
   );
