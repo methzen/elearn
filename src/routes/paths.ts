@@ -24,10 +24,6 @@ export const PATH_DASHBOARD = {
     community: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/community`),
   },
   user: {
-    root: path(ROOTS_DASHBOARD, '/user'),
-    four: path(ROOTS_DASHBOARD, '/user/four'),
-    five: path(ROOTS_DASHBOARD, '/user/five'),
-    six: path(ROOTS_DASHBOARD, '/user/six'),
     myprofile: path(ROOTS_DASHBOARD, `/user/myprofile`),
     // profile: (name: string) => path(ROOTS_DASHBOARD, `/user/${name}/profile`),
   },

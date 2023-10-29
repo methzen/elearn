@@ -63,8 +63,9 @@ import getAllPostsByPage from '../../../api/getAllPostsByPage';
 import likeAPost from '../../../api/likeAPost';
 import unlikeAPost from '../../../api/unlikeAPost';
 import commentAPost from '../../../api/commentAPost';
-
+import CourseCardAside from '../../../components/CourseCardAside';
 // ----------------------------------------------------------------------
+
 
 interface Props {
   post: IUserProfilePost;
@@ -80,7 +81,8 @@ interface commentDataType {
 // ----------------------------------------------------------------------
 
 Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
-const fetcher = (url: string) => getAllPostsByPage(url);
+const getAllPosts = (url: string) => getAllPostsByPage(url);
+
 
 export default function Community() {
   const { push, query:{ circleId}} = useRouter();
@@ -94,11 +96,11 @@ export default function Community() {
   const [postToDisplay, setPostToDisplay] = useState<IUserProfilePost | null>(null)
 
   const [page, setPage] = useState<number>(1)
-  const { data , error, mutate } = useSWR(`/posts/get-all-posts?page=${page}`, fetcher)
+  const { data , error, mutate } = useSWR(`/posts/get-all-posts?page=${page}&groupId=${circleId}`, getAllPosts)
 
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading...</div>
-  const posts : IUserProfilePost[] = data.items;
+  const posts : IUserProfilePost[] = data.posts;
 
   const DisplayPost=(id:any)=>{
     setOpen(true)
@@ -179,19 +181,7 @@ export default function Community() {
         </Grid>
 
           <Grid item xs={12} md={3}>
-            <Box
-                sx={{
-                  pl: 1.5,
-                  height: 40,
-                  width: "100%",
-                  borderRadius: 1,
-                  border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
-                  cursor:"pointer",
-                  color: "gray",
-                  display:"flex",
-                  alignItems: "center"
-                }}
-            >Some box here with data</Box>
+            <CourseCardAside {...data.group}/>
           </Grid>
         </Grid>
       {/* {

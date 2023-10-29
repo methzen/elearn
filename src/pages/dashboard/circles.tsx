@@ -1,7 +1,7 @@
 import { useState } from 'react'
 // next
 import Head from 'next/head';
-import { Container, Typography, Box, Button, Paper, Stack, IconButton, Divider, InputBase} from '@mui/material';
+import { Container, Box, Button, Paper, Stack, IconButton, Divider} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 
@@ -119,7 +119,7 @@ export default function PageTwo() {
       setOpenModal(false)
       await createGroup(data)
       mutate()
-      enqueueSnackbar("The group has been created successfully")
+      enqueueSnackbar("The group has been created successfully.")
     }catch (err) {
       console.error(err);
     }
@@ -150,7 +150,7 @@ export default function PageTwo() {
               onClick={handleOpenModal}
               style={{ marginTop:"20px"}}
             >
-              Create a group
+              Create a circle
             </Button>
           }
         />    
