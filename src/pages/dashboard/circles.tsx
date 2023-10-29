@@ -22,10 +22,20 @@ import createGroup from 'src/api/createGroup';
 import { FormSchema } from '../../sections/form/schema';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
+import getAllGroupsByPage from '../../api/getAllGroupsByPage';
+import { useSnackbar } from '../../components/snackbar';
+import useSWR from 'swr';
 // ----------------------------------------------------------------------
+type FormValuesProps = {
+  name: string;
+  editor: string;
+  singleUpload: File | null;
+};
+
 interface CreateGroupDialogProps{
   open: boolean;
   cancel: ()=> void;
+  submit: (data: FormValuesProps)=> void;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -86,11 +96,16 @@ function CreateAGroupDialog({open, cancel}: CreateGroupDialogProps) {
   );
 }
 PageTwo.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+const fetcher = (url: string) => getAllGroupsByPage(url);
+
 
 export default function PageTwo() {
+  const { enqueueSnackbar } = useSnackbar();
   const { themeStretch } = useSettingsContext();
   const { user } = useAuthContext();
   const [openModal, setOpenModal] = useState(false)
+  const [page, setPage] = useState<number>(1)
+  const { data , error, mutate } = useSWR(`/groups/get/all?page=${page}`, fetcher)
 
   const handleOpenModal = () =>{
     setOpenModal(true)
@@ -98,6 +113,20 @@ export default function PageTwo() {
   const cancelCourseCreation = () =>{
     setOpenModal(false)
   }
+
+  const submitGroup = async (data: FormValuesProps) => {
+    try {
+      setOpenModal(false)
+      await createGroup(data)
+      mutate()
+      enqueueSnackbar("The group has been created successfully")
+    }catch (err) {
+      console.error(err);
+    }
+
+  };
+
+
   return (
     <>
       <Head>
@@ -105,7 +134,7 @@ export default function PageTwo() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
-        {openModal && <CreateAGroupDialog open={openModal} cancel={cancelCourseCreation}/>}
+        {openModal && <CreateAGroupDialog open={openModal} cancel={cancelCourseCreation} submit={submitGroup}/>}
       <CustomBreadcrumbs
           heading={`Welcome ${user?.displayName} !`}
           links={[
@@ -119,11 +148,12 @@ export default function PageTwo() {
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={handleOpenModal}
+              style={{ marginTop:"20px"}}
             >
               Create a group
             </Button>
           }
-        />
+        />    
         <Box
           gap={3}
           display="grid"
@@ -134,7 +164,7 @@ export default function PageTwo() {
             lg: 'repeat(3, 1fr)',
           }}
         >
-          {_userGroups.map((course) =>
+          {data?.items?.map((course:any) =>
               <CourseCard key={course.id} {...course}/>
           )}
       </Box>

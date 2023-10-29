@@ -6,15 +6,23 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 
 type Course={
     name: string
     id: string
     imageUrl: string
     description: string
+    ownerShipLevel: number
 }
 
-export default function CourseCard({id, name, imageUrl, description}: Course) {
+export default function CourseCard({id, name, imageUrl, description, ownerShipLevel}: Course) {
+  const { push } = useRouter()
+
+  const ownerShipInfo = ["member", "moderator", "admin"]
+  const getInsideGroup = ()=>{
+    push(`/dashboard/${id}/community`)
+  }
 
   return (
     <Card sx={{ maxWidth: 350, maxHeight:426 }}>
@@ -23,7 +31,7 @@ export default function CourseCard({id, name, imageUrl, description}: Course) {
         title="green iguana"
       >
       <div style={{ position: 'relative', width: '100%', height: '187px' }}>
-            <Image src={imageUrl} alt={name} fill />
+        <Image src={imageUrl} alt={name} fill />
       </div>
       </CardMedia>
       <CardContent sx={{ height:150, overflow: "hidden",textOverflow: "ellipsis"}}>
@@ -34,8 +42,12 @@ export default function CourseCard({id, name, imageUrl, description}: Course) {
           {description}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small">Join </Button>
+      <CardActions sx={{
+        display:"flex",
+        flexDirection: "row",
+        justifyContent: "space-between"
+      }}>
+        <Button size="small" onClick={getInsideGroup}>Join </Button><span style={{color:"#BFBFBF", fontSize:14, marginRight:15}}> {ownerShipInfo[ownerShipLevel]}</span>
       </CardActions>
     </Card>
   );

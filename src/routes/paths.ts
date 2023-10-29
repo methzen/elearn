@@ -16,13 +16,12 @@ export const PATH_AUTH = {
 
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
-  one: path(ROOTS_DASHBOARD, '/one'),
   circles: path(ROOTS_DASHBOARD, '/circles'),
-  library: path(ROOTS_DASHBOARD, '/library'),
-  community: path(ROOTS_DASHBOARD, '/community'),
   group: {
-    list : path(ROOTS_DASHBOARD, '/group/list'),
-    create : path(ROOTS_DASHBOARD, '/group/create'),
+    list : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/list`),
+    create : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/create`),
+    library: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/library`),
+    community: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/community`),
   },
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),

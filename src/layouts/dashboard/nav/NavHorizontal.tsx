@@ -11,15 +11,17 @@ import { NavSectionHorizontal } from '../../../components/nav-section';
 //
 import { useAuthContext } from '../../../auth/useAuthContext';
 import {GroupNav, HomeNav} from './config-navigation';
-
+import { useRouter } from 'next/router'
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
   const theme = useTheme();
   const { user } = useAuthContext();
+  const {
+    query: { circleId },
+  } = useRouter();
 
-  const NavConfig = user?.selectedGroup ? GroupNav : HomeNav
-
+  const NavConfig = circleId ? GroupNav(circleId as string) : HomeNav
   return (
     <AppBar
       component="nav"

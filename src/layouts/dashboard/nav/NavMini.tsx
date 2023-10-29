@@ -11,13 +11,16 @@ import { NavSectionMini } from '../../../components/nav-section';
 import {GroupNav, HomeNav} from './config-navigation';
 import NavToggleButton from './NavToggleButton';
 import { useAuthContext } from '../../../auth/useAuthContext';
-
+import { useRouter } from 'next/router'
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
   const { user } = useAuthContext();
+  const {
+    query: { circleId },
+  } = useRouter();
 
-  const NavConfig = user?.selectedGroup ? GroupNav : HomeNav
+  const NavConfig = circleId ? GroupNav(circleId as string) : HomeNav
 
   return (
     <Box

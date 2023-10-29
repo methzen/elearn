@@ -5,9 +5,9 @@ import Dialog from '@mui/material/Dialog';
 // @mui
 import { alpha } from '@mui/material/styles';
 // hooks
-import useResponsive from '../../hooks/useResponsive';
+import useResponsive from '../../../hooks/useResponsive';
 // components
-import Editor from '../../components/editor';
+import Editor from '../../../components/editor';
 import {
   Box,
   Link,
@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import {
     _userFeeds,
-  } from '../../_mock/arrays';
+  } from '../../../_mock/arrays';
 
 
 // next
@@ -37,32 +37,32 @@ import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { Container } from '@mui/material';
 // layouts
-import DashboardLayout from '../../layouts/dashboard';
+import DashboardLayout from '../../../layouts/dashboard';
 // components
-import { useSettingsContext } from '../../components/settings';
-import { useSnackbar } from '../../components/snackbar';
+import { useSettingsContext } from '../../../components/settings';
+import { useSnackbar } from '../../../components/snackbar';
 
 import {
   _userGroups
-} from '../../_mock/arrays';
+} from '../../../_mock/arrays';
 // @types
-import { IUserProfilePost } from '../../@types/user';
+import { IUserProfilePost } from '../../../@types/user';
 // auth
-import { useAuthContext } from '../../auth/useAuthContext';
+import { useAuthContext } from '../../../auth/useAuthContext';
 // utils
-import { fDate } from '../../utils/formatTime';
-import { fShortenNumber } from '../../utils/formatNumber';
+import { fDate } from '../../../utils/formatTime';
+import { fShortenNumber } from '../../../utils/formatNumber';
 // components
-import Image from '../../components/image';
-import Iconify from '../../components/iconify';
-import submitNewPost from '../../api/submitNewPost';
-import { CustomAvatar, CustomAvatarGroup } from '../../components/custom-avatar';
-import { PATH_DASHBOARD } from '../../routes/paths';
-import Markdown from '../../components/markdown/Markdown';
-import getAllPostsByPage from '../../api/getAllPostsByPage';
-import likeAPost from '../../api/likeAPost';
-import unlikeAPost from '../../api/unlikeAPost';
-import commentAPost from '../../api/commentAPost';
+import Image from '../../../components/image';
+import Iconify from '../../../components/iconify';
+import submitNewPost from '../../../api/submitNewPost';
+import { CustomAvatar, CustomAvatarGroup } from '../../../components/custom-avatar';
+import { PATH_DASHBOARD } from '../../../routes/paths';
+import Markdown from '../../../components/markdown/Markdown';
+import getAllPostsByPage from '../../../api/getAllPostsByPage';
+import likeAPost from '../../../api/likeAPost';
+import unlikeAPost from '../../../api/unlikeAPost';
+import commentAPost from '../../../api/commentAPost';
 
 // ----------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Das
 const fetcher = (url: string) => getAllPostsByPage(url);
 
 export default function Community() {
-  const { push } = useRouter();
+  const { push, query:{ circleId}} = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const { themeStretch } = useSettingsContext();
@@ -116,7 +116,6 @@ export default function Community() {
 
   const HandleCreatePost = (e:any)=> {
     e.preventDefault()
-    console.log("user want to add a post...")
     SetWriteSomething(true)
   }
 
@@ -129,7 +128,7 @@ export default function Community() {
       const response = await submitNewPost(content);
       SetWriteSomething(false)
       enqueueSnackbar(response.data);
-      push(PATH_DASHBOARD.community);
+      push(PATH_DASHBOARD.group.community(circleId as String));
     } catch (error) {
       console.error(error);
     }
@@ -148,7 +147,7 @@ export default function Community() {
       SetWriteAComment(v => ({...v, status: false}))
       const response = await commentAPost(data)
       enqueueSnackbar(response.data);
-      push(PATH_DASHBOARD.community);
+      push(PATH_DASHBOARD.group.community(circleId as String));
     }catch(e){
       console.error(e);
     }

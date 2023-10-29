@@ -67,15 +67,15 @@ export default function CreateAgroup(
 
   const values = watch();
 
-  const onSubmit = async (data: FormValuesProps) => {
-    try {
-      await submitData(data)
-      reset();
-    }catch (err) {
-      console.error(err);
-    }
+  // const onSubmit = async (data: FormValuesProps) => {
+  //   try {
+  //     await submitData(data)
+  //     reset();
+  //   }catch (err) {
+  //     console.error(err);
+  //   }
 
-  };
+  // };
 
   const handleDropSingleFile = useCallback(
     (acceptedFiles: File[]) => {
@@ -101,7 +101,7 @@ export default function CreateAgroup(
         </Backdrop>
       )}
 
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(submitData)}>
         <Box 
           sx={{
             marginLeft:"auto",
@@ -130,7 +130,11 @@ export default function CreateAgroup(
               </Block>
 
               <Block label={editorLabel}>
-                <RHFEditor simple name="editor"  showMedia={false}/>
+                {/* <RHFEditor simple name="editor"  showMedia={false}/> */}
+                <RHFTextField name="editor" label={nameLabel} 
+                multiline
+                maxRows={8}
+                />
               </Block>
             </Stack>
             <Stack spacing={3}>

@@ -22,9 +22,7 @@ const NavConfig = [
   {
     subheader: 'general v4.2.0',
     items: [
-      { title: 'One', path: PATH_DASHBOARD.one, icon: ICONS.dashboard },
       { title: 'Two', path: PATH_DASHBOARD.circles, icon: ICONS.ecommerce },
-      { title: 'Library', path: PATH_DASHBOARD.library, icon: ICONS.analytics },
     ],
   },
   // GROUP
@@ -56,11 +54,11 @@ const NavConfig = [
   },
 ];
 
-const GroupNav = [
+const GroupNav = (id:string)=> [
   {
     items: [
-      { title: 'Community', path: PATH_DASHBOARD.community},
-      { title: 'Library', path: PATH_DASHBOARD.library},
+      { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
+      { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
       { title: 'Account', path: PATH_DASHBOARD.user.myprofile}
     ],
   },

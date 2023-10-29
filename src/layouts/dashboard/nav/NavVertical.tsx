@@ -18,17 +18,16 @@ import NavToggleButton from './NavToggleButton';
 import { useAuthContext } from '../../../auth/useAuthContext';
 // ----------------------------------------------------------------------
 
-
 type Props = {
   openNav: boolean;
   onCloseNav: VoidFunction;
 };
 
 export default function NavVertical({ openNav, onCloseNav }: Props) {
-  const { pathname } = useRouter();
+  const { pathname, query: { circleId }, } = useRouter();
   const { user } = useAuthContext();
 
-  const NavConfig = user?.selectedGroup ? GroupNav : HomeNav
+  const NavConfig = circleId ? GroupNav(circleId as string) : HomeNav
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {

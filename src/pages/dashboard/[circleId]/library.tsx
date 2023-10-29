@@ -2,11 +2,11 @@
 import Head from 'next/head';
 import { Container, Grid } from '@mui/material';
 // layouts
-import DashboardLayout from '../../layouts/dashboard';
+import DashboardLayout from '../../../layouts/dashboard';
 // components
-import { useSettingsContext } from '../../components/settings';
-import Video from '../../components/Video';
-import Menu from '../../components/CourseMenu';
+import { useSettingsContext } from '../../../components/settings';
+import Video from '../../../components/Video';
+import Menu from '../../../components/CourseMenu';
 // ----------------------------------------------------------------------
 
 PageThree.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
