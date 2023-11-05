@@ -78,7 +78,7 @@ type props ={
 export default function MyProfilePage() {
   const { themeStretch } = useSettingsContext();
   const { user, logout } = useAuthContext()
-  console.log("user", user)
+
   const [currentTab, setCurrentTab] = useState('profile');
   const [currentUser, setCurrentUser] = useState<IUserAccountGeneral | null>(null);
 

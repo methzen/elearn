@@ -53,7 +53,6 @@ import { useAuthContext } from '../../../auth/useAuthContext';
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 // components
-import Image from '../../../components/image';
 import Iconify from '../../../components/iconify';
 import submitNewPost from '../../../api/submitNewPost';
 import { CustomAvatar, CustomAvatarGroup } from '../../../components/custom-avatar';
@@ -93,28 +92,12 @@ export default function Community() {
   const [writeSomething, SetWriteSomething] = useState<boolean>(false);
   const [writeAComment, SetWriteAComment] = useState({status: false, postId: ""});
 
-  const [postToDisplay, setPostToDisplay] = useState<IUserProfilePost | null>(null)
-
   const [page, setPage] = useState<number>(1)
   const { data , error, mutate } = useSWR(`/posts/get-all-posts?page=${page}&groupId=${circleId}`, getAllPosts)
 
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading...</div>
   const posts : IUserProfilePost[] = data.posts;
-
-  const DisplayPost=(id:any)=>{
-    setOpen(true)
-    const post = posts.find(post=> post.id === id)
-    setPostToDisplay(post as IUserProfilePost)
-  }
-
-  const addComment =(id:string)=>{
-    SetWriteAComment( v => ({...v, status: true, postId:id}))
-  }
-
-  const handleClose=()=>{
-    setOpen(false)
-  }
 
   const HandleCreatePost = (e:any)=> {
     e.preventDefault()
@@ -136,14 +119,10 @@ export default function Community() {
     }
   };
 
-  const cancelComment = ()=>{
-    SetWriteAComment(v => ({...v, status: false}))
-  }
-
-  const sendComment = async (comment: any) =>{
+  const sendComment = async (comment: any, id:any) =>{
     const data = {
-      parentItemId: writeAComment.postId,
-      text: comment.message
+      parentItemId: id,
+      text: comment
     }
     try{
       SetWriteAComment(v => ({...v, status: false}))
@@ -171,9 +150,8 @@ export default function Community() {
         <Stack spacing={3}>
           {posts.map((post) => (
             <PostCard key={post.id} post={post}
-            addComment={()=>addComment(post.id)}
+            sendComment={(comment)=>sendComment(comment, post.id)}
             mutate={mutate}
-            // onClick={()=>DisplayPost(post.id)}
             />
           ))}
         </Stack>
@@ -184,19 +162,9 @@ export default function Community() {
             <CourseCardAside {...data.group}/>
           </Grid>
         </Grid>
-      {/* {
-        open && <CustomizedDialogs open={open}
-        post={postToDisplay}
-        handleClose={handleClose}
-        />
-      } */}
       {
         writeSomething &&
         <CreateAPostDialog open={writeSomething} cancelPost={cancelPost} sendPost={sendPost}/>
-      }
-      {
-        writeAComment &&
-        <CreateAPostDialog open={writeAComment.status} cancelPost={cancelComment} sendPost={sendComment}/>
       }
       </Container>
     </>
@@ -234,22 +202,24 @@ function WriteSomething(){
 }
 interface Post {
   post: IUserProfilePost;
-  addComment: () => void;
+  sendComment: (comment: string) => void;
   mutate: () => void;
 }
-function PostCard( { post, addComment, mutate }: Post) {
+
+function PostCard( { post, sendComment, mutate }: Post) {
   const { user } = useAuthContext();
 
   const commentInputRef = useRef<HTMLInputElement>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const userHasLikedTheirPost = post?.personLikes.filter(like => like.id === user?.id)
+  const userHasLikedTheirPost = post?.personLikes?.filter(like => like.id === user?.id)
 
-  const [isLiked, setLiked] = useState(userHasLikedTheirPost.length >=1 ? true: false);
+  const [isLiked, setLiked] = useState(userHasLikedTheirPost?.length >=1 ? true: false);
 
   const [likes, setLikes] = useState(post?.personLikes?.length);
 
   const [message, setMessage] = useState('');
+  const [minRows, setMinRows] = useState(1)
 
   const hasComments = post?.comments?.length > 0;
 
@@ -283,7 +253,6 @@ function PostCard( { post, addComment, mutate }: Post) {
     if (current) {
       current.focus();
     }
-    addComment()
   };
 
   return (
@@ -407,18 +376,21 @@ function PostCard( { post, addComment, mutate }: Post) {
         }}
       >
         <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
-
+        
         <InputBase
           fullWidth
           value={message}
+          multiline
+          minRows={minRows}
           inputRef={commentInputRef}
           placeholder="Write a comment…"
           onChange={(event) => handleChangeMessage(event.target.value)}
+          onClick={()=>setMinRows(4)}
           endAdornment={
-            <InputAdornment position="end" sx={{ mr: 1 }}>
-              <IconButton size="small" onClick={handleClickAttach}>
+            <InputAdornment position="end" sx={{ mr: 0 }}>
+              {/* <IconButton size="small" onClick={handleClickAttach}>
                 <Iconify icon="ic:round-add-photo-alternate" />
-              </IconButton>
+              </IconButton> */}
 
               {/* <IconButton size="small">
                 <Iconify icon="eva:smiling-face-fill" />
@@ -427,17 +399,21 @@ function PostCard( { post, addComment, mutate }: Post) {
           }
           sx={{
             pl: 1.5,
-            height: 40,
+            minHeight: 40,
             borderRadius: 1,
             border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
           }}
         />
-
-        <input type="file" ref={fileInputRef} style={{ display: 'none' }} />
+              <Button variant="contained" sx={{ mr: 0 }} onClick={() => sendComment(message)}>
+              Post
+            </Button>
+        {/* <input type="file" ref={fileInputRef} style={{ display: 'none' }} /> */}
       </Stack>
+      
     </Card>
   );
 }
+
 
 const CardSx = {
   boxShadow: 5, 
@@ -539,47 +515,6 @@ function Post({ post, onClick }: Props) {
     },
   }));
 
-  interface DialogCommands {
-    post: IUserProfilePost | null;
-    open: boolean;
-    handleClose: ()=> void;
-    add: ()=> void;
-  }
-
-// function CustomizedDialogs({post, open, handleClose}: DialogCommands) {  
-//     return (
-//       <div>
-//         <BootstrapDialog
-//           onClose={handleClose}
-//           aria-labelledby="customized-dialog-title"
-//           open={open}
-//         >
-//           <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-//           </DialogTitle>
-//           <IconButton
-//             aria-label="close"
-//             onClick={handleClose}
-//             sx={{
-//               position: 'absolute',
-//               right: 8,
-//               top: 8,
-//               color: (theme) => theme.palette.grey[500],
-//             }}
-//           >
-//           <CloseIcon />
-//           </IconButton>
-//           <DialogContent dividers>
-//             <PostCard post={post as IUserProfilePost}/>
-//           </DialogContent>
-//           <DialogActions>
-//             <Button autoFocus onClick={handleClose}>
-//               Save changes
-//             </Button>
-//           </DialogActions>
-//         </BootstrapDialog>
-//       </div>
-//     );
-//   }
 
   interface PostSomeThingDialogProps {
     open: boolean;
@@ -619,105 +554,6 @@ function Post({ post, onClick }: Props) {
           aria-labelledby="customized-dialog-title"
           open={open}
         >
-
-        <Paper
-          sx={{
-            width:`calc(${fullWidth}%)`,
-            top: 90,
-            right: `calc((100% - ${fullWidth}%)/2)`,
-            margin: "0px auto",
-            position: 'fixed',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Stack
-            direction="row"
-            alignItems="center"
-            sx={{
-              py: 2,
-              pl: 2.5,
-              pr: 1,
-            }}
-          >
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              What's on your mind {user?.displayName} ?
-            </Typography>
-
-            <IconButton onClick={() => setFullScreen(!fullScreen)}>
-              <Iconify icon={fullScreen ? 'eva:collapse-fill' : 'eva:expand-fill'} />
-            </IconButton>
-  
-            <IconButton onClick={cancelPost}>
-              <Iconify icon="eva:close-fill" />
-            </IconButton>
-          </Stack>
-  
-          <Divider />
-  
-          <InputBase placeholder="Title" 
-            sx={{ px: 2, height: 40 }} 
-            value={content.title}
-            onChange={handleChangeTitle}
-            />
-  
-          <Divider />
-  
-          <Editor
-            simple
-            id="compose-mail"
-            value={content.message}
-            onChange={handleChangeMessage}
-            placeholder="Type a message"
-            sx={{ flexGrow: 1, borderColor: 'transparent' }}
-          />
-  
-          <Divider />
-  
-          <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
-            <Button variant="contained" sx={{ mr: 2 }} onClick={() => sendPost(content)}>
-              Post
-            </Button>
-            <IconButton>
-              <Iconify icon="ic:round-add-photo-alternate" />
-            </IconButton>
-  
-            <IconButton>
-              <Iconify icon="eva:attach-2-fill" />
-            </IconButton>
-          </Stack>
-        </Paper>
-        </BootstrapDialog>
-    );
-  }
-
-  function addComment({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
-    const { user } = useAuthContext();
-
-    const isDesktop = useResponsive('up', 'sm');
-
-    const [content, setContent] = useState<PostContent>({title:'', message: '', attachment:''})
-    const [fullScreen, setFullScreen] = useState(false);
-  
-    const handleChangeMessage = (message: string) => {
-      setContent( value=> ({...value, message: message}));
-    };
-
-    const handleChangeTitle = (event: React.ChangeEvent) => {
-      const target = event.target as HTMLInputElement;
-      setContent( value => ({...value, title: target.value}));
-    };
-  
-    const fullWidth = isDesktop ?
-                        (fullScreen ? 90 : 40) : 90
-
-    return (
-        <BootstrapDialog
-          onClose={cancelPost}
-          aria-labelledby="customized-dialog-title"
-          open={open}
-        >
-
         <Paper
           sx={{
             width:`calc(${fullWidth}%)`,
