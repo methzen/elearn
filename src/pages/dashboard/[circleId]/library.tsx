@@ -12,27 +12,31 @@ import Video from '../../../components/Video';
 import Menu from '../../../components/CourseMenu';
 import {CourseSection} from "../../../sections/AddCoursSection"
 import SectionPanel from "../../../sections/SectionPanel"
+import { useDispatch, useSelector } from '../../../redux/store';
+import {
+  addSection,
+  updateSection,
+  startLoading
+} from '../../../redux/slices/course';
+import { Video as VideoProps, Attachment, Chapter, Section ,Course } from '../../../@types/course';
 // ----------------------------------------------------------------------
 
-PageThree.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 // ----------------------------------------------------------------------
 
-interface section {
-  id: number;
-  name: string;
-  isValidated: boolean;
-}
-
-export default function PageThree() {
+export default function Library() {
   const { themeStretch } = useSettingsContext();
 
-  const [sectionList, setSectionList] = useState<section[]>([])
+  const courseStore = useSelector( state => state.course )
+  const dispatch = useDispatch()
+
+  const [sectionList, setSectionList] = useState<Section[]>(courseStore.sections)
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
 
   const addAsection = () =>{
-      const newSection = {id: sectionList.length + 1, name : `Section ${sectionList.length + 1}`, isValidated:false}
-      setSectionList(sections=>([...sections, newSection ]))
+    dispatch(addSection())
+    setSectionList(courseStore.sections)
   }
 
   const updateSection = () =>{

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 // @mui
 import {
   Box,
@@ -23,6 +23,7 @@ import MenuPopover from '../components/menu-popover';
 import { CldUploadWidget, CldVideoPlayer ,CldUploadWidgetPropsOptions } from 'next-cloudinary';
 // import { FileShareDialog, FileDetailsDrawer } from '../../file';
 
+import { Video as VideoProps, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
 // ----------------------------------------------------------------------
 
 const options = {
@@ -58,19 +59,13 @@ const options = {
         }
     }
 }
-interface ChapterType {
-    name: string;
-    videoContent: string;
-    textContent: string;
-    attachement: any
-  }
 
 interface ChapterProps extends PaperProps {
     index?: number;
     chapter: ChapterType;
     handleAddAttachment: (index:number)=>void;
     handleAddArticle: (index:number)=>void;
-    handleAddVideo: (index:number, publicId:string)=>void;
+    handleAddVideo: (index:number, info:any)=>void;
     onDelete: (index:number)=>void;
   };
 
@@ -88,9 +83,9 @@ export default function Chapter({
   const isDesktop = useResponsive('up', 'sm');
 
   const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
+  const [thisChapter, setThisChapter] = useState(chapter)
   const [chapIndex, setChapIndex] = useState< number|undefined >(index)
   const [openViewer, setOpenViewer] = useState(false)
-
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
     setOpenPopover(event.currentTarget);
@@ -114,7 +109,7 @@ export default function Chapter({
 
   return (
     <>
-    <VideoViewer open={openViewer} chapter={chapter} close={()=>setOpenViewer(false)} />
+    {openViewer && <VideoViewer open={openViewer} public_id={thisChapter.videoContent?.url as string} close={()=>setOpenViewer(false)} />}
       <Stack
         spacing={isDesktop ? 1.5 : 2}
         direction={isDesktop ? 'row' : 'column'}
@@ -195,26 +190,17 @@ export default function Chapter({
       >
         <CldUploadWidget 
             options={{...options} as CldUploadWidgetPropsOptions}
-            uploadPreset="oshhrjgn" onUpload={(result, _)=>{
-            console.log(result)
-            if (result.event === "success"){
-                const info = result.info as CloudinaryResult
-                console.log(result.info)
-                handleAddVideo(chapIndex!, info.public_id)
-            }
-
-          }}>
+            uploadPreset="oshhrjgn"
+            onSuccess={
+                (result, _) => handleAddVideo(chapIndex!, result.info)
+            }>
             {({ open }) => {
-              
-              function openUploader() {
-                open();
-              }
               return (
                 <MenuItem
                 onClick={(e) => {
                   e.preventDefault();
                   handleClosePopover();
-                  openUploader();
+                  open();
                 }}
               >
                 <Iconify icon="mdi:youtube" />
@@ -223,8 +209,6 @@ export default function Chapter({
               );
             }}
         </CldUploadWidget>
-
-
 
         <MenuItem
           onClick={() => {
@@ -289,18 +273,17 @@ export default function Chapter({
 }
 
 
-export function VideoViewer({ open, chapter, close } : { open: boolean, chapter:ChapterType, close: () => void;}) {
+export function VideoViewer({ open, public_id, close } : { open: boolean, public_id: string, close: () => void;}) {
   return (
     <>
     <Dialog fullWidth maxWidth="sm" open={open} onClose={close}  sx={{mt : -70}}>
       <DialogContent dividers sx={{ pt: 5, pb: 0, border: 'none' }}>
         <CldVideoPlayer
-                width="1920"
-                height="1080"
-                src={chapter.videoContent}
-                logo={false}
-                    />
-
+            width="1920"
+            height="1080"
+            src={public_id}
+            logo={false}
+        />
       </DialogContent>
       <DialogActions>
           <Stack direction="row" justifyContent="flex-end" flexGrow={1}>

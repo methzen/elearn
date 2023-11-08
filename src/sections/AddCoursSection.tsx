@@ -15,6 +15,7 @@ import Iconify from '../components/iconify';
 import SectionPanel from "./SectionPanel"
 import {ChangeSectionNameDialog} from "./ChangeNameDialog"
 import Chapter from "./Chapter"
+import { Video as VideoProps, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
 // ----------------------------------------------------------------------
 
 type ItemProps = {
@@ -27,20 +28,14 @@ type ItemProps = {
   tags: string[];
 };
 
-interface section {
-  id: number;
-  name: string;
-  isValidated: boolean;
-}
-
 interface ChangeNameProps {
-  section: section;
-  update: (value: section) => void;
+  section: Section;
+  update: (value: Section) => void;
 }
 
 const ChangeName=({section, update}:ChangeNameProps)=>{
     const [openModal, setOpenModal] = useState(false)
-    const [thisSection, setThisSection] = useState<section>(section)
+    const [thisSection, setThisSection] = useState<Section>(section)
 
     const handleCloseNewFolder = ()=>{
         setOpenModal(false)
@@ -62,7 +57,7 @@ const ChangeName=({section, update}:ChangeNameProps)=>{
         open={openModal}
         onClose={handleCloseNewFolder}
         title="Give a name to this section"
-        inputValue={thisSection.name}
+        inputValue={thisSection.name as string}
         onChangeInputValue={onChangeInputValue}
         onCreate={saveChangeName}
       />
@@ -78,23 +73,9 @@ interface Props extends CardProps {
   list?: ItemProps[];
 }
 
-interface section {
-  id: number;
-  name: string;
-  isValidated: boolean;
-}
-
 interface CourseSection extends CardProps {
-  section: section;
-  updateSection: (section: section)=> void;
-}
-
-interface ChapterType {
-  id?: number;
-  name: string;
-  videoContent: string;
-  textContent: string;
-  attachement: any
+  section: Section;
+  updateSection: (section: Section)=> void;
 }
 
 
@@ -119,14 +100,14 @@ export function CourseSection({ section, updateSection, ...other }: CourseSectio
   
   const [currentChapter, setCurentChapter] = useState<ChapterType>({
     name: `Chapter ${chapterList.length}`,
-    videoContent: "",
+    videoContent: null,
     textContent: "",
-    attachement: []
+    attachments: []
   })
 
   const [localSection, setSection] = useState(section)
 
-  const update = (section:section) => {
+  const update = (section:Section) => {
     setSection( s => ({...s, ...section}))
   }
 
@@ -148,10 +129,11 @@ export function CourseSection({ section, updateSection, ...other }: CourseSectio
     console.log('user want to add article', index)
   };
 
-  const handleAddVideo = (index:number, publicId:string) => {
-    const newChapterList = chapterList;
+  const handleAddVideo = (index:number, info:any) => {
+    console.log("uploaded", index, info)
+    const newChapterList = [...chapterList];
     const chapter = newChapterList[index]
-    chapter.videoContent = publicId
+    chapter.videoContent = info.public_id
     newChapterList[index] = chapter;
     setChapterList(newChapterList)
   };
@@ -178,7 +160,7 @@ export function CourseSection({ section, updateSection, ...other }: CourseSectio
         open={addChapterModal}
         onClose={()=>setAddChapterModal(false)}
         title="Give a name to this chapter"
-        inputValue={currentChapter.name}
+        inputValue={currentChapter.name as string}
         onChangeInputValue={onChangeInputValue}
         onCreate={saveChangeChapterName}
       />

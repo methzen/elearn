@@ -3,22 +3,27 @@ import { createSlice, Dispatch } from '@reduxjs/toolkit';
 // utils
 import axios from '../../utils/axios';
 // @types
-import { Chapter, Module, Course } from '../../@types/course';
-
+import { Video, Attachment, Chapter, Section ,Course } from '../../@types/course';
+// import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
 
-const initialState: Course = {
+interface CourseStore extends Course {
+  isLoading: boolean;
+  error: boolean;
+}
+
+const initialState: CourseStore = {
   name: null,
   description: null,
   created: null,
-  content: null,
   isLoading: false,
-  contentStructure : null,
-  error: null,
+  error: false,
+  sections: [],
+
 };
 
 const slice = createSlice({
-  name: 'chat',
+  name: 'course',
   initialState,
   reducers: {
     // START LOADING
@@ -32,13 +37,26 @@ const slice = createSlice({
       state.description = action.payload.description;
     },
 
-    addStructureType(state, action) {
-      state.contentStructure = action.payload.contentStructure;
-    },
     hasError(state, action) {
         state.isLoading = false;
         state.error = action.payload;
-      },
+    },
+
+    addSection(state:CourseStore) {
+      const section = {
+        id: state.sections.length + 1,
+        name : `Section ${state.sections.length + 1}`, 
+        isValidated:false,
+      }
+      state.sections.push(section as Section)
+    },
+
+    updateSection(state:CourseStore, action: {type:any, payload:Section}) {
+      const stateSection = state.sections.find(section => section.id === action.payload.id)
+      const index = state.sections.indexOf(stateSection!)
+      state.sections[index] = action.payload
+    },
+
   },
 });
 
@@ -46,20 +64,20 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const { addBasicInfo, addStructureType } = slice.actions;
+export const { startLoading, addSection, updateSection } = slice.actions;
 
 // ----------------------------------------------------------------------
 
-export function getContacts() {
-  return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const response = await axios.get('/api/chat/contacts');
-      dispatch(slice.actions.addBasicInfo(response.data.contacts));
-    } catch (error) {
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
+// export function getContacts() {
+//   return async (dispatch: Dispatch) => {
+//     dispatch(startLoading());
+//     try {
+//       const response = await axios.get('/api/chat/contacts');
+//       dispatch(addBasicInfo(response.data.contacts));
+//     } catch (error) {
+//       dispatch(hasError(error));
+//     }
+//   };
+// }
 
 // ----------------------------------------------------------------------

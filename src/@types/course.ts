@@ -1,24 +1,35 @@
-export type basic ={
+export type Base = {
+    id?: string | number;
     name: string | null,
     created?: Date | null,
-    description: string | null,   
+    description?: string | null,
 }
 
-export interface Chapter extends basic {
-    videoUrl: string | null,
-    contentText: string | null,
+export interface Attachment {
+    name: string;
+    url: string;
+    type: string;
 }
 
-export interface Module extends basic {
-    chaperList: Chapter[] | null,
+export interface Video {
+    name: string;
+    url: string;
+    type: string;
+}
+export interface Chapter extends Base {
+    videoContent: Video | null;
+    textContent: string | null;
+    attachments: Attachment[];
 }
 
-export interface Course extends basic {
-    avatar?: string,
-    creatorId?: string,
-    groupId?: string,
-    content: Module[] | Chapter[] | null,
-    contentStructure : "STRUCTURED" | "UNSTRUCTURED" | null
-    isLoading?: boolean
-    error ? : string | null
+export interface Section extends Base {
+    chapters: Chapter[];
+    isValidated?: boolean;
 }
+
+export interface Course extends Base {
+    authorId?: string;
+    groupId?: string;
+    sections: Section[];
+}
+

@@ -3,6 +3,7 @@ import { persistReducer } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 // slices
 import chatReducer from './slices/chat';
+import courseReducer from './slices/course'
 
 // ----------------------------------------------------------------------
 
@@ -28,8 +29,16 @@ export const rootPersistConfig = {
   whitelist: [],
 };
 
+export const coursePersistConfig = {
+  key: 'course',
+  storage,
+  keyPrefix: 'redux-',
+  whitelist: [],
+};
+
 const rootReducer = combineReducers({
   chat: chatReducer,
+  course: persistReducer(coursePersistConfig, courseReducer),
 });
 
 export default rootReducer;
