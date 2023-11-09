@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -16,6 +16,13 @@ import SectionPanel from "./SectionPanel"
 import {ChangeSectionNameDialog} from "./ChangeNameDialog"
 import Chapter from "./Chapter"
 import { Video as VideoProps, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
+import { useDispatch, useSelector } from '../redux/store';
+import {
+  addSection,
+  updateSection,
+  startLoading,
+  addChapter,
+} from '../redux/slices/course';
 // ----------------------------------------------------------------------
 
 type ItemProps = {
@@ -75,7 +82,6 @@ interface Props extends CardProps {
 
 interface CourseSection extends CardProps {
   section: Section;
-  updateSection: (section: Section)=> void;
 }
 
 
@@ -89,36 +95,29 @@ export type ChapterProps = {
 };
 
 
-
-
-export function CourseSection({ section, updateSection, ...other }: CourseSection) {
+export function CourseSection({ section, ...other }: CourseSection) {
   const theme = useTheme();
+  const dispatch = useDispatch()
+
   const [chapterList, setChapterList] = useState<ChapterType[]>([])
+  useEffect(()=> {
+    setChapterList(section.chapters)
+  }, [section])
+
   const subheader = chapterList.length===0 ? "This section has 0 chapter" : `${chapterList.length} Chatpers`
   const [addChapterModal, setAddChapterModal] = useState(false)
   const [openCloudinaryDialog, setOpenCloudinaryDialog] = useState<{value : boolean, index: number | null}>({value : false, index: null})
   
-  const [currentChapter, setCurentChapter] = useState<ChapterType>({
-    name: `Chapter ${chapterList.length}`,
-    videoContent: null,
-    textContent: "",
-    attachments: []
-  })
-
-  const [localSection, setSection] = useState(section)
-
-  const update = (section:Section) => {
-    setSection( s => ({...s, ...section}))
-  }
+  const [addedChapterName, setAddedChapterName] = useState<string>(`Chapter ${chapterList.length}`)
 
   const onChangeInputValue = (event:React.ChangeEvent<HTMLInputElement>)=>{
     event.preventDefault()
-    setCurentChapter( s => ({...s, name: event.target.value}))
+    setAddedChapterName(event.target.value)
   }
 
-  const saveChangeChapterName = () => {
-    setChapterList(list=>([...list, currentChapter]))
+  const handleAddChapter = () => {
     setAddChapterModal(false)
+    dispatch(addChapter({name : addedChapterName, index: section.id}))
   }
 
   const handleAddAttachment = (index:number) => {
@@ -130,7 +129,6 @@ export function CourseSection({ section, updateSection, ...other }: CourseSectio
   };
 
   const handleAddVideo = (index:number, info:any) => {
-    console.log("uploaded", index, info)
     const newChapterList = [...chapterList];
     const chapter = newChapterList[index]
     chapter.videoContent = info.public_id
@@ -148,9 +146,11 @@ export function CourseSection({ section, updateSection, ...other }: CourseSectio
   return (
     <Card {...other}>
       <CardHeader
-        title={localSection.name}
+        title={section.name}
         subheader={subheader}
-        action={<ChangeName section={localSection} update={update}/>}
+        action={<ChangeName section={section} 
+        update={(section)=>dispatch(updateSection(section))}
+        />}
         sx={{
           '& .MuiCardHeader-action': { alignSelf: 'center' },
           marginBottom: 5
@@ -160,20 +160,15 @@ export function CourseSection({ section, updateSection, ...other }: CourseSectio
         open={addChapterModal}
         onClose={()=>setAddChapterModal(false)}
         title="Give a name to this chapter"
-        inputValue={currentChapter.name as string}
+        inputValue={addedChapterName}
         onChangeInputValue={onChangeInputValue}
-        onCreate={saveChangeChapterName}
+        onCreate={handleAddChapter}
       />
         {
           chapterList.map((chapter, index) => (
-            <Chapter key={index} {...{
-                index,
-                chapter,
-                handleAddAttachment,
-                handleAddArticle,
-                handleAddVideo,
-                onDelete
-            }}/>
+            <Chapter key={index} chapter={chapter}
+            sectionId={section.id as number}
+            />
           ))
         }
         <SectionPanel

@@ -12,9 +12,17 @@ export interface Attachment {
 }
 
 export interface Video {
-    name: string;
-    url: string;
-    type: string;
+    name?: string;
+    url?: string;
+    type?: string;
+    format?: string;
+    bytes?: number;
+    asset_id?: string;
+    thumbnail_url?: string;
+    secure_url?: string;
+    path?: string;
+    original_filename?: string;
+    public_id: string;
 }
 export interface Chapter extends Base {
     videoContent: Video | null;

@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import { Container, Grid, Button } from '@mui/material';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
@@ -28,15 +28,19 @@ Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dashb
 export default function Library() {
   const { themeStretch } = useSettingsContext();
 
-  const courseStore = useSelector( state => state.course )
   const dispatch = useDispatch()
 
-  const [sectionList, setSectionList] = useState<Section[]>(courseStore.sections)
+  const [sectionList, setSectionList] = useState<Section[]>([])
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
+
+  const courseStore = useSelector( (state) => state.course )
+  
+  useEffect(()=>{
+    setSectionList(courseStore.sections)
+  },[courseStore])
 
   const addAsection = () =>{
     dispatch(addSection())
-    setSectionList(courseStore.sections)
   }
 
   const updateSection = () =>{
@@ -82,7 +86,7 @@ export default function Library() {
           <CourseSection 
               key={section.name}
               section={section}
-              updateSection={updateSection}/>
+              />
         ))}
 
         {isLastSectionValidated && <SectionPanel

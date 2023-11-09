@@ -44,9 +44,10 @@ const slice = createSlice({
 
     addSection(state:CourseStore) {
       const section = {
-        id: state.sections.length + 1,
+        id: state.sections.length,
         name : `Section ${state.sections.length + 1}`, 
         isValidated:false,
+        chapters: [],
       }
       state.sections.push(section as Section)
     },
@@ -57,6 +58,28 @@ const slice = createSlice({
       state.sections[index] = action.payload
     },
 
+    addChapter(state:CourseStore, {type, payload}: {type:any, payload:any}) {
+      const section = state.sections[payload.index]
+      section.chapters.push({
+        id : section.chapters.length,
+        name: payload.name,
+        videoContent: null,
+        textContent: "",
+        attachments: []
+      })
+      state.sections[payload.index] = section
+    },
+
+    updateChapter(state, action){
+      const section : Section = state.sections[action.payload.index]
+      const chapter : Chapter = section.chapters[action.payload.chapter.id]
+      const newChapter = {
+        ...chapter,
+        ...action.payload.chapter
+      }
+      section.chapters[action.payload.chapter.id] = newChapter
+      state.sections[action.payload.index] = section
+    }
   },
 });
 
@@ -64,7 +87,13 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const { startLoading, addSection, updateSection } = slice.actions;
+export const { 
+  startLoading,
+  addSection,
+  addChapter,
+  updateSection,
+  updateChapter,
+} = slice.actions;
 
 // ----------------------------------------------------------------------
 

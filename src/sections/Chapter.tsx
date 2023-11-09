@@ -23,7 +23,14 @@ import MenuPopover from '../components/menu-popover';
 import { CldUploadWidget, CldVideoPlayer ,CldUploadWidgetPropsOptions } from 'next-cloudinary';
 // import { FileShareDialog, FileDetailsDrawer } from '../../file';
 
-import { Video as VideoProps, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
+import { Video as VideoType, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
+import { useDispatch, useSelector } from '../redux/store';
+import {
+  addSection,
+  updateSection,
+  startLoading,
+  updateChapter,
+} from '../redux/slices/course';
 // ----------------------------------------------------------------------
 
 const options = {
@@ -63,29 +70,36 @@ const options = {
 interface ChapterProps extends PaperProps {
     index?: number;
     chapter: ChapterType;
-    handleAddAttachment: (index:number)=>void;
-    handleAddArticle: (index:number)=>void;
-    handleAddVideo: (index:number, info:any)=>void;
-    onDelete: (index:number)=>void;
+    sectionId: number;
+    handleAddAttachment?: (index:number)=>void;
+    handleAddArticle?: (index:number)=>void;
+    handleAddVideo?: (index:number, info:any)=>void;
+    onDelete?: (index:number)=>void;
   };
 
 interface CloudinaryResult {
     public_id:string
   }
-export default function Chapter({
-    index,
+
+export default function ChapterComponent({
     chapter,
-    handleAddAttachment,
-    handleAddArticle,
-    handleAddVideo,
-    onDelete, sx, ...other }: ChapterProps) {
+    sectionId, sx, ...other }: ChapterProps) {
 
   const isDesktop = useResponsive('up', 'sm');
 
   const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
   const [thisChapter, setThisChapter] = useState(chapter)
-  const [chapIndex, setChapIndex] = useState< number|undefined >(index)
+
   const [openViewer, setOpenViewer] = useState(false)
+
+  const dispatch = useDispatch()
+
+  const handleAddVideo = (info: any) => {
+    const newVideoContent : VideoType = info
+    const newChapter = {...chapter, videoContent: newVideoContent}
+    setThisChapter(newChapter)
+    dispatch(updateChapter({index : sectionId, chapter : newChapter}))
+  };
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
     setOpenPopover(event.currentTarget);
@@ -109,7 +123,7 @@ export default function Chapter({
 
   return (
     <>
-    {openViewer && <VideoViewer open={openViewer} public_id={thisChapter.videoContent?.url as string} close={()=>setOpenViewer(false)} />}
+    {openViewer && <VideoViewer open={openViewer} public_id={chapter.videoContent?.url as string} close={()=>setOpenViewer(false)} />}
       <Stack
         spacing={isDesktop ? 1.5 : 2}
         direction={isDesktop ? 'row' : 'column'}
@@ -192,7 +206,7 @@ export default function Chapter({
             options={{...options} as CldUploadWidgetPropsOptions}
             uploadPreset="oshhrjgn"
             onSuccess={
-                (result, _) => handleAddVideo(chapIndex!, result.info)
+                (result, _) => handleAddVideo(result.info)
             }>
             {({ open }) => {
               return (
@@ -213,7 +227,7 @@ export default function Chapter({
         <MenuItem
           onClick={() => {
             handleClosePopover();
-            handleAddArticle(index!);
+            // handleAddArticle(index!);
           }}
         >
           <Iconify icon="mdi:text-box-outline" />
@@ -223,7 +237,7 @@ export default function Chapter({
         <MenuItem
           onClick={() => {
             handleClosePopover();
-            handleAddAttachment(index!);
+            // handleAddAttachment(index!);
           }}
         >
           <Iconify icon="mdi:file-document" />
@@ -235,7 +249,7 @@ export default function Chapter({
         <MenuItem
           onClick={() => {
             handleClosePopover();
-            onDelete(index!);
+            // onDelete(index!);
           }}
           sx={{ color: 'error.main' }}
         >
