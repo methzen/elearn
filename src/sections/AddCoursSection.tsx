@@ -128,14 +128,6 @@ export function CourseSection({ section, ...other }: CourseSection) {
     console.log('user want to add article', index)
   };
 
-  const handleAddVideo = (index:number, info:any) => {
-    const newChapterList = [...chapterList];
-    const chapter = newChapterList[index]
-    chapter.videoContent = info.public_id
-    newChapterList[index] = chapter;
-    setChapterList(newChapterList)
-  };
-
   const onDelete = (index:number) => {
     console.log('user want to delete chapter', index)
   }

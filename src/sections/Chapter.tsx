@@ -12,6 +12,7 @@ import {
   Button,
   DialogContent,
   DialogActions,
+  Paper
 } from '@mui/material';
 // hooks
 import useResponsive from '../hooks/useResponsive';
@@ -22,7 +23,7 @@ import MenuPopover from '../components/menu-popover';
 //
 import { CldUploadWidget, CldVideoPlayer ,CldUploadWidgetPropsOptions } from 'next-cloudinary';
 // import { FileShareDialog, FileDetailsDrawer } from '../../file';
-
+import { styled } from '@mui/material/styles';
 import { Video as VideoType, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
 import { useDispatch, useSelector } from '../redux/store';
 import {
@@ -31,6 +32,8 @@ import {
   startLoading,
   updateChapter,
 } from '../redux/slices/course';
+import Editor from '../components/editor';
+import Markdown from '../components/markdown/Markdown';
 // ----------------------------------------------------------------------
 
 const options = {
@@ -91,12 +94,21 @@ export default function ChapterComponent({
   const [thisChapter, setThisChapter] = useState(chapter)
 
   const [openViewer, setOpenViewer] = useState(false)
+  const [openContentTextDialog, setOpenContentTextDialog] = useState(false)
+  const [displayChatperContentText, setDisplayChapterContentText] = useState(false)
 
   const dispatch = useDispatch()
 
   const handleAddVideo = (info: any) => {
     const newVideoContent : VideoType = info
     const newChapter = {...chapter, videoContent: newVideoContent}
+    setThisChapter(newChapter)
+    dispatch(updateChapter({index : sectionId, chapter : newChapter}))
+  };
+
+  const handleAddArticle = (content: string) => {
+    setOpenContentTextDialog(false)
+    const newChapter = {...chapter, textContent: content}
     setThisChapter(newChapter)
     dispatch(updateChapter({index : sectionId, chapter : newChapter}))
   };
@@ -114,16 +126,41 @@ export default function ChapterComponent({
   }
 
   const handleViewArticle = () => {
-    console.log('user want to display article')
+    if(!chapter.textContent){
+      return
+    }
+    setDisplayChapterContentText(true)
+    setOpenContentTextDialog(true)
   }
-  
+
+  const handleEditArticle = () =>{
+    setDisplayChapterContentText(false)
+  }
+
   const handleViewAttachment = () => {
     console.log('user want to display attachment')
   }
 
   return (
     <>
-    {openViewer && <VideoViewer open={openViewer} public_id={chapter.videoContent?.url as string} close={()=>setOpenViewer(false)} />}
+    {openViewer &&
+      <VideoViewer
+          open={openViewer}
+          public_id={chapter.videoContent?.url as string}
+          close={() => setOpenViewer(false)}
+      />
+    }
+    {
+      openContentTextDialog &&
+      <AddTextContentDialog
+        open={openContentTextDialog}
+        display={displayChatperContentText}
+        chapter={chapter}
+        cancel={()=>setOpenContentTextDialog(false)}
+        handleAddArticle={handleAddArticle}
+        handleEditArticle={handleEditArticle}
+      />
+    }
       <Stack
         spacing={isDesktop ? 1.5 : 2}
         direction={isDesktop ? 'row' : 'column'}
@@ -227,7 +264,7 @@ export default function ChapterComponent({
         <MenuItem
           onClick={() => {
             handleClosePopover();
-            // handleAddArticle(index!);
+            setOpenContentTextDialog(true);
           }}
         >
           <Iconify icon="mdi:text-box-outline" />
@@ -309,4 +346,100 @@ export function VideoViewer({ open, public_id, close } : { open: boolean, public
     </Dialog>
     </>
   )
+}
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
+
+function AddTextContentDialog({
+  open,
+  display,
+  chapter,
+  cancel,
+  handleAddArticle,
+  handleEditArticle,
+}: {
+  open:boolean;
+  display?: boolean;
+  chapter?: ChapterType;
+  cancel: () => void;
+  handleAddArticle: (content:string) => void;
+  handleEditArticle: () => void;
+}) {
+
+  const isDesktop = useResponsive('up', 'sm');
+  const fullWidth = isDesktop ? 900 : 400
+
+  const [content, setContent] = useState(chapter? chapter.textContent: "")
+
+  return (
+      <BootstrapDialog
+        onClose={cancel}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+      <Paper
+        sx={{
+          width:`${fullWidth}px`,
+          top: 90,
+          right: `calc((100% - ${fullWidth}px)/2)`,
+          margin: "0px auto",
+          position: 'fixed',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            py: 2,
+            pl: 2.5,
+            pr: 1,
+          }}
+        >
+          <IconButton onClick={cancel}>
+            <Iconify icon="eva:close-fill" />
+          </IconButton>
+        </Stack>
+        <Divider />
+        {display ?
+        <Stack alignItems="center" sx={{ py: 2, px: 3, overflow: "scroll", maxHeight: "70vh"}}>
+        <Markdown
+            key={chapter?.name}
+            children={chapter?.textContent as string}
+            sx={{
+              px: { md: 2 },
+              py: { md: 2 },
+            }} />
+        </Stack>
+            :
+        <Editor
+          simple
+          id="compose-mail"
+          value={content as string}
+          onChange={(content)=>setContent(content)}
+          placeholder="Type a message"
+          sx={{ flexGrow: 1, borderColor: 'transparent'}}
+        />}
+
+        <Divider />
+        <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
+            <Button
+                variant="contained"
+                sx={{ mr: 2 }}
+                onClick={() => !display? handleAddArticle(content as string) : handleEditArticle()}>
+              {!display ? "Save" : "Edit"}
+            </Button>
+        </Stack>
+
+      </Paper>
+      </BootstrapDialog>
+  );
 }
