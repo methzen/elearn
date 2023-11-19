@@ -13,13 +13,12 @@ type Course={
     id: string
     imageUrl: string
     description: string
-    ownerShipLevel: number
+    ownerShipLevel: string
 }
 
 export default function CourseCard({id, name, imageUrl, description, ownerShipLevel}: Course) {
   const { push } = useRouter()
 
-  const ownerShipInfo = ["member", "moderator", "admin"]
   const getInsideGroup = ()=>{
     push(`/dashboard/${id}/community`)
   }
@@ -47,7 +46,7 @@ export default function CourseCard({id, name, imageUrl, description, ownerShipLe
         flexDirection: "row",
         justifyContent: "space-between"
       }}>
-        <Button size="small" onClick={getInsideGroup}>Join </Button><span style={{color:"#BFBFBF", fontSize:14, marginRight:15}}> {ownerShipInfo[ownerShipLevel]}</span>
+        <Button size="small" onClick={getInsideGroup}>Join </Button><span style={{color:"#BFBFBF", fontSize:14, marginRight:15}}> {ownerShipLevel}</span>
       </CardActions>
     </Card>
   );

@@ -1,16 +1,16 @@
-import keyBy from 'lodash/keyBy';
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
-// utils
-import axios from '../../utils/axios';
 // @types
 import { Video, Attachment, Chapter, Section ,Course } from '../../@types/course';
 import createACourse from '../../api/createACourse'
+import getCourseByGroupId from "../../api/getCourseByGroupId"
+import createASection from "../../api/createASection"
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
 
 interface CourseStore extends Course {
   isLoading: boolean;
   error: boolean;
+  editable: boolean
 }
 
 const initialState: CourseStore = {
@@ -20,6 +20,7 @@ const initialState: CourseStore = {
   isLoading: false,
   error: false,
   sections: [],
+  editable: false,
 
 };
 
@@ -32,7 +33,8 @@ const slice = createSlice({
       state.isLoading = true;
     },
 
-    createCourse(state, action){
+    initalizeCourse(state, action){
+      if(!action.payload) return state
       state.name = action.payload.name;
       state.description = action.payload.description;
       state.created = action.payload.created
@@ -40,6 +42,7 @@ const slice = createSlice({
       state.creatorId = action.payload.creatorId
       state.sections = action.payload.sections
       state.id = action.payload._id
+      state.editable = action.payload.editable
     },
 
     endLoading(state) {
@@ -56,14 +59,14 @@ const slice = createSlice({
         state.error = action.payload;
     },
 
-    addSection(state:CourseStore) {
-      const section = {
-        id: state.sections.length,
-        name : `Section ${state.sections.length + 1}`, 
-        isValidated:false,
-        chapters: [],
-      }
-      state.sections.push(section as Section)
+    addSection(state, action) {
+      // const section = {
+      //   id: state.sections.length,
+      //   name : `Section ${state.sections.length + 1}`, 
+      //   isValidated:false,
+      //   chapters: [],
+      // }
+      state.sections.push(action.payload as Section)
     },
 
     updateSection(state:CourseStore, action: {type:any, payload:Section}) {
@@ -108,7 +111,7 @@ export const {
   addChapter,
   updateSection,
   updateChapter,
-  createCourse,
+  initalizeCourse,
 } = slice.actions;
 
 // ----------------------------------------------------------------------
@@ -119,12 +122,42 @@ export function CreateACourse(groupId:string) {
     try {
       const response = await createACourse(groupId);
       dispatch(endLoading());
-      dispatch(createCourse(response.data))
-      dispatch(addSection())
+      dispatch(initalizeCourse(response.data))
+      // dispatch(addSection())
     } catch (error) {
       console.log(error)
+      dispatch(endLoading());
     }
   };
 }
 
+export function getCourse(groupId:string) {
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const response = await getCourseByGroupId(groupId);
+      if (response.groupHasNoCourse) return 
+      dispatch(initalizeCourse(response))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export function apiCreateASection(groupId:string, courseId:string){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const response = await createASection(groupId, courseId);
+      console.log("add sestion response", response)
+      dispatch(addSection(response))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
 // ----------------------------------------------------------------------

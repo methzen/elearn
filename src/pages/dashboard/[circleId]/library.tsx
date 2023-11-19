@@ -15,23 +15,25 @@ import {CourseSection} from "../../../sections/AddCoursSection"
 import SectionPanel from "../../../sections/SectionPanel"
 import { useDispatch, useSelector } from '../../../redux/store';
 import {
-  addSection,
+  apiCreateASection,
   updateSection,
   startLoading,
-  CreateACourse
+  CreateACourse,
+  initalizeCourse,
+  getCourse,
 } from '../../../redux/slices/course';
 import { Video as VideoProps, Attachment, Chapter, Section ,Course } from '../../../@types/course';
+import getCourseByGroupId from "../../../api/getCourseByGroupId"
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
-
 // ----------------------------------------------------------------------
 
 export default function Library() {
   const { themeStretch } = useSettingsContext();
-  const { push, query:{ circleId} } = useRouter();
-  const dispatch = useDispatch()
+  const { query:{ circleId} } = useRouter();
 
+  const dispatch = useDispatch()
   const [sectionList, setSectionList] = useState<Section[]>([])
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
 
@@ -41,19 +43,26 @@ export default function Library() {
     setSectionList(courseStore.sections)
   },[courseStore])
 
+  useEffect(() => {
+    if (circleId){
+      dispatch(getCourse(circleId as string))
+    }
+  },[circleId])
+
   const createCourse = () =>{
     dispatch(CreateACourse(circleId as string))
     // dispatch(addSection())
   }
 
   const addAsection = () =>{
-    dispatch(addSection())
+    dispatch(apiCreateASection(circleId as string, courseStore.id as string))
   }
 
   const updateSection = () =>{
     console.log("update sections...")
   }
 
+  if (!circleId || !courseStore) return <>loading...</>
   return (
     <>
       <Head>
