@@ -22,7 +22,7 @@ export interface Video {
     secure_url?: string;
     path?: string;
     original_filename?: string;
-    public_id: string;
+    public_id?: string;
 }
 export interface Chapter extends Base {
     videoContent: Video | null;
@@ -36,7 +36,7 @@ export interface Section extends Base {
 }
 
 export interface Course extends Base {
-    authorId?: string;
+    creatorId?: string;
     groupId?: string;
     sections: Section[];
 }

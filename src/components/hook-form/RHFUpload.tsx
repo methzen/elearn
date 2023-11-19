@@ -103,3 +103,47 @@ export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
     />
   );
 }
+
+
+export function PdfUpload({ name, multiple, helperText, ...other }: Props) {
+  const { control } = useFormContext();
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) =>
+        multiple ? (
+          <Upload
+            multiple
+            accept={{ 'pdf/*': [] }}
+            files={field.value}
+            error={!!error}
+            helperText={
+              (!!error || helperText) && (
+                <FormHelperText error={!!error} sx={{ px: 2 }}>
+                  {error ? error?.message : helperText}
+                </FormHelperText>
+              )
+            }
+            {...other}
+          />
+        ) : (
+          <Upload
+            accept={{ 'pdf/*': [] }}
+            file={field.value}
+            error={!!error}
+            helperText={
+              (!!error || helperText) && (
+                <FormHelperText error={!!error} sx={{ px: 2 }}>
+                  {error ? error?.message : helperText}
+                </FormHelperText>
+              )
+            }
+            {...other}
+          />
+        )
+      }
+    />
+  );
+}

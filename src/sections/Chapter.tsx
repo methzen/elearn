@@ -34,6 +34,8 @@ import {
 } from '../redux/slices/course';
 import Editor from '../components/editor';
 import Markdown from '../components/markdown/Markdown';
+import { AttachmentUploader } from '../sections/form';
+import { FormSchema } from '../sections/form/schema';
 // ----------------------------------------------------------------------
 
 const options = {
@@ -91,25 +93,23 @@ export default function ChapterComponent({
   const isDesktop = useResponsive('up', 'sm');
 
   const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
-  const [thisChapter, setThisChapter] = useState(chapter)
-
   const [openViewer, setOpenViewer] = useState(false)
   const [openContentTextDialog, setOpenContentTextDialog] = useState(false)
   const [displayChatperContentText, setDisplayChapterContentText] = useState(false)
+  const [openAddAttachmentDialog, setOpenAddAttachmentDialog] = useState(false)
 
   const dispatch = useDispatch()
 
   const handleAddVideo = (info: any) => {
     const newVideoContent : VideoType = info
     const newChapter = {...chapter, videoContent: newVideoContent}
-    setThisChapter(newChapter)
     dispatch(updateChapter({index : sectionId, chapter : newChapter}))
   };
 
   const handleAddArticle = (content: string) => {
+    setDisplayChapterContentText(false)
     setOpenContentTextDialog(false)
     const newChapter = {...chapter, textContent: content}
-    setThisChapter(newChapter)
     dispatch(updateChapter({index : sectionId, chapter : newChapter}))
   };
 
@@ -143,6 +143,13 @@ export default function ChapterComponent({
 
   return (
     <>
+    {
+      openAddAttachmentDialog &&
+      <AddAttachmentDialog
+        open={openAddAttachmentDialog}
+        cancel={()=>console.log("User cancel adding attachement")}
+      />
+    }
     {openViewer &&
       <VideoViewer
           open={openViewer}
@@ -166,20 +173,12 @@ export default function ChapterComponent({
         direction={isDesktop ? 'row' : 'column'}
         alignItems={isDesktop ? 'center' : 'flex-start'}
         sx={{
-          p: 2.5,
-          borderRadius: 2,
+          px: 1.5,
+          borderRadius: 1,
           margin:"5px 30px",
           maxWidth: 900,
           position: 'relative',
           border: (theme) => `solid 1px ${theme.palette.divider}`,
-          '&:hover': {
-            bgcolor: 'background.paper',
-            boxShadow: (theme) => theme.customShadows.z20,
-          },
-          ...(isDesktop && {
-            p: 1.5,
-            borderRadius: 1.5,
-          }),
           ...sx,
         }}
         {...other}
@@ -203,15 +202,26 @@ export default function ChapterComponent({
             alignItems="center"
             sx={{ typography: 'caption', color: 'text.disabled', mt: 0.5 }}
           >
-            <IconButton onClick={handleViewVideo} >
+            {
+            chapter.videoContent && 
+              <IconButton onClick={handleViewVideo} >
                 <Iconify icon="mdi:youtube" />
-            </IconButton>
-            <IconButton onClick={handleViewArticle} >
+              </IconButton>
+            }
+
+            {
+              chapter.textContent && 
+              <IconButton onClick={handleViewArticle} >
                 <Iconify icon="mdi:text-box-outline" />
-            </IconButton>
-            <IconButton onClick={handleViewAttachment}>
+              </IconButton>
+            }
+
+            {
+              chapter.attachments.length ?
+              <IconButton onClick={handleViewAttachment}>
                 <Iconify icon="mdi:file-document" />
-            </IconButton>
+              </IconButton>: null
+            }
 
           </Stack>
         </Stack>
@@ -264,16 +274,18 @@ export default function ChapterComponent({
         <MenuItem
           onClick={() => {
             handleClosePopover();
+            setDisplayChapterContentText(false)
             setOpenContentTextDialog(true);
           }}
         >
           <Iconify icon="mdi:text-box-outline" />
-          Add an article
+          {!chapter.textContent? "Add an article" : "Edit the article"}
         </MenuItem>
 
         <MenuItem
           onClick={() => {
             handleClosePopover();
+            setOpenAddAttachmentDialog(true)
             // handleAddAttachment(index!);
           }}
         >
@@ -294,31 +306,6 @@ export default function ChapterComponent({
           Delete
         </MenuItem>
       </MenuPopover>
-
-      {/* <FileDetailsDrawer
-        item={file}
-        favorited={favorited}
-        onFavorite={handleFavorite}
-        onCopyLink={handleCopy}
-        open={openDetails}
-        onClose={handleCloseDetails}
-        onDelete={() => {
-          handleCloseDetails();
-          onDelete();
-        }}
-      /> */}
-
-      {/* <FileShareDialog
-        open={openShare}
-        shared={file.shared}
-        inviteEmail={inviteEmail}
-        onChangeInvite={handleChangeInvite}
-        onCopyLink={handleCopy}
-        onClose={() => {
-          handleCloseShare();
-          setInviteEmail('');
-        }}
-      /> */}
     </>
   );
 }
@@ -364,7 +351,9 @@ function AddTextContentDialog({
   cancel,
   handleAddArticle,
   handleEditArticle,
-}: {
+}
+:
+{
   open:boolean;
   display?: boolean;
   chapter?: ChapterType;
@@ -427,8 +416,8 @@ function AddTextContentDialog({
           onChange={(content)=>setContent(content)}
           placeholder="Type a message"
           sx={{ flexGrow: 1, borderColor: 'transparent'}}
-        />}
-
+        />
+        }
         <Divider />
         <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
             <Button
@@ -438,7 +427,53 @@ function AddTextContentDialog({
               {!display ? "Save" : "Edit"}
             </Button>
         </Stack>
+      </Paper>
+      </BootstrapDialog>
+  );
+}
 
+function AddAttachmentDialog({open, cancel}: {open: boolean, cancel: () => void; }) {
+
+  const isDesktop = useResponsive('up', 'sm');
+  const fullWidth = isDesktop ? 700 : 400
+
+  const nameLabel = "name"
+  const editorLabel = "What is this group about ?"
+  return (
+      <BootstrapDialog
+        onClose={cancel}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+      <Paper
+        sx={{
+          width:`${fullWidth}px`,
+          top: 90,
+          right: `calc((100% - ${fullWidth}px)/2)`,
+          margin: "0px auto",
+          position: 'fixed',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            py: 2,
+            pl: 2.5,
+            pr: 1,
+          }}
+        >
+          <IconButton onClick={cancel}>
+            <Iconify icon="eva:close-fill" />
+          </IconButton>
+        </Stack>
+        <AttachmentUploader {...{
+          nameLabel,
+          submitData : ()=>console.log("submit uploads")
+        }}  />
+        <Divider />
       </Paper>
       </BootstrapDialog>
   );

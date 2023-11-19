@@ -1,6 +1,7 @@
 // next
 import Head from 'next/head';
 import {useEffect, useState} from 'react'
+import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
@@ -16,7 +17,8 @@ import { useDispatch, useSelector } from '../../../redux/store';
 import {
   addSection,
   updateSection,
-  startLoading
+  startLoading,
+  CreateACourse
 } from '../../../redux/slices/course';
 import { Video as VideoProps, Attachment, Chapter, Section ,Course } from '../../../@types/course';
 // ----------------------------------------------------------------------
@@ -27,7 +29,7 @@ Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dashb
 
 export default function Library() {
   const { themeStretch } = useSettingsContext();
-
+  const { push, query:{ circleId} } = useRouter();
   const dispatch = useDispatch()
 
   const [sectionList, setSectionList] = useState<Section[]>([])
@@ -38,6 +40,11 @@ export default function Library() {
   useEffect(()=>{
     setSectionList(courseStore.sections)
   },[courseStore])
+
+  const createCourse = () =>{
+    dispatch(CreateACourse(circleId as string))
+    // dispatch(addSection())
+  }
 
   const addAsection = () =>{
     dispatch(addSection())
@@ -66,7 +73,7 @@ export default function Library() {
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={addAsection}
+              onClick={createCourse}
               style={{ marginTop:"20px"}}
             >
               Create a course

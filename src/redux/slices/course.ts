@@ -4,6 +4,7 @@ import { createSlice, Dispatch } from '@reduxjs/toolkit';
 import axios from '../../utils/axios';
 // @types
 import { Video, Attachment, Chapter, Section ,Course } from '../../@types/course';
+import createACourse from '../../api/createACourse'
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,19 @@ const slice = createSlice({
       state.isLoading = true;
     },
 
+    createCourse(state, action){
+      state.name = action.payload.name;
+      state.description = action.payload.description;
+      state.created = action.payload.created
+      state.groupId = action.payload.groupId
+      state.creatorId = action.payload.creatorId
+      state.sections = action.payload.sections
+      state.id = action.payload._id
+    },
+
+    endLoading(state) {
+      state.isLoading = false;
+    },
     // RESET ACTIVE CONVERSATION
     addBasicInfo(state, action) {
       state.name = action.payload.name;
@@ -89,24 +103,28 @@ export default slice.reducer;
 // Actions
 export const { 
   startLoading,
+  endLoading,
   addSection,
   addChapter,
   updateSection,
   updateChapter,
+  createCourse,
 } = slice.actions;
 
 // ----------------------------------------------------------------------
 
-// export function getContacts() {
-//   return async (dispatch: Dispatch) => {
-//     dispatch(startLoading());
-//     try {
-//       const response = await axios.get('/api/chat/contacts');
-//       dispatch(addBasicInfo(response.data.contacts));
-//     } catch (error) {
-//       dispatch(hasError(error));
-//     }
-//   };
-// }
+export function CreateACourse(groupId:string) {
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const response = await createACourse(groupId);
+      dispatch(endLoading());
+      dispatch(createCourse(response.data))
+      dispatch(addSection())
+    } catch (error) {
+      console.log(error)
+    }
+  };
+}
 
 // ----------------------------------------------------------------------

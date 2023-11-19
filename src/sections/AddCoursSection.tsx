@@ -104,7 +104,7 @@ export function CourseSection({ section, ...other }: CourseSection) {
     setChapterList(section.chapters)
   }, [section])
 
-  const subheader = chapterList.length===0 ? "This section has 0 chapter" : `${chapterList.length} Chatpers`
+  const subheader = chapterList.length===0 ? "This section has 0 chapter" : `${chapterList.length} Chatper(s)`
   const [addChapterModal, setAddChapterModal] = useState(false)
   const [openCloudinaryDialog, setOpenCloudinaryDialog] = useState<{value : boolean, index: number | null}>({value : false, index: null})
   
@@ -184,7 +184,7 @@ export function CourseSection({ section, ...other }: CourseSection) {
           startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
           onClick={() => console.log('ACCEPT')}
         >
-          Create Section
+          Save
         </Button>
 
         <Button
@@ -194,7 +194,7 @@ export function CourseSection({ section, ...other }: CourseSection) {
           startIcon={<Iconify icon="eva:close-circle-fill" />}
           onClick={() => console.log('REJECT')}
         >
-          Cancel Section
+          Delete
         </Button>
       </Stack>
     </Card>
