@@ -1,17 +1,21 @@
 export type Base = {
-    id?: string | number;
+    id?: string ;
     name: string | null,
     created?: Date | null,
     description?: string | null,
 }
 
 export interface Attachment {
-    name: string;
-    url: string;
-    type: string;
+    id?: string;
+    title:string;
+    fileUrl:string;
+    type:string;
+    originalName?:string;
+    sectionId?:string;
+    chapter: string;
 }
 
-export interface Video {
+export interface Videodata {
     name?: string;
     url?: string;
     type?: string;
@@ -24,15 +28,24 @@ export interface Video {
     original_filename?: string;
     public_id?: string;
 }
+
+export interface Video {
+    data: Videodata;
+    type: string;
+    sectionId?: string;
+    chapterId?:string
+}
 export interface Chapter extends Base {
-    videoContent: Video | null;
-    textContent: string | null;
+    video: Video | null;
+    content: string | null;
     attachments: Attachment[];
+    section?: string
 }
 
 export interface Section extends Base {
     chapters: Chapter[];
     isValidated?: boolean;
+    course?: string;
 }
 
 export interface Course extends Base {

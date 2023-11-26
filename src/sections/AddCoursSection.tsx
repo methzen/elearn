@@ -21,7 +21,8 @@ import {
   addSection,
   updateSection,
   startLoading,
-  addChapter,
+  apiAddChapter,
+  chapterData,
 } from '../redux/slices/course';
 // ----------------------------------------------------------------------
 
@@ -84,7 +85,6 @@ interface CourseSection extends CardProps {
   section: Section;
 }
 
-
 export type ChapterProps = {
   index: number;
   chapter: ChapterType;
@@ -106,9 +106,9 @@ export function CourseSection({ section, ...other }: CourseSection) {
 
   const subheader = chapterList.length===0 ? "This section has 0 chapter" : `${chapterList.length} Chatper(s)`
   const [addChapterModal, setAddChapterModal] = useState(false)
-  const [openCloudinaryDialog, setOpenCloudinaryDialog] = useState<{value : boolean, index: number | null}>({value : false, index: null})
+  // const [openCloudinaryDialog, setOpenCloudinaryDialog] = useState<{value : boolean, index: number | null}>({value : false, index: null})
   
-  const [addedChapterName, setAddedChapterName] = useState<string>(`Chapter ${chapterList.length}`)
+  const [addedChapterName, setAddedChapterName] = useState<string>(`Chapter ${chapterList.length +1}`)
 
   const onChangeInputValue = (event:React.ChangeEvent<HTMLInputElement>)=>{
     event.preventDefault()
@@ -117,24 +117,9 @@ export function CourseSection({ section, ...other }: CourseSection) {
 
   const handleAddChapter = () => {
     setAddChapterModal(false)
-    dispatch(addChapter({name : addedChapterName, index: section.id}))
+    dispatch(apiAddChapter({name : addedChapterName, sectionId: section.id} as chapterData))
   }
 
-  const handleAddAttachment = (index:number) => {
-    console.log('user want to add attachment', index)
-  };
-
-  const handleAddArticle = (index:number) => {
-    console.log('user want to add article', index)
-  };
-
-  const onDelete = (index:number) => {
-    console.log('user want to delete chapter', index)
-  }
-
-  const linkVideoAddedToChapter = (value:any) =>{
-
-  }
   return (
     <Card {...other}>
       <CardHeader
@@ -158,9 +143,7 @@ export function CourseSection({ section, ...other }: CourseSection) {
       />
         {
           chapterList.map((chapter, index) => (
-            <Chapter key={index} chapter={chapter}
-            sectionId={section.id as number}
-            />
+            <Chapter key={index} chapter={chapter} courseId={section.course as string}/>
           ))
         }
         <SectionPanel

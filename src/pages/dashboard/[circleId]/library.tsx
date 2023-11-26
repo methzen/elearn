@@ -21,6 +21,7 @@ import {
   CreateACourse,
   initalizeCourse,
   getCourse,
+  CreateCourseData,
 } from '../../../redux/slices/course';
 import { Video as VideoProps, Attachment, Chapter, Section ,Course } from '../../../@types/course';
 import getCourseByGroupId from "../../../api/getCourseByGroupId"
@@ -50,12 +51,12 @@ export default function Library() {
   },[circleId])
 
   const createCourse = () =>{
-    dispatch(CreateACourse(circleId as string))
+    dispatch(CreateACourse({groupId: circleId} as CreateCourseData))
     // dispatch(addSection())
   }
 
   const addAsection = () =>{
-    dispatch(apiCreateASection(circleId as string, courseStore.id as string))
+    dispatch(apiCreateASection(courseStore.id as string))
   }
 
   const updateSection = () =>{

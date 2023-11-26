@@ -1,16 +1,29 @@
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
 // @types
 import { Video, Attachment, Chapter, Section ,Course } from '../../@types/course';
-import createACourse from '../../api/createACourse'
 import getCourseByGroupId from "../../api/getCourseByGroupId"
-import createASection from "../../api/createASection"
+import {
+  createACourse,
+  addAttachmentApi, 
+  addChapterApi,
+  addSectionApi,
+  addTextContentApi,
+  addVideoContentApi,
+  CreateCourseData,
+  attachmentData,
+  chapterData,
+  contentData,
+  sectionData,
+  videoData
+} from "../../api/courseApi"
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
 
 interface CourseStore extends Course {
   isLoading: boolean;
   error: boolean;
-  editable: boolean
+  editable?: boolean
+  ownershipLevel?: string
 }
 
 const initialState: CourseStore = {
@@ -21,7 +34,6 @@ const initialState: CourseStore = {
   error: false,
   sections: [],
   editable: false,
-
 };
 
 const slice = createSlice({
@@ -41,8 +53,13 @@ const slice = createSlice({
       state.groupId = action.payload.groupId
       state.creatorId = action.payload.creatorId
       state.sections = action.payload.sections
-      state.id = action.payload._id
+      state.id = action.payload.id
       state.editable = action.payload.editable
+    },
+
+    updateState(state, action){
+      if(!action.payload) return state
+      return {...state, ...action.payload}
     },
 
     endLoading(state) {
@@ -60,13 +77,13 @@ const slice = createSlice({
     },
 
     addSection(state, action) {
-      // const section = {
-      //   id: state.sections.length,
-      //   name : `Section ${state.sections.length + 1}`, 
-      //   isValidated:false,
-      //   chapters: [],
-      // }
-      state.sections.push(action.payload as Section)
+      const section = {
+        id: action.payload.id,
+        name : action.payload.name, 
+        isValidated:action.payload.isValidated,
+        chapters: action.payload.chapters,
+      }
+      state.sections.push(section as Section)
     },
 
     updateSection(state:CourseStore, action: {type:any, payload:Section}) {
@@ -75,16 +92,55 @@ const slice = createSlice({
       state.sections[index] = action.payload
     },
 
-    addChapter(state:CourseStore, {type, payload}: {type:any, payload:any}) {
-      const section = state.sections[payload.index]
-      section.chapters.push({
-        id : section.chapters.length,
-        name: payload.name,
-        videoContent: null,
-        textContent: "",
-        attachments: []
+    // addChapter(state:CourseStore, {type, payload}:{type:any, payload: Chapter}) {
+    //   const section = state.sections.find(section => section.id === payload.section) as Section
+    //   const index = state.sections.indexOf(section!)
+    //   section.chapters.push({
+    //     id: payload.id,
+    //     name: payload.name,
+    //     attachments: payload.attachments,
+    //     content: payload.content,
+    //     created: payload.created,
+    //     description: payload.description,
+    //     video: payload.video
+    //   })
+    //   state.sections[index] = {...section}
+    // },
+
+    addAttachment(state, action){
+      const attachment: Attachment = action.payload
+      const section = state.sections.find(section => section.id === attachment.sectionId) as Section
+      section.chapters.map(chap => {
+        if (chap.id === attachment.chapter){
+          chap.attachments.push(attachment)
+          return chap;
+        }
+        return chap;
       })
-      state.sections[payload.index] = section
+    },
+
+    addVideo(state, action){
+      const video: Video = action.payload
+      const section = state.sections.find(section => section.id === video.sectionId) as Section
+      section.chapters.map(chap => {
+        if (chap.id === video.chapterId){
+          chap.video = video;
+          return chap;
+        }
+        return chap;
+      })
+    },
+
+    addContent(state, action){
+      const chapter = action.payload
+      const section = state.sections.find(section => section.id === chapter.sectionId) as Section
+      section.chapters.map(chap => {
+        if (chap.id === chapter.id){
+          chap.content = chapter.content;
+          return chap;
+        }
+        return chap;
+      })
     },
 
     updateChapter(state, action){
@@ -108,22 +164,24 @@ export const {
   startLoading,
   endLoading,
   addSection,
-  addChapter,
+  addAttachment,
+  addVideo,
+  addContent,
   updateSection,
   updateChapter,
   initalizeCourse,
+  updateState,
 } = slice.actions;
 
 // ----------------------------------------------------------------------
 
-export function CreateACourse(groupId:string) {
+export function CreateACourse(data:CreateCourseData) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const response = await createACourse(groupId);
+      const response = await createACourse(data);
+      dispatch(updateState(response.data))
       dispatch(endLoading());
-      dispatch(initalizeCourse(response.data))
-      // dispatch(addSection())
     } catch (error) {
       console.log(error)
       dispatch(endLoading());
@@ -137,7 +195,7 @@ export function getCourse(groupId:string) {
     try {
       const response = await getCourseByGroupId(groupId);
       if (response.groupHasNoCourse) return 
-      dispatch(initalizeCourse(response))
+      dispatch(updateState(response))
       dispatch(endLoading());
     } catch (error) {
       console.log(error)
@@ -146,18 +204,85 @@ export function getCourse(groupId:string) {
   };
 }
 
-export function apiCreateASection(groupId:string, courseId:string){
+export function apiCreateASection(courseId:string){
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const response = await createASection(groupId, courseId);
-      console.log("add sestion response", response)
-      dispatch(addSection(response))
+      const data = await addSectionApi({courseId} as sectionData);
+      console.log("add section data", data)
+      dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {
       console.log(error)
       dispatch(endLoading());
     }
   };
+}
+
+export function apiAddChapter(chapData:chapterData){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await addChapterApi(chapData);
+      console.log("add chapter data", data)
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export function apiAddAttachment(attachmentData:attachmentData){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await addAttachmentApi(attachmentData);
+      console.log("add attachment data", data)
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export function apiAddTextContent(contentData:contentData){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await addTextContentApi(contentData);
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export function apiAddVideoContent(videoData:videoData){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await addVideoContentApi(videoData);
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export type {
+  CreateCourseData,
+  attachmentData,
+  chapterData,
+  contentData,
+  sectionData,
+  videoData
 }
 // ----------------------------------------------------------------------

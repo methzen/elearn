@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 // @mui
 import {
   Box,
@@ -24,18 +24,18 @@ import MenuPopover from '../components/menu-popover';
 import { CldUploadWidget, CldVideoPlayer ,CldUploadWidgetPropsOptions } from 'next-cloudinary';
 // import { FileShareDialog, FileDetailsDrawer } from '../../file';
 import { styled } from '@mui/material/styles';
-import { Video as VideoType, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
-import { useDispatch, useSelector } from '../redux/store';
+import { Video as VideoType, Attachment, Chapter as ChapterType, Section , Course} from '../@types/course';
+import { useDispatch } from '../redux/store';
 import {
-  addSection,
-  updateSection,
-  startLoading,
-  updateChapter,
+  apiAddVideoContent,
+  videoData,
+  apiAddTextContent,
+  contentData,
 } from '../redux/slices/course';
 import Editor from '../components/editor';
 import Markdown from '../components/markdown/Markdown';
 import { AttachmentUploader } from '../sections/form';
-import { FormSchema } from '../sections/form/schema';
+
 // ----------------------------------------------------------------------
 
 const options = {
@@ -71,24 +71,19 @@ const options = {
         }
     }
 }
-
 interface ChapterProps extends PaperProps {
     index?: number;
     chapter: ChapterType;
-    sectionId: number;
+    courseId: string;
     handleAddAttachment?: (index:number)=>void;
     handleAddArticle?: (index:number)=>void;
-    handleAddVideo?: (index:number, info:any)=>void;
     onDelete?: (index:number)=>void;
-  };
-
-interface CloudinaryResult {
-    public_id:string
-  }
+};
 
 export default function ChapterComponent({
     chapter,
-    sectionId, sx, ...other }: ChapterProps) {
+    courseId,
+    sx, ...other }: ChapterProps) {
 
   const isDesktop = useResponsive('up', 'sm');
 
@@ -101,16 +96,24 @@ export default function ChapterComponent({
   const dispatch = useDispatch()
 
   const handleAddVideo = (info: any) => {
-    const newVideoContent : VideoType = info
-    const newChapter = {...chapter, videoContent: newVideoContent}
-    dispatch(updateChapter({index : sectionId, chapter : newChapter}))
+    const videoData : videoData = {
+      title: "",
+      chapterId: chapter.id as string,
+      courseId: courseId,
+      data: {...info}
+    }
+    dispatch(apiAddVideoContent(videoData))
   };
 
   const handleAddArticle = (content: string) => {
     setDisplayChapterContentText(false)
     setOpenContentTextDialog(false)
-    const newChapter = {...chapter, textContent: content}
-    dispatch(updateChapter({index : sectionId, chapter : newChapter}))
+    const contentData: contentData = {
+      chapterId: chapter.id as string,
+      content: content,
+      courseId: courseId, 
+    }
+    dispatch(apiAddTextContent(contentData))
   };
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -126,7 +129,7 @@ export default function ChapterComponent({
   }
 
   const handleViewArticle = () => {
-    if(!chapter.textContent){
+    if(!chapter.content){
       return
     }
     setDisplayChapterContentText(true)
@@ -153,7 +156,7 @@ export default function ChapterComponent({
     {openViewer &&
       <VideoViewer
           open={openViewer}
-          public_id={chapter.videoContent?.url as string}
+          public_id={chapter.video?.data.public_id as string}
           close={() => setOpenViewer(false)}
       />
     }
@@ -203,14 +206,14 @@ export default function ChapterComponent({
             sx={{ typography: 'caption', color: 'text.disabled', mt: 0.5 }}
           >
             {
-            chapter.videoContent && 
+            chapter.video && 
               <IconButton onClick={handleViewVideo} >
                 <Iconify icon="mdi:youtube" />
               </IconButton>
             }
 
             {
-              chapter.textContent && 
+              chapter.content && 
               <IconButton onClick={handleViewArticle} >
                 <Iconify icon="mdi:text-box-outline" />
               </IconButton>
@@ -257,8 +260,8 @@ export default function ChapterComponent({
             }>
             {({ open }) => {
               return (
-                <MenuItem
-                onClick={(e) => {
+              <MenuItem
+                  onClick={(e) => {
                   e.preventDefault();
                   handleClosePopover();
                   open();
@@ -279,7 +282,7 @@ export default function ChapterComponent({
           }}
         >
           <Iconify icon="mdi:text-box-outline" />
-          {!chapter.textContent? "Add an article" : "Edit the article"}
+          {!chapter.content? "Add an article" : "Edit the article"}
         </MenuItem>
 
         <MenuItem
@@ -365,7 +368,7 @@ function AddTextContentDialog({
   const isDesktop = useResponsive('up', 'sm');
   const fullWidth = isDesktop ? 900 : 400
 
-  const [content, setContent] = useState(chapter? chapter.textContent: "")
+  const [content, setContent] = useState(chapter? chapter.content: "")
 
   return (
       <BootstrapDialog
@@ -402,7 +405,7 @@ function AddTextContentDialog({
         <Stack alignItems="center" sx={{ py: 2, px: 3, overflow: "scroll", maxHeight: "70vh"}}>
         <Markdown
             key={chapter?.name}
-            children={chapter?.textContent as string}
+            children={chapter?.content as string}
             sx={{
               px: { md: 2 },
               py: { md: 2 },
