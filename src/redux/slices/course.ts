@@ -14,7 +14,8 @@ import {
   chapterData,
   contentData,
   sectionData,
-  videoData
+  videoData,
+  updateSectionApi
 } from "../../api/courseApi"
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
@@ -210,6 +211,20 @@ export function apiCreateASection(courseId:string){
     try {
       const data = await addSectionApi({courseId} as sectionData);
       console.log("add section data", data)
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export function apiUpdateSection(inputData:sectionData){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await updateSectionApi(inputData);
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {

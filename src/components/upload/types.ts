@@ -9,6 +9,7 @@ export interface CustomFile extends File {
   path?: string;
   preview?: string;
   lastModifiedDate?: Date;
+  type: string;
 }
 
 export interface UploadProps extends DropzoneOptions {

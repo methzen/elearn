@@ -23,6 +23,7 @@ import {
   startLoading,
   apiAddChapter,
   chapterData,
+  apiUpdateSection,
 } from '../redux/slices/course';
 // ----------------------------------------------------------------------
 
@@ -38,13 +39,12 @@ type ItemProps = {
 
 interface ChangeNameProps {
   section: Section;
-  update: (value: Section) => void;
 }
 
-const ChangeName=({section, update}:ChangeNameProps)=>{
+const ChangeName=({section}:ChangeNameProps)=>{
     const [openModal, setOpenModal] = useState(false)
     const [thisSection, setThisSection] = useState<Section>(section)
-
+    const dispatch = useDispatch()
     const handleCloseNewFolder = ()=>{
         setOpenModal(false)
     }
@@ -55,12 +55,15 @@ const ChangeName=({section, update}:ChangeNameProps)=>{
     }
 
     const saveChangeName = ()=>{
-        setOpenModal(false)
-        update(thisSection)
+      setOpenModal(false)
+      dispatch(apiUpdateSection({
+        name: thisSection.name as string,
+        sectionId: thisSection.id
+      }))
     }
 
     return(
-        <>
+      <>
         <ChangeSectionNameDialog
         open={openModal}
         onClose={handleCloseNewFolder}
@@ -68,11 +71,11 @@ const ChangeName=({section, update}:ChangeNameProps)=>{
         inputValue={thisSection.name as string}
         onChangeInputValue={onChangeInputValue}
         onCreate={saveChangeName}
-      />
+        />
       
-    <Chip size="small" label={"Change Section Name"} sx={{ mr: 1, mb: 1, color: 'text.secondary', cursor:"pointer"}}
-    onClick={()=>setOpenModal(true)} />
-        </>
+        <Chip size="small" label={"Change Section Name"} sx={{ mr: 1, mb: 1, color: 'text.secondary', cursor:"pointer"}}
+          onClick={()=>setOpenModal(true)} />
+      </>
     )
 }
 
@@ -125,9 +128,7 @@ export function CourseSection({ section, ...other }: CourseSection) {
       <CardHeader
         title={section.name}
         subheader={subheader}
-        action={<ChangeName section={section} 
-        update={(section)=>dispatch(updateSection(section))}
-        />}
+        action={<ChangeName section={section}/>}
         sx={{
           '& .MuiCardHeader-action': { alignSelf: 'center' },
           marginBottom: 5

@@ -31,11 +31,13 @@ import {
   videoData,
   apiAddTextContent,
   contentData,
+  apiAddAttachment,
+  attachmentData,
 } from '../redux/slices/course';
 import Editor from '../components/editor';
 import Markdown from '../components/markdown/Markdown';
 import { AttachmentUploader } from '../sections/form';
-
+import { AttachmentProps } from '../@types/file'
 // ----------------------------------------------------------------------
 
 const options = {
@@ -116,6 +118,19 @@ export default function ChapterComponent({
     dispatch(apiAddTextContent(contentData))
   };
 
+  const handleSubmitAttachment=(data:AttachmentProps)=>{
+    setOpenAddAttachmentDialog(false)
+    console.log("attachment", data)
+    const InputData: attachmentData ={
+      title: data.name,
+      chapterId: chapter.id as string,
+      courseId: courseId,
+      singleUpload: data.singleUpload
+      
+    }
+    dispatch(apiAddAttachment(InputData))
+  }
+
   const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
     setOpenPopover(event.currentTarget);
   };
@@ -150,7 +165,8 @@ export default function ChapterComponent({
       openAddAttachmentDialog &&
       <AddAttachmentDialog
         open={openAddAttachmentDialog}
-        cancel={()=>console.log("User cancel adding attachement")}
+        cancel={()=>setOpenAddAttachmentDialog(false)}
+        submitData={handleSubmitAttachment}
       />
     }
     {openViewer &&
@@ -268,7 +284,7 @@ export default function ChapterComponent({
                 }}
               >
                 <Iconify icon="mdi:youtube" />
-                Add a video
+                {!chapter.video? "Add a video": "Replace video"}
               </MenuItem>
               );
             }}
@@ -306,7 +322,7 @@ export default function ChapterComponent({
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="eva:trash-2-outline" />
-          Delete
+          Delete chapter
         </MenuItem>
       </MenuPopover>
     </>
@@ -435,13 +451,13 @@ function AddTextContentDialog({
   );
 }
 
-function AddAttachmentDialog({open, cancel}: {open: boolean, cancel: () => void; }) {
+function AddAttachmentDialog({open, cancel, submitData}: {open: boolean, cancel: () => void; submitData: (data:AttachmentProps)=>void;}) {
 
   const isDesktop = useResponsive('up', 'sm');
   const fullWidth = isDesktop ? 700 : 400
 
   const nameLabel = "name"
-  const editorLabel = "What is this group about ?"
+
   return (
       <BootstrapDialog
         onClose={cancel}
@@ -474,7 +490,7 @@ function AddAttachmentDialog({open, cancel}: {open: boolean, cancel: () => void;
         </Stack>
         <AttachmentUploader {...{
           nameLabel,
-          submitData : ()=>console.log("submit uploads")
+          submitData
         }}  />
         <Divider />
       </Paper>

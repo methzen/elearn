@@ -36,3 +36,8 @@ export type IFileManager = {
 };
 
 export type IFile = IFileManager | IFolderManager;
+
+export type AttachmentProps = {
+  name: string;
+  singleUpload: File | null;
+};

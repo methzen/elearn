@@ -2,6 +2,7 @@ import axios from "./axios";
 
 export type attachmentData = {
     title: string;
+    courseId: string
     chapterId: string;
     singleUpload: File | null;
 };
@@ -11,6 +12,7 @@ export async function addAttachmentApi(data: attachmentData){
   try{    const response =  await axios.post(`/groups/course/attachment`, {
         title: data.title,
         chapterId: data.chapterId,
+        courseId: data.courseId,
         file: data.singleUpload
       }, {
       headers: {
@@ -48,16 +50,33 @@ export async function addChapterApi(data: chapterData){
 }
 
 export interface sectionData {
-    name?: string,
-    description?: string,
-    creatorId?: string,
-    courseId: string,
+    name?: string
+    description?: string
+    creatorId?: string
+    courseId?: string
+    isValidated?: boolean
+    sectionId?:string
 }
 
 export async function addSectionApi(data: sectionData){
   const token = localStorage.getItem('x-auth-token')
   try{
     const response = await axios.post(`/groups/course/section`, data, {
+      headers: {
+        "x-auth-token" : token,
+        'Content-Type': 'application/json'
+      }
+    })
+      return response.data
+  }catch(e){
+    throw (e);
+  }
+}
+
+export async function updateSectionApi(data: sectionData){
+  const token = localStorage.getItem('x-auth-token')
+  try{
+    const response = await axios.put(`/groups/course/section`, data, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'

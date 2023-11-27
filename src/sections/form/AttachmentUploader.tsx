@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 // form
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 // @mui
 import {
@@ -15,18 +14,13 @@ import { LoadingButton } from '@mui/lab';
 // components
 
 import FormProvider, {
-  PdfUpload,
+  RHFPdfUpload,
   RHFTextField,
 } from '../../components/hook-form';
+import { AttachmentProps } from '../../@types/file'
 
 // ----------------------------------------------------------------------
 
-
-type FormValuesProps = {
-  name: string;
-  editor: string;
-  singleUpload: File | null;
-};
 
 export const defaultValues = {
   name: '',
@@ -37,12 +31,12 @@ export default function AttachmentUploader(
   { nameLabel, 
     submitData } : {
       nameLabel: string
-      submitData : (data : FormValuesProps) => void;
+      submitData : (data : AttachmentProps) => void;
     }) {
 
   const [fileData, setFileData] = useState<File | null>(null)
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<AttachmentProps>({
     defaultValues,
   });
 
@@ -93,8 +87,8 @@ export default function AttachmentUploader(
           }}
         >
             <Stack spacing={2}>
-            <Block label="Select a banner">
-                <PdfUpload
+            <Block label="Select a file">
+                <RHFPdfUpload
                   name="singleUpload"
                   maxSize={3145728}
                   onDrop={handleDropSingleFile}
@@ -115,7 +109,7 @@ export default function AttachmentUploader(
                 variant="contained"
                 loading={isSubmitting}
               >
-                Add
+                Submit
               </LoadingButton>
             </Stack>
           </Box>
