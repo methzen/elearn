@@ -13,8 +13,6 @@ import {
 import useResponsive from '../../../hooks/useResponsive';
 // utils
 import { fData } from '../../../utils/formatNumber';
-// @types
-import { IFileManager } from '../../../@types/file';
 // components
 import FileThumbnail from '../../file-thumbnail';
 // ----------------------------------------------------------------------

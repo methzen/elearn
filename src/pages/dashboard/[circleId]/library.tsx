@@ -9,7 +9,7 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 // components
 import { useSettingsContext } from '../../../components/settings';
 import Iconify from '../../../components/iconify';
-import Video from '../../../components/Video';
+import Video from '../../../components/ChapterDisplayer';
 import Menu from '../../../components/CourseMenu';
 import {CourseSection} from "../../../sections/AddCoursSection"
 import SectionPanel from "../../../sections/SectionPanel"
@@ -36,12 +36,16 @@ export default function Library() {
 
   const dispatch = useDispatch()
   const [sectionList, setSectionList] = useState<Section[]>([])
+  const [currentChapter, setCurrentChapter] = useState<Chapter>()
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
 
   const courseStore = useSelector( (state) => state.course )
-  
-  useEffect(()=>{
-    setSectionList(courseStore.sections)
+
+  useEffect(() => {
+    if(courseStore?.sections){
+      setSectionList(courseStore?.sections)
+      setCurrentChapter(courseStore?.sections[0]?.chapters[0])
+    }
   },[courseStore])
 
   useEffect(() => {
@@ -98,19 +102,26 @@ export default function Library() {
         <Video  />
           </Grid>
         </Grid> */}
+        <Grid container justifyContent="center" spacing={3}>
+        <Grid item xs={12} md={5}>
+            {sectionList.map((section)=>( 
+            <CourseSection 
+                key={section.name}
+                section={section}
+                />
+              ))}
 
-        {sectionList.map((section)=>( 
-          <CourseSection 
-              key={section.name}
-              section={section}
-              />
-        ))}
+              {isLastSectionValidated && <SectionPanel
+                title="Add a section"
+                onOpen={addAsection}
+                sx={{ mt: 5 }}
+              />}
+          </Grid>
+          <Grid item xs={12} md={6}>
+               {currentChapter && <Video  chapter={currentChapter as Chapter}/>}
+          </Grid>
+        </Grid>
 
-        {isLastSectionValidated && <SectionPanel
-          title="Add a section"
-          onOpen={addAsection}
-          sx={{ mt: 5 }}
-        />}
       </Container>
     </>
   );

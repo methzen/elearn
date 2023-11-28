@@ -210,7 +210,6 @@ export function apiCreateASection(courseId:string){
     dispatch(startLoading());
     try {
       const data = await addSectionApi({courseId} as sectionData);
-      console.log("add section data", data)
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {
@@ -239,7 +238,6 @@ export function apiAddChapter(chapData:chapterData){
     dispatch(startLoading());
     try {
       const data = await addChapterApi(chapData);
-      console.log("add chapter data", data)
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {
@@ -254,7 +252,6 @@ export function apiAddAttachment(attachmentData:attachmentData){
     dispatch(startLoading());
     try {
       const data = await addAttachmentApi(attachmentData);
-      console.log("add attachment data", data)
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {

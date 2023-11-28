@@ -15,12 +15,9 @@ import Iconify from '../components/iconify';
 import SectionPanel from "./SectionPanel"
 import {ChangeSectionNameDialog} from "./ChangeNameDialog"
 import Chapter from "./Chapter"
-import { Video as VideoProps, Attachment, Chapter as ChapterType, Section , Course } from '../@types/course';
-import { useDispatch, useSelector } from '../redux/store';
+import {Chapter as ChapterType, Section } from '../@types/course';
+import { useDispatch } from '../redux/store';
 import {
-  addSection,
-  updateSection,
-  startLoading,
   apiAddChapter,
   chapterData,
   apiUpdateSection,

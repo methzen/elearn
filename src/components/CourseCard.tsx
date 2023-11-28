@@ -24,7 +24,7 @@ export default function CourseCard({id, name, imageUrl, description, ownerShipLe
   }
 
   return (
-    <Card sx={{ maxWidth: 350, maxHeight:426 }}>
+    <Card sx={{ maxWidth: 350, maxHeight:426, cursor:"pointer"}} onClick={getInsideGroup}>
       <CardMedia
         sx={{ height: 187 }}
         title="green iguana"
@@ -46,7 +46,8 @@ export default function CourseCard({id, name, imageUrl, description, ownerShipLe
         flexDirection: "row",
         justifyContent: "space-between"
       }}>
-        <Button size="small" onClick={getInsideGroup}>Join </Button><span style={{color:"#BFBFBF", fontSize:14, marginRight:15}}> {ownerShipLevel}</span>
+        {/* <Button size="small" onClick={getInsideGroup}>Join </Button> */}
+        <span style={{color:"#BFBFBF", fontSize:14, marginRight:15}}> {ownerShipLevel}</span>
       </CardActions>
     </Card>
   );
