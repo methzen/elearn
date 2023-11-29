@@ -27,10 +27,11 @@ export async function addAttachmentApi(data: attachmentData){
 }
 
 export interface chapterData {
-    name: string,
-    description: string,
-    creatorId: string,
+    name?: string,
+    description?: string,
+    creatorId?: string,
     sectionId:string
+    chapterId?: string
 }
 
 export async function addChapterApi(data: chapterData){
@@ -49,6 +50,22 @@ export async function addChapterApi(data: chapterData){
   }
 }
 
+export async function deleteChapterApi(data: chapterData){
+  const token = localStorage.getItem('x-auth-token')
+  try{
+    const response = await axios.delete(`/groups/course/chapter`, {
+      data: data,
+      headers: {
+        "x-auth-token" : token,
+        'Content-Type': 'application/json'
+      }
+    })
+    return response.data
+  }
+  catch(e){
+    throw (e)
+  }
+}
 export interface sectionData {
     name?: string
     description?: string

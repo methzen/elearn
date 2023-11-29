@@ -33,6 +33,7 @@ import {
   contentData,
   apiAddAttachment,
   attachmentData,
+  apiDeleteChapter,
 } from '../redux/slices/course';
 import Editor from '../components/editor';
 import Markdown from '../components/markdown/Markdown';
@@ -317,7 +318,7 @@ export default function ChapterComponent({
         <MenuItem
           onClick={() => {
             handleClosePopover();
-            // onDelete(index!);
+            dispatch(apiDeleteChapter({chapterId:chapter.id, sectionId:chapter.section as string}))
           }}
           sx={{ color: 'error.main' }}
         >

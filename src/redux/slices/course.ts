@@ -15,7 +15,8 @@ import {
   contentData,
   sectionData,
   videoData,
-  updateSectionApi
+  updateSectionApi,
+  deleteChapterApi
 } from "../../api/courseApi"
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
@@ -238,6 +239,20 @@ export function apiAddChapter(chapData:chapterData){
     dispatch(startLoading());
     try {
       const data = await addChapterApi(chapData);
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+export function apiDeleteChapter(chapData:chapterData){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await deleteChapterApi(chapData);
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {
