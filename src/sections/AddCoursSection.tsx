@@ -181,7 +181,8 @@ export function CourseSection({ section, ...other }: CourseSection) {
         />}
       <Stack
         direction="row"
-        gap={5}
+        justifyContent={"space-between"}
+        gap={2}
       >
         {
           section.isValidated?
@@ -189,7 +190,6 @@ export function CourseSection({ section, ...other }: CourseSection) {
           :
           <>
           <Button
-            fullWidth
             color="success"
             variant="contained"
             startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
@@ -199,7 +199,6 @@ export function CourseSection({ section, ...other }: CourseSection) {
         </Button>
 
         <Button
-          fullWidth
           color="error"
           variant="contained"
           startIcon={<Iconify icon="eva:close-circle-fill" />}
