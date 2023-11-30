@@ -24,7 +24,7 @@ import MenuPopover from '../components/menu-popover';
 import { CldUploadWidget, CldVideoPlayer ,CldUploadWidgetPropsOptions } from 'next-cloudinary';
 // import { FileShareDialog, FileDetailsDrawer } from '../../file';
 import { styled } from '@mui/material/styles';
-import { Video as VideoType, Attachment, Chapter as ChapterType, Section , Course} from '../@types/course';
+import { Video as VideoType, Attachment, Chapter as ChapterType} from '../@types/course';
 import { useDispatch } from '../redux/store';
 import {
   apiAddVideoContent,
@@ -189,21 +189,18 @@ export default function ChapterComponent({
       />
     }
       <Stack
-        spacing={isDesktop ? 1.5 : 2}
-        direction={isDesktop ? 'row' : 'column'}
-        alignItems={isDesktop ? 'center' : 'flex-start'}
+        direction={'row'}
+        alignItems={'center'}
         sx={{
           px: 1.5,
           borderRadius: 1,
-          margin:"5px 30px",
-          maxWidth: 900,
+          margin:"3px 2px",
           position: 'relative',
           border: (theme) => `solid 1px ${theme.palette.divider}`,
           ...sx,
         }}
         {...other}
       >
-
         <Stack
           direction="row"
           sx={{
@@ -242,7 +239,6 @@ export default function ChapterComponent({
                 <Iconify icon="mdi:file-document" />
               </IconButton>: null
             }
-
           </Stack>
         </Stack>
 

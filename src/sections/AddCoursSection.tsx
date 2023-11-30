@@ -9,6 +9,11 @@ import {
   CardHeader,
   Chip,
 } from '@mui/material';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Collapse from '@mui/material/Collapse';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ExpandMore } from '../components/CardExpender'
 // utils
 // components
 import Iconify from '../components/iconify';
@@ -22,6 +27,7 @@ import {
   chapterData,
   apiUpdateSection,
 } from '../redux/slices/course';
+import Label from 'src/components/label/Label';
 // ----------------------------------------------------------------------
 
 type ItemProps = {
@@ -36,9 +42,10 @@ type ItemProps = {
 
 interface ChangeNameProps {
   section: Section;
+  edit?: boolean
 }
 
-const ChangeName=({section}:ChangeNameProps)=>{
+const SectionUpdate=({section, edit}:ChangeNameProps) => {
     const [openModal, setOpenModal] = useState(false)
     const [thisSection, setThisSection] = useState<Section>(section)
     const dispatch = useDispatch()
@@ -58,7 +65,14 @@ const ChangeName=({section}:ChangeNameProps)=>{
         sectionId: thisSection.id
       }))
     }
+    const AllowSectionUpdate = () =>{
+      dispatch(apiUpdateSection({
+        isValidated: false,
+        sectionId: thisSection.id
+      }))
+    }
 
+    const label = edit? "Edit Section": "Change Section Name"
     return(
       <>
         <ChangeSectionNameDialog
@@ -70,15 +84,11 @@ const ChangeName=({section}:ChangeNameProps)=>{
         onCreate={saveChangeName}
         />
       
-        <Chip size="small" label={"Change Section Name"} sx={{ mr: 1, mb: 1, color: 'text.secondary', cursor:"pointer"}}
-          onClick={()=>setOpenModal(true)} />
+        <Chip size="small" label={label} 
+              sx={{ mr: 1, mb: 1, color: 'text.secondary', cursor:"pointer", mt: edit? 3: -2}}
+          onClick={edit? AllowSectionUpdate: ()=>setOpenModal(true)} />
       </>
     )
-}
-
-interface Props extends CardProps {
-  title?: string;
-  list?: ItemProps[];
 }
 
 interface CourseSection extends CardProps {
@@ -98,16 +108,19 @@ export type ChapterProps = {
 export function CourseSection({ section, ...other }: CourseSection) {
   const theme = useTheme();
   const dispatch = useDispatch()
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
   const [chapterList, setChapterList] = useState<ChapterType[]>([])
   useEffect(()=> {
     setChapterList(section.chapters)
   }, [section])
 
-  const subheader = chapterList.length===0 ? "This section has 0 chapter" : `${chapterList.length} Chatper(s)`
+  const subheader = chapterList.length === 0 ? "This section has 0 chapter" : `${chapterList.length} Chatper(s)`
   const [addChapterModal, setAddChapterModal] = useState(false)
-  // const [openCloudinaryDialog, setOpenCloudinaryDialog] = useState<{value : boolean, index: number | null}>({value : false, index: null})
-  
   const [addedChapterName, setAddedChapterName] = useState<string>(`Chapter ${chapterList.length +1}`)
 
   const onChangeInputValue = (event:React.ChangeEvent<HTMLInputElement>)=>{
@@ -121,17 +134,20 @@ export function CourseSection({ section, ...other }: CourseSection) {
   }
 
   return (
-    <Card {...other}>
+    <Card {...other} sx={{mb:2}}>
       <CardHeader
         title={section.name}
         subheader={subheader}
-        action={<ChangeName section={section}/>}
+        action={section.isValidated? 
+        <Label variant={'soft'} color={'success'}> validated </Label>: <SectionUpdate section={section}/>}
         sx={{
-          '& .MuiCardHeader-action': { alignSelf: 'center' },
-          marginBottom: 5
+          '& .MuiCardHeader-action': { alignSelf: 'center', mt:-2},
+          py:1,
+          marginBottom: 0
         }}
       />
-      <ChangeSectionNameDialog
+      {!section.isValidated && 
+        <ChangeSectionNameDialog
         open={addChapterModal}
         onClose={()=>setAddChapterModal(false)}
         title="Give a name to this chapter"
@@ -139,32 +155,46 @@ export function CourseSection({ section, ...other }: CourseSection) {
         onChangeInputValue={onChangeInputValue}
         onCreate={handleAddChapter}
       />
-        {
-          chapterList.map((chapter, index) => (
-            <Chapter key={index} chapter={chapter} courseId={section.course as string}/>
-          ))
-        }
-        <SectionPanel
+      }
+      <CardActions disableSpacing>
+        <ExpandMore
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </ExpandMore>
+      </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+          {
+        chapterList.map((chapter, index) => (
+          <Chapter key={index} chapter={chapter} courseId={section.course as string}/>
+        ))
+      }
+       {!section.isValidated && 
+       <SectionPanel
             title="Add a Chapter"
             onOpen={()=> setAddChapterModal(true)}
             sx={{ ml: 3, mt: 2 }}
-        />
+        />}
       <Stack
-        spacing={4}
-        maxWidth={500}
         direction="row"
-        alignItems="flex-end"
-        sx={{
-          p: theme.spacing(0, 3, 3, 3),
-        }}
+        gap={5}
       >
-        <Button
-          fullWidth
-          color="success"
-          variant="contained"
-          startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
-          onClick={() => console.log('ACCEPT')}
-        >
+        {
+          section.isValidated?
+          <SectionUpdate section={section} edit/>
+          :
+          <>
+          <Button
+            fullWidth
+            color="success"
+            variant="contained"
+            startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
+            onClick={() => dispatch(apiUpdateSection({sectionId:section.id, isValidated:true}))}
+          >
           Save
         </Button>
 
@@ -177,7 +207,11 @@ export function CourseSection({ section, ...other }: CourseSection) {
         >
           Delete
         </Button>
+          </>
+        }
       </Stack>
+          </CardContent>
+      </Collapse>
     </Card>
   );
 }

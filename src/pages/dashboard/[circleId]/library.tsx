@@ -16,15 +16,11 @@ import SectionPanel from "../../../sections/SectionPanel"
 import { useDispatch, useSelector } from '../../../redux/store';
 import {
   apiCreateASection,
-  updateSection,
-  startLoading,
   CreateACourse,
-  initalizeCourse,
   getCourse,
   CreateCourseData,
 } from '../../../redux/slices/course';
-import { Video as VideoProps, Attachment, Chapter, Section ,Course } from '../../../@types/course';
-import getCourseByGroupId from "../../../api/getCourseByGroupId"
+import { Video as VideoProps, Chapter, Section } from '../../../@types/course';
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
@@ -33,38 +29,36 @@ Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</Dashb
 export default function Library() {
   const { themeStretch } = useSettingsContext();
   const { query:{ circleId} } = useRouter();
-
-  const dispatch = useDispatch()
-  const [sectionList, setSectionList] = useState<Section[]>([])
-  const [currentChapter, setCurrentChapter] = useState<Chapter>()
-  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
-
-  const courseStore = useSelector( (state) => state.course )
-
-  useEffect(() => {
-    if(courseStore?.sections){
-      setSectionList(courseStore?.sections)
-      setCurrentChapter(courseStore?.sections[0]?.chapters[0])
-    }
-  },[courseStore])
-
   useEffect(() => {
     if (circleId){
       dispatch(getCourse(circleId as string))
     }
   },[circleId])
 
-  const createCourse = () =>{
+  const dispatch = useDispatch()
+  const [sectionList, setSectionList] = useState<Section[]>([])
+  const [currentChapter, setCurrentChapter] = useState<Chapter>()
+  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
+
+  const courseStore = useSelector((state) => state.course)
+
+  useEffect(() => {
+    if(courseStore?.sections){
+      setSectionList(courseStore?.sections)
+      setCurrentChapter(courseStore?.sections[0]?.chapters[0])
+      const indexOfLastSection = courseStore.sections.length - 1
+      const lastSection = courseStore.sections[indexOfLastSection]
+      setIsLastSectionValidated(!!lastSection?.isValidated)
+    }
+  },[courseStore])
+
+  const createCourse = () => {
     dispatch(CreateACourse({groupId: circleId} as CreateCourseData))
     // dispatch(addSection())
   }
 
   const addAsection = () =>{
     dispatch(apiCreateASection(courseStore.id as string))
-  }
-
-  const updateSection = () =>{
-    console.log("update sections...")
   }
 
   if (!circleId || !courseStore) return <>loading...</>
