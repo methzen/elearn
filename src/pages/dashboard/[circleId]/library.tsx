@@ -59,12 +59,10 @@ export default function Library() {
   useEffect(() => {
     if(courseStore.currentChapter && courseStore.currentSection){
       setCurrentChapter(undefined)
-      setTimeout(()=>{
-        const currentSec = courseStore.sections.find(sec=>sec.id===courseStore.currentSection)
-        const currentChap = currentSec?.chapters.find(chap=>chap.id===courseStore.currentChapter)
-        setCurrentChapter(currentChap)
-      }, 1000)
-    }
+      const currentSec = courseStore.sections.find(sec=>sec.id===courseStore.currentSection)
+      const currentChap = currentSec?.chapters.find(chap=>chap.id===courseStore.currentChapter)
+      setCurrentChapter(currentChap)
+  }
   },[courseStore.currentChapter, courseStore.currentSection])
 
   const createCourse = () => {
@@ -128,7 +126,7 @@ export default function Library() {
               />}
           </Grid>
           <Grid item xs={12} md={6}>
-          <Suspense key={(Math.random() + 1).toString(36).substring(7)} fallback={<>loading...</>}>
+          <Suspense fallback={<>loading...</>}>
            {currentChapter && <Video chapter={currentChapter as Chapter}/>}
           </Suspense>
           </Grid>

@@ -11,6 +11,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {Chapter, Videodata } from '../@types/course';
 import Markdown from '../components/markdown/Markdown';
 import { AttachmentDisplayer } from './AttachmentDisplayer';
+import { Suspense } from 'react'
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
@@ -40,16 +41,15 @@ export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
 
   return (
     <Card >
-      {!!data && 
-        <CardMedia component="iframe" src={data.url} height="500" width={"100%"} 
-        />
-        // <CldVideoPlayer
-        //     id={chapter.id}
-        //     width="1920"
-        //     height="1080"
-        //     src={data.public_id as string}
-        //     logo={false}
-        //     />
+      {!!data &&
+          <CardMedia
+            component="video"
+            width="100%"
+            src={data.url}
+            image={data.url}
+            autoPlay
+            controls
+          />
       }
       <CardContent>
         <Typography variant="body2" color="text.secondary">
