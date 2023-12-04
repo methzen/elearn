@@ -1,6 +1,5 @@
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
-import { useTheme } from '@mui/material/styles';
 import {
   Card,
   Stack,
@@ -29,17 +28,6 @@ import {
 } from '../redux/slices/course';
 import Label from 'src/components/label/Label';
 // ----------------------------------------------------------------------
-
-type ItemProps = {
-  id: string;
-  name: string;
-  description: string;
-  avatar: string;
-  rating: number;
-  postedAt: Date | string | number;
-  tags: string[];
-};
-
 interface ChangeNameProps {
   section: Section;
   edit?: boolean
@@ -72,7 +60,7 @@ const SectionUpdate=({section, edit}:ChangeNameProps) => {
       }))
     }
 
-    const label = edit? "Edit Section": "Change Section Name"
+    const label = edit? "Edit section": "Change section same"
     return(
       <>
         <ChangeSectionNameDialog
@@ -93,29 +81,23 @@ const SectionUpdate=({section, edit}:ChangeNameProps) => {
 
 interface CourseSection extends CardProps {
   section: Section;
+  isCurrentSection?: boolean
+  currentChapter?: string
 }
 
-export type ChapterProps = {
-  index: number;
-  chapter: ChapterType;
-  handleAddAttachment: (index:number)=>void;
-  handleAddArticle: (index:number)=>void;
-  handleAddVideo: (index:number)=>void;
-  onDelete: (index:number)=>void;
-};
+export function CourseSection({ section, isCurrentSection, currentChapter, ...other }: CourseSection) {
 
-
-export function CourseSection({ section, ...other }: CourseSection) {
-  const theme = useTheme();
   const dispatch = useDispatch()
   const [expanded, setExpanded] = useState(false);
+  const [chapterIsSelected, selectChapter ] = useState(false)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   const [chapterList, setChapterList] = useState<ChapterType[]>([])
-  useEffect(()=> {
+
+  useEffect(() => {
     setChapterList(section.chapters)
   }, [section])
 
@@ -132,6 +114,7 @@ export function CourseSection({ section, ...other }: CourseSection) {
     setAddChapterModal(false)
     dispatch(apiAddChapter({name : addedChapterName, sectionId: section.id} as chapterData))
   }
+
 
   return (
     <Card {...other} sx={{mb:2}}>
@@ -168,47 +151,50 @@ export function CourseSection({ section, ...other }: CourseSection) {
       </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-          {
-        chapterList.map((chapter, index) => (
-          <Chapter key={index} chapter={chapter} courseId={section.course as string}/>
-        ))
-      }
-       {!section.isValidated && 
-       <SectionPanel
-            title="Add a Chapter"
-            onOpen={()=> setAddChapterModal(true)}
-            sx={{ ml: 3, mt: 2 }}
-        />}
-      <Stack
-        direction="row"
-        justifyContent={"space-between"}
-        gap={2}
-      >
-        {
-          section.isValidated?
-          <SectionUpdate section={section} edit/>
-          :
-          <>
-          <Button
-            color="success"
-            variant="contained"
-            startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
-            onClick={() => dispatch(apiUpdateSection({sectionId:section.id, isValidated:true}))}
-          >
-          Save
-        </Button>
+              {
+              chapterList.map((chapter, index) => (
+                <Chapter 
+                    key={index} 
+                    chapter={chapter} 
+                    courseId={section.course as string} 
+                    isSelected={currentChapter===chapter.id}/>
+              ))
+              }
+              {!section.isValidated && 
+              <SectionPanel
+                  title="Add a Chapter"
+                  onOpen={()=> setAddChapterModal(true)}
+                  sx={{ ml: 3, mt: 2 }}
+              />}
+            <Stack
+                direction="row"
+                justifyContent="space-between"
+              >
+              {
+                section.isValidated?
+                <SectionUpdate section={section} edit/>
+                :
+                <>
+                <Button
+                  color="success"
+                  variant="contained"
+                  startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
+                  onClick={() => dispatch(apiUpdateSection({sectionId:section.id, isValidated:true}))}
+                >
+                Save
+              </Button>
 
-        <Button
-          color="error"
-          variant="contained"
-          startIcon={<Iconify icon="eva:close-circle-fill" />}
-          onClick={() => console.log('REJECT')}
-        >
-          Delete
-        </Button>
-          </>
-        }
-      </Stack>
+              <Button
+                color="error"
+                variant="contained"
+                startIcon={<Iconify icon="eva:close-circle-fill" />}
+                onClick={() => console.log('REJECT')}
+              >
+                Delete
+              </Button>
+                </>
+              }
+            </Stack>
           </CardContent>
       </Collapse>
     </Card>

@@ -34,6 +34,7 @@ import {
   apiAddAttachment,
   attachmentData,
   apiDeleteChapter,
+  setCurrentChapter,
 } from '../redux/slices/course';
 import Editor from '../components/editor';
 import Markdown from '../components/markdown/Markdown';
@@ -78,6 +79,7 @@ interface ChapterProps extends PaperProps {
     index?: number;
     chapter: ChapterType;
     courseId: string;
+    isSelected: boolean;
     handleAddAttachment?: (index:number)=>void;
     handleAddArticle?: (index:number)=>void;
     onDelete?: (index:number)=>void;
@@ -86,6 +88,7 @@ interface ChapterProps extends PaperProps {
 export default function ChapterComponent({
     chapter,
     courseId,
+    isSelected,
     sx, ...other }: ChapterProps) {
 
   const isDesktop = useResponsive('up', 'sm');
@@ -121,7 +124,6 @@ export default function ChapterComponent({
 
   const handleSubmitAttachment=(data:AttachmentProps)=>{
     setOpenAddAttachmentDialog(false)
-    console.log("attachment", data)
     const InputData: attachmentData ={
       title: data.name,
       chapterId: chapter.id as string,
@@ -189,6 +191,7 @@ export default function ChapterComponent({
       />
     }
       <Stack
+        onClick={()=>dispatch(setCurrentChapter({chapterId: chapter.id, sectionId: chapter.section}))}
         direction={'row'}
         alignItems={'center'}
         sx={{
@@ -196,7 +199,7 @@ export default function ChapterComponent({
           borderRadius: 1,
           margin:"3px 2px",
           position: 'relative',
-          border: (theme) => `solid 1px ${theme.palette.divider}`,
+          border: (theme) => `solid 1px ${ isSelected? "green" : theme.palette.divider}`,
           ...sx,
         }}
         {...other}
@@ -209,7 +212,7 @@ export default function ChapterComponent({
             alignItems:"center"
           }}
         >
-          <Typography variant="subtitle2">
+          <Typography variant="subtitle2" sx={{cursor:"pointer"}} >
             {chapter.name}
           </Typography>
 

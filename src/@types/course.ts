@@ -26,7 +26,7 @@ export interface Videodata {
     secure_url?: string;
     path?: string;
     original_filename?: string;
-    public_id?: string;
+    public_id: string;
 }
 
 export interface Video {
@@ -40,6 +40,7 @@ export interface Chapter extends Base {
     content: string | null;
     attachments: Attachment[];
     section?: string
+    isSelected?: boolean
 }
 
 export interface Section extends Base {

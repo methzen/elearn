@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
-// import CardMedia from '@mui/material/CardMedia';
+import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Chapter } from '../@types/course';
-import { CldVideoPlayer } from 'next-cloudinary';
+import {Chapter, Videodata } from '../@types/course';
 import Markdown from '../components/markdown/Markdown';
 import { AttachmentDisplayer } from './AttachmentDisplayer';
 interface ExpandMoreProps extends IconButtonProps {
@@ -33,6 +32,7 @@ interface ChapterDisplayProps {
 
 export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
   const [expanded, setExpanded] = React.useState(false);
+  const data : Videodata | undefined = chapter?.video?.data
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -40,23 +40,20 @@ export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
 
   return (
     <Card >
-      {/* <CardMedia
-        component="video"
-        width="100%"
-        src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
-        image="https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
-        autoPlay
-        controls
-      /> */}
-      { chapter.video?.data.public_id && <CldVideoPlayer
-            width="1920"
-            height="1080"
-            src={chapter.video?.data.public_id as string}
-            logo={false}
-        />}
+      {!!data && 
+        <CardMedia component="iframe" src={data.url} height="500" width={"100%"} 
+        />
+        // <CldVideoPlayer
+        //     id={chapter.id}
+        //     width="1920"
+        //     height="1080"
+        //     src={data.public_id as string}
+        //     logo={false}
+        //     />
+      }
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-        {chapter.description}
+        {chapter?.description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -74,7 +71,7 @@ export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
             {chapter?.attachments.map(
               (Attachment) => <AttachmentDisplayer key={Attachment.id} file={Attachment} />
             )}
-          {chapter.content 
+          {chapter?.content 
             &&
             <Markdown
               key={chapter.id}

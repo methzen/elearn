@@ -26,6 +26,8 @@ interface CourseStore extends Course {
   error: boolean;
   editable?: boolean
   ownershipLevel?: string
+  currentSection?: string
+  currentChapter?: string
 }
 
 const initialState: CourseStore = {
@@ -94,20 +96,15 @@ const slice = createSlice({
       state.sections[index] = action.payload
     },
 
-    // addChapter(state:CourseStore, {type, payload}:{type:any, payload: Chapter}) {
-    //   const section = state.sections.find(section => section.id === payload.section) as Section
-    //   const index = state.sections.indexOf(section!)
-    //   section.chapters.push({
-    //     id: payload.id,
-    //     name: payload.name,
-    //     attachments: payload.attachments,
-    //     content: payload.content,
-    //     created: payload.created,
-    //     description: payload.description,
-    //     video: payload.video
-    //   })
-    //   state.sections[index] = {...section}
-    // },
+    setCurrentSection(state, action){
+    },
+
+    setCurrentChapter(state, action){
+      return {...state, 
+        currentChapter: action.payload.chapterId,
+        currentSection: action.payload.sectionId
+      }
+    },
 
     addAttachment(state, action){
       const attachment: Attachment = action.payload
@@ -173,6 +170,7 @@ export const {
   updateChapter,
   initalizeCourse,
   updateState,
+  setCurrentChapter,
 } = slice.actions;
 
 // ----------------------------------------------------------------------
