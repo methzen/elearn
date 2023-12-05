@@ -28,7 +28,7 @@ export default function SectionPanel({
   return (
     <Stack direction="row" sx={{ mb: 3, ...sx }} {...other}>
         <Stack direction="row" alignItems="center" spacing={1} flexGrow={1}>
-          <Typography variant="h6"> {title} </Typography>
+          <Typography> {title} </Typography>
           <IconButton
             size="small"
             color="success"

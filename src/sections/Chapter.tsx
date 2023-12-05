@@ -94,7 +94,6 @@ export default function ChapterComponent({
   const isDesktop = useResponsive('up', 'sm');
 
   const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
-  const [openViewer, setOpenViewer] = useState(false)
   const [openContentTextDialog, setOpenContentTextDialog] = useState(false)
   const [displayChatperContentText, setDisplayChapterContentText] = useState(false)
   const [openAddAttachmentDialog, setOpenAddAttachmentDialog] = useState(false)
@@ -142,24 +141,9 @@ export default function ChapterComponent({
     setOpenPopover(null);
   };
 
-  const handleViewVideo = () => {
-    setOpenViewer(true)
-  }
-
-  const handleViewArticle = () => {
-    if(!chapter.content){
-      return
-    }
-    setDisplayChapterContentText(true)
-    setOpenContentTextDialog(true)
-  }
 
   const handleEditArticle = () =>{
     setDisplayChapterContentText(false)
-  }
-
-  const handleViewAttachment = () => {
-    console.log('user want to display attachment')
   }
 
   return (
@@ -170,13 +154,6 @@ export default function ChapterComponent({
         open={openAddAttachmentDialog}
         cancel={()=>setOpenAddAttachmentDialog(false)}
         submitData={handleSubmitAttachment}
-      />
-    }
-    {openViewer &&
-      <VideoViewer
-          open={openViewer}
-          public_id={chapter.video?.data.public_id as string}
-          close={() => setOpenViewer(false)}
       />
     }
     {
@@ -191,28 +168,28 @@ export default function ChapterComponent({
       />
     }
       <Stack
-        onClick={()=>dispatch(setCurrentChapter({chapterId: chapter.id, sectionId: chapter.section}))}
         direction={'row'}
         alignItems={'center'}
         sx={{
-          px: 1.5,
-          borderRadius: 1,
-          margin:"3px 2px",
           position: 'relative',
-          border: (theme) => `solid 1px ${ isSelected? "green" : theme.palette.divider}`,
           ...sx,
         }}
         {...other}
       >
         <Stack
+          onClick={()=>dispatch(setCurrentChapter({chapterId: chapter.id, sectionId: chapter.section}))}
           direction="row"
           sx={{
+            margin:"3px 1px",
+            px: 1.5,
+            borderRadius: 1,
             width: 1,
             justifyContent:"space-between",
-            alignItems:"center"
+            alignItems:"center",
+            border: (theme) => `solid 1px ${ isSelected? "green" : theme.palette.divider}`,
           }}
         >
-          <Typography variant="subtitle2" sx={{cursor:"pointer"}} >
+          <Typography variant="subtitle2" sx={{cursor:"pointer", py:1.5}} >
             {chapter.name}
           </Typography>
 
@@ -220,25 +197,25 @@ export default function ChapterComponent({
             spacing={0.75}
             direction="row"
             alignItems="center"
-            sx={{ typography: 'caption', color: 'text.disabled', mt: 0.5 }}
+            sx={{ typography: 'caption', color: 'text.disabled'}}
           >
             {
             chapter.video && 
-              <IconButton onClick={handleViewVideo} >
+              <IconButton >
                 <Iconify icon="mdi:youtube" />
               </IconButton>
             }
 
             {
               chapter.content && 
-              <IconButton onClick={handleViewArticle} >
+              <IconButton>
                 <Iconify icon="mdi:text-box-outline" />
               </IconButton>
             }
 
             {
               chapter.attachments.length ?
-              <IconButton onClick={handleViewAttachment}>
+              <IconButton>
                 <Iconify icon="mdi:file-document" />
               </IconButton>: null
             }
@@ -327,31 +304,6 @@ export default function ChapterComponent({
       </MenuPopover>
     </>
   );
-}
-
-
-export function VideoViewer({ open, public_id, close } : { open: boolean, public_id: string, close: () => void;}) {
-  return (
-    <>
-    <Dialog fullWidth maxWidth="sm" open={open} onClose={close}  sx={{mt : -70}}>
-      <DialogContent dividers sx={{ pt: 5, pb: 0, border: 'none' }}>
-        <CldVideoPlayer
-            width="1920"
-            height="1080"
-            src={public_id}
-            logo={false}
-        />
-      </DialogContent>
-      <DialogActions>
-          <Stack direction="row" justifyContent="flex-end" flexGrow={1}>
-            <Button variant="soft" onClick={close}>
-              Close
-            </Button>
-          </Stack>
-      </DialogActions>
-    </Dialog>
-    </>
-  )
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({

@@ -164,7 +164,7 @@ export function CourseSection({ section, isCurrentSection, currentChapter, ...ot
               <SectionPanel
                   title="Add a Chapter"
                   onOpen={()=> setAddChapterModal(true)}
-                  sx={{ ml: 3, mt: 2 }}
+                  sx={{ ml: 1, mt: 3 }}
               />}
             <Stack
                 direction="row"
