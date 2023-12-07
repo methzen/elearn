@@ -80,6 +80,7 @@ interface ChapterProps extends PaperProps {
     chapter: ChapterType;
     courseId: string;
     isSelected: boolean;
+    readMode?: boolean;
     handleAddAttachment?: (index:number)=>void;
     handleAddArticle?: (index:number)=>void;
     onDelete?: (index:number)=>void;
@@ -89,6 +90,7 @@ export default function ChapterComponent({
     chapter,
     courseId,
     isSelected,
+    readMode=true,
     sx, ...other }: ChapterProps) {
 
   const isDesktop = useResponsive('up', 'sm');
@@ -146,6 +148,11 @@ export default function ChapterComponent({
     setDisplayChapterContentText(false)
   }
 
+  if (readMode) return <ChapterOnReadOnly 
+            chapter={chapter}
+            courseId={courseId}
+            isSelected={isSelected}
+  />
   return (
     <>
     {
@@ -448,4 +455,72 @@ function AddAttachmentDialog({open, cancel, submitData}: {open: boolean, cancel:
       </Paper>
       </BootstrapDialog>
   );
+}
+
+function ChapterOnReadOnly({
+  chapter,
+  courseId,
+  isSelected,
+  sx, ...other }: ChapterProps) {
+
+const isDesktop = useResponsive('up', 'sm');
+
+const dispatch = useDispatch()
+return (
+    <Stack
+      direction={'row'}
+      alignItems={'center'}
+      sx={{
+        position: 'relative',
+        ...sx,
+      }}
+      {...other}
+    >
+      <Stack
+        onClick={()=>dispatch(setCurrentChapter({chapterId: chapter.id, sectionId: chapter.section}))}
+        direction="row"
+        sx={{
+          margin:"3px 1px",
+          px: 1.5,
+          borderRadius: 1,
+          width: 1,
+          justifyContent:"space-between",
+          alignItems:"center",
+          border: (theme) => `solid 1px ${ isSelected? "green" : theme.palette.divider}`,
+        }}
+      >
+        <Typography variant="subtitle2" sx={{cursor:"pointer", py:1.5}} >
+          {chapter.name}
+        </Typography>
+
+        <Stack
+          spacing={0.75}
+          direction="row"
+          alignItems="center"
+          sx={{ typography: 'caption', color: 'text.disabled'}}
+        >
+          {
+          chapter.video && 
+            <IconButton >
+              <Iconify icon="mdi:youtube" />
+            </IconButton>
+          }
+
+          {
+            chapter.content && 
+            <IconButton>
+              <Iconify icon="mdi:text-box-outline" />
+            </IconButton>
+          }
+
+          {
+            chapter.attachments.length ?
+            <IconButton>
+              <Iconify icon="mdi:file-document" />
+            </IconButton>: null
+          }
+        </Stack>
+      </Stack>
+    </Stack>
+);
 }

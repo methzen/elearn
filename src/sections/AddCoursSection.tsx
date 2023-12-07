@@ -25,6 +25,7 @@ import {
   apiAddChapter,
   chapterData,
   apiUpdateSection,
+  setCurrentChapter,
 } from '../redux/slices/course';
 import Label from 'src/components/label/Label';
 // ----------------------------------------------------------------------
@@ -83,13 +84,13 @@ interface CourseSection extends CardProps {
   section: Section;
   isCurrentSection?: boolean
   currentChapter?: string
+  chapterList?: ChapterType[]
+  readMode?: boolean;
 }
 
-export function CourseSection({ section, isCurrentSection, currentChapter, ...other }: CourseSection) {
-
+export function CourseSection({ section, isCurrentSection, currentChapter, readMode,...other }: CourseSection) {
   const dispatch = useDispatch()
   const [expanded, setExpanded] = useState(false);
-  const [chapterIsSelected, selectChapter ] = useState(false)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -115,6 +116,12 @@ export function CourseSection({ section, isCurrentSection, currentChapter, ...ot
     dispatch(apiAddChapter({name : addedChapterName, sectionId: section.id} as chapterData))
   }
 
+  if(readMode) return <SectionReader 
+    section={section}
+    chapterList={chapterList}
+    currentChapter={currentChapter}
+    isCurrentSection={isCurrentSection}
+  />
 
   return (
     <Card {...other} sx={{mb:2}}>
@@ -201,3 +208,61 @@ export function CourseSection({ section, isCurrentSection, currentChapter, ...ot
   );
 }
 
+
+// //////////////////////////////////////////////////////////////////////////////////
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import {ExpandMore as MUIExpandMore} from '@mui/icons-material';
+
+export function SectionReader({ 
+  section,
+  isCurrentSection,
+  currentChapter,
+  chapterList
+}: CourseSection
+) {
+  const dispatch = useDispatch()
+  const [open, setOpen] = useState(!!isCurrentSection);
+  return (
+    <List
+      sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+    >
+      <ListItemButton onClick={() => setOpen(!open)}>
+        <ListItemText 
+          primaryTypographyProps={{
+            fontSize: 22,
+            color: 'primary.main',
+            fontWeight: 'bold',
+          }}
+          primary={section.name} sx={{ }}/>
+        {open ? <ExpandLess /> : <MUIExpandMore />}
+      </ListItemButton>
+  
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {
+            chapterList?.map(
+              chapter =>
+              <ListItemButton sx={{ pl: 4 }} 
+                  key={chapter.id} 
+                  selected={currentChapter === chapter.id}
+                  onClick={(event) => dispatch(setCurrentChapter({chapterId: chapter.id, sectionId: section.id}))}
+                  >
+              <ListItemText 
+                  primary={chapter.name} sx={{ fontWeight: "bold" }}
+                  primaryTypographyProps={{
+                    fontSize: 17,
+                  }}    
+              />
+              </ListItemButton>
+            )
+          }
+        </List>
+      </Collapse>
+    </List>
+  );
+}
