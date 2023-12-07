@@ -105,6 +105,24 @@ export async function updateSectionApi(data: sectionData){
   }
 }
 
+export async function editOrSaveCourseApi({ groupId, courseId, forSave } : {
+  groupId: string; courseId: string; forSave: boolean;
+}){
+  const token = localStorage.getItem('x-auth-token')
+  const baseUrl = forSave? '/groups/course/save' : '/groups/course/edit'
+  try{
+    const response = await axios.put(`${baseUrl}?groupId=${groupId}&courseId=${courseId}`, {}, {
+      headers: {
+        "x-auth-token" : token,
+        'Content-Type': 'application/json'
+      }
+    })
+      return response.data
+  }catch(e){
+    throw (e);
+  }
+}
+
 export type contentData = {
     title?: string;
     chapterId: string;

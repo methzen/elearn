@@ -16,7 +16,8 @@ import {
   sectionData,
   videoData,
   updateSectionApi,
-  deleteChapterApi
+  deleteChapterApi,
+  editOrSaveCourseApi,
 } from "../../api/courseApi"
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
@@ -25,7 +26,6 @@ interface CourseStore extends Course {
   isLoading: boolean;
   error: boolean;
   editable?: boolean
-  ownershipLevel?: string
   currentSection?: string
   currentChapter?: string
 }
@@ -38,6 +38,7 @@ const initialState: CourseStore = {
   error: false,
   sections: [],
   editable: false,
+  isSaved: undefined
 };
 
 const slice = createSlice({
@@ -223,6 +224,23 @@ export function apiUpdateSection(inputData:sectionData){
     dispatch(startLoading());
     try {
       const data = await updateSectionApi(inputData);
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
+
+
+export function apiEditOrSaveCourse(inputData : {
+  groupId: string; courseId: string; forSave: boolean;
+}){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await editOrSaveCourseApi(inputData);
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {

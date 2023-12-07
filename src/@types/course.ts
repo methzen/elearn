@@ -49,9 +49,19 @@ export interface Section extends Base {
     course?: string;
 }
 
+type ownershipLevel = "admin" | "member" | "moderator"
+
+export enum CourseOwnerShip {
+    admin = "admin",
+    member = "member",
+    moderator = "moderator"
+}
+
 export interface Course extends Base {
     creatorId?: string;
     groupId?: string;
     sections: Section[];
+    isSaved: boolean | undefined;
+    ownershipLevel?: ownershipLevel;
 }
 

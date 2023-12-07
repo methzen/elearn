@@ -164,7 +164,9 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readM
                     key={index} 
                     chapter={chapter} 
                     courseId={section.course as string} 
-                    isSelected={currentChapter===chapter.id}/>
+                    isSelected={currentChapter===chapter.id}
+                    readMode={readMode}
+                />
               ))
               }
               {!section.isValidated && 
