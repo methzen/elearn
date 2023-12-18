@@ -4,10 +4,29 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
+type Recurring = "month" | "year"
 
-export default function PaymentSummary({ sx, ...other }: BoxProps) {
+enum RecurringString {
+  yearly = "year",
+  monthly = "month"
+}
+
+type Price = {
+  recurring: Recurring
+  amount: number
+  id: string
+}
+
+interface PaymentSummuryProps extends BoxProps{
+  handleChange: () =>void;
+  price: Price | undefined;
+  selection: boolean
+}
+export default function PaymentSummary({ handleChange,  price, selection, sx, ...other}: PaymentSummuryProps) {
+
   return (
     <Box
       sx={{
@@ -28,23 +47,27 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
             Subscription
           </Typography>
 
-          <Label color="error">PREMIUM</Label>
+          <Label color="success">PREMIUM</Label>
         </Stack>
 
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Billed Monthly
+            {`Billed ${price?.recurring}ly`}
           </Typography>
-          <Switch defaultChecked />
+          <Switch
+            checked={selection}
+            onChange={handleChange}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
         </Stack>
 
         <Stack spacing={1} direction="row" justifyContent="flex-end">
           <Typography variant="h5">$</Typography>
 
-          <Typography variant="h2">9.99</Typography>
+          <Typography variant="h2">{price?.amount && price?.amount/100}</Typography>
 
           <Typography component="span" sx={{ mb: 1, alignSelf: 'center', color: 'text.secondary' }}>
-            /mo
+          {`/${price?.recurring}`}
           </Typography>
         </Stack>
 
@@ -63,9 +86,9 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
         * Plus applicable taxes
       </Typography>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" sx={{ mt: 5, mb: 3 }}>
+      {/* <LoadingButton fullWidth size="large" type="submit" variant="contained" sx={{ mt: 5, mb: 3 }}>
         Upgrade My Plan
-      </LoadingButton>
+      </LoadingButton> */}
 
       <Stack alignItems="center" spacing={1}>
         <Stack direction="row" alignItems="center" spacing={1}>

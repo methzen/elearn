@@ -26,6 +26,8 @@ import ProgressBar from '../components/progress-bar';
 import SnackbarProvider from '../components/snackbar';
 import { MotionLazyContainer } from '../components/animate';
 import { ThemeSettings, SettingsProvider } from '../components/settings';
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
 
 // Check our docs
 // https://docs.minimals.cc/authentication/ts-version
@@ -65,7 +67,9 @@ export default function MyApp(props: MyAppProps) {
                 <ThemeLocalization>
                   <SnackbarProvider>
                     <ProgressBar />
+                    <Elements stripe={loadStripe(process.env.STRIPE_PUBLIC_KEY as string)}>
                     {getLayout(<Component {...pageProps} />)}
+                    </Elements>
                   </SnackbarProvider>
                 </ThemeLocalization>
               </ThemeSettings>

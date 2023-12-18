@@ -37,10 +37,10 @@ export const defaultValues = {
 };
 
 interface CreateForm {
-  FormSchema : any
+  FormSchema: any
   nameLabel: string
   editorLabel: string
-  submitData : (data : FormValuesProps) => void;
+  submitData: (data : FormValuesProps) => void;
 }
 
 export default function CreateAgroup(

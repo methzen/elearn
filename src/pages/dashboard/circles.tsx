@@ -25,6 +25,7 @@ import useResponsive from '../../hooks/useResponsive';
 import getAllGroupsByPage from '../../api/getAllGroupsByPage';
 import { useSnackbar } from '../../components/snackbar';
 import useSWR from 'swr';
+import { useRouter } from 'next/router';
 // ----------------------------------------------------------------------
 type FormValuesProps = {
   name: string;
@@ -100,6 +101,7 @@ const fetcher = (url: string) => getAllGroupsByPage(url);
 
 
 export default function PageTwo() {
+  const {push} = useRouter()
   const { enqueueSnackbar } = useSnackbar();
   const { themeStretch } = useSettingsContext();
   const { user } = useAuthContext();
@@ -108,7 +110,8 @@ export default function PageTwo() {
   const { data , error, mutate } = useSWR(`/groups/get/all?page=${page}`, fetcher)
 
   const handleOpenModal = () =>{
-    setOpenModal(true)
+    push('/dashboard/prices')
+    // setOpenModal(true)
   }
   const cancelCourseCreation = () =>{
     setOpenModal(false)

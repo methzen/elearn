@@ -85,6 +85,7 @@ export default function MyProfilePage() {
   useEffect(()=>{
     const getData = async () => {
       const response = await getUserData(user?.id as string)
+      console.log('user data', response)
       if (response){
         setCurrentUser({...response, id:user?.id})
       }

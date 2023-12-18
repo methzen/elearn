@@ -14,6 +14,20 @@ export const PATH_AUTH = {
   register: path(ROOTS_AUTH, '/register'),
 };
 
+export const PATH_PAGE = {
+  comingSoon: '/coming-soon',
+  maintenance: '/maintenance',
+  pricing: '/pricing',
+  payment: '/payment',
+  about: '/about-us',
+  contact: '/contact-us',
+  faqs: '/faqs',
+  page403: '/403',
+  page404: '/404',
+  page500: '/500',
+  components: '/components',
+};
+
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   circles: path(ROOTS_DASHBOARD, '/circles'),
@@ -24,6 +38,7 @@ export const PATH_DASHBOARD = {
     community: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/community`),
   },
   user: {
+    root: path(ROOTS_DASHBOARD, `/user`),
     myprofile: path(ROOTS_DASHBOARD, `/user/myprofile`),
     // profile: (name: string) => path(ROOTS_DASHBOARD, `/user/${name}/profile`),
   },
