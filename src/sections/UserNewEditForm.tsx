@@ -1,28 +1,20 @@
 import * as Yup from 'yup';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 // next
-import { useRouter } from 'next/router';
-// form
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@mui/material';
+import { Box, Card, Grid, Stack, Switch, Typography } from '@mui/material';
 // utils
 import { fData } from '../utils/formatNumber';
-// routes
-import { PATH_DASHBOARD } from '../routes/paths';
 // @types
 import { IUserAccountGeneral } from '../@types/user';
 // assets
-import { countries } from '../assets/data';
 // components
-import Label from '../components/label';
 import { CustomFile } from '../components/upload';
 import { useSnackbar } from '../components/snackbar';
 import FormProvider, {
-  RHFSelect,
-  RHFSwitch,
   RHFTextField,
   RHFUploadAvatar,
 } from '../components/hook-form';
@@ -39,17 +31,7 @@ type Props = {
   currentUser: IUserAccountGeneral | null;
 };
 
-function createFile(fileContent: any) {
-  const file = new FormData()
-  file.append("file", fileContent)
-  console.log("createFile", file, fileContent)
-  return file
-}
-
-
 export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
-  const { push } = useRouter();
-  console.log("snackbar", useSnackbar())
   const { enqueueSnackbar } = useSnackbar();
 
   const [fileData, setFileData] = useState<any>(null)
@@ -115,8 +97,6 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
     try {
         await updateUserData(data, fileData);
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      // push(PATH_DASHBOARD.user.profile(currentUser?.id as string));
-      // console.log('DATA', inputData);
     } catch (error) {
       console.error(error);
     }
@@ -143,15 +123,6 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {/* {isEdit && (
-              <Label
-                color={values.status === 'active' ? 'success' : 'error'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )} */}
-
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
                 name="photoURL"

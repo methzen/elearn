@@ -7,5 +7,5 @@ export { default as ProfilePostProfileInput } from './home/ProfilePostInput';
 
 export { default as ProfileCover } from './ProfileCover';
 export { default as ProfileFriends } from './ProfileFriends';
-export { default as ProfileGallery } from './ProfileGallery';
+export { default as ProfileCircles } from './ProfileCircles';
 export { default as ProfileFollowers } from './ProfileFollowers';

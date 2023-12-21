@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-type Course={
+export type Circle = {
     name: string
     id: string
     imageUrl: string
@@ -16,7 +16,7 @@ type Course={
     ownerShipLevel: string
 }
 
-export default function CourseCard({id, name, imageUrl, description, ownerShipLevel}: Course) {
+export default function CourseCard({id, name, imageUrl, description, ownerShipLevel}: Circle) {
   const { push } = useRouter()
 
   const getInsideGroup = ()=>{

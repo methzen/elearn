@@ -28,7 +28,7 @@ import { useSettingsContext } from '../../../components/settings';
 import {
   Profile,
   ProfileCover,
-  ProfileGallery,
+  ProfileCircles,
 } from '../../../sections/profile';
 import {
   AccountBilling,
@@ -38,42 +38,12 @@ import {
 import UserNewEditForm from '../../../sections/UserNewEditForm';
 import { useRouter } from 'next/router';
 import getUserData from 'src/api/getUserData';
-
-export type IUserAccountGeneral = {
-  id: string;
-  photoURL: string;
-  cover: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  phoneNumber?: string;
-  created: Date | string | number;
-  karma: number | null;
-  about: string;
-  showDead?: boolean;
-  address?: string;
-  state?: string;
-  country?: string;
-  city?: string;
-  zipCode?: string;
-  company?: string;
-  isVerified?: boolean;
-  status?: string;
-  job: string;
-  groups: string[];
-  contribution: number | null;
-  showPrivateUserData?: boolean;
-};
+import { IUserAccountGeneral } from 'src/@types/user';
 // ----------------------------------------------------------------------
 
 MyProfilePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 // ----------------------------------------------------------------------
-
-type props ={
-  query : any,
-}
-
 
 export default function MyProfilePage() {
   const { themeStretch } = useSettingsContext();
@@ -82,10 +52,9 @@ export default function MyProfilePage() {
   const [currentTab, setCurrentTab] = useState('profile');
   const [currentUser, setCurrentUser] = useState<IUserAccountGeneral | null>(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     const getData = async () => {
       const response = await getUserData(user?.id as string)
-      console.log('user data', response)
       if (response){
         setCurrentUser({...response, id:user?.id})
       }
@@ -104,13 +73,13 @@ export default function MyProfilePage() {
       value: 'profile',
       label: 'Profile',
       icon: <Iconify icon="ic:round-account-box" />,
-      component: <Profile info={currentUser} posts={_userFeeds} />,
+      component: <Profile info={currentUser} />,
     },
     {
-      value: 'Groups',
-      label: 'groups',
+      value: 'Circles',
+      label: 'circles',
       icon: <Iconify icon="ic:round-perm-media" />,
-      component: <ProfileGallery gallery={_userGallery} />,
+      component: <ProfileCircles />,
     },
     {
       value: 'Edit',
