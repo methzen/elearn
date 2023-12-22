@@ -19,7 +19,6 @@ import {
 } from '../../../_mock/arrays';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
-import { paramCase } from 'change-case';
 // components
 import Iconify from '../../../components/iconify';
 import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
@@ -36,7 +35,6 @@ import {
 } from '../../../sections/account';
 // sections
 import UserNewEditForm from '../../../sections/UserNewEditForm';
-import { useRouter } from 'next/router';
 import getUserData from 'src/api/getUserData';
 import { IUserAccountGeneral } from 'src/@types/user';
 // ----------------------------------------------------------------------
