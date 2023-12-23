@@ -2,20 +2,20 @@ import { useState } from 'react';
 // @mui
 import { Card, Stack, Paper, Button, Typography, IconButton } from '@mui/material';
 // @types
-import { IUserAccountBillingCreditCard } from '../../../@types/user';
 // components
 import Image from '../../../components/image';
 import Iconify from '../../../components/iconify';
 // section
 import { PaymentNewCardDialog } from '../../payment';
+import { StripePaymentMethod } from 'src/@types/stripe';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  cards: IUserAccountBillingCreditCard[];
+  paymentMethods: StripePaymentMethod[];
 };
 
-export default function AccountBillingPaymentMethod({ cards }: Props) {
+export default function AccountBillingPaymentMethod({ paymentMethods }: Props) {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -37,7 +37,7 @@ export default function AccountBillingPaymentMethod({ cards }: Props) {
               color: 'text.secondary',
             }}
           >
-            Payment Method
+            Payment Methods
           </Typography>
 
           <Button size="small" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpen}>
@@ -52,9 +52,9 @@ export default function AccountBillingPaymentMethod({ cards }: Props) {
             md: 'row',
           }}
         >
-          {cards.map((card) => (
+          {paymentMethods.map((method) => (
             <Paper
-              key={card.id}
+              key={method.id}
               variant="outlined"
               sx={{
                 p: 3,
@@ -65,14 +65,14 @@ export default function AccountBillingPaymentMethod({ cards }: Props) {
               <Image
                 alt="icon"
                 src={
-                  card.cardType === 'master_card'
+                  method.card.brand.toLowerCase() === 'mastercard'
                     ? '/assets/icons/payments/ic_mastercard.svg'
                     : '/assets/icons/payments/ic_visa.svg'
                 }
                 sx={{ mb: 1, maxWidth: 36 }}
               />
 
-              <Typography variant="subtitle2">{card.cardNumber}</Typography>
+              <Typography variant="subtitle2">{`**** **** **** ${method.card.last4}`}</Typography>
 
               <IconButton
                 sx={{

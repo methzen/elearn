@@ -58,3 +58,15 @@ export async function getCustomerInvoices(){
     })
     return response.data
 }
+
+
+export async function getCustomerPaymentMethods(){
+  const token = localStorage.getItem('x-auth-token')
+    const response =  await axios.get('/customer/payment/method', {
+      headers: {
+        "x-auth-token" : token,
+        'Content-Type': 'application/json'
+      }
+    })
+    return response.data
+}

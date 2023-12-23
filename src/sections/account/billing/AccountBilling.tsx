@@ -1,34 +1,22 @@
 // @mui
 import { Box, Grid, Card, Button, Typography, Stack, Divider } from '@mui/material';
-// @types
-import {
-  IUserAccountBillingCreditCard,
-  IUserAccountBillingAddress,
-  IUserAccountBillingInvoice,
-} from 'src/@types/user';
 //
-import AccountBillingAddressBook from './AccountBillingAddressBook';
 import AccountBillingPaymentMethod from './AccountBillingPaymentMethod';
 import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory';
 import { useEffect, useState } from 'react';
-import { cancelSubscription, getCustomerInvoices, getSubscription } from 'src/api/stripe';
-import { CustomerStripeInvoice, StripeSubscription } from 'src/@types/stripe';
+import { cancelSubscription, getCustomerInvoices, getCustomerPaymentMethods, getSubscription } from 'src/api/stripe';
+import { CustomerStripeInvoice, StripePaymentMethod, StripeSubscription } from 'src/@types/stripe';
 import Iconify from 'src/components/iconify';
 
 
 // ----------------------------------------------------------------------
 
-type Props = {
-  cards: IUserAccountBillingCreditCard[];
-  invoices?: IUserAccountBillingInvoice[];
-  addressBook: IUserAccountBillingAddress[];
-};
-
-export default function AccountBilling({ cards, addressBook }: Props) {
+export default function AccountBilling() {
   const [subscriptions, setSubscriptions] = useState<StripeSubscription[]>([])
   const [hasMorsSubs, setHasMoreSubs] = useState(false)
   const [invoices, setInvoices] = useState<CustomerStripeInvoice[]>([])
   const [hasMoreInvoice, setHasMoreInvoice] = useState(false)
+  const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
 
   useEffect(() => {
     const getData = async () => {
@@ -41,6 +29,10 @@ export default function AccountBilling({ cards, addressBook }: Props) {
       if (response){
         setInvoices(response.data)
         setHasMoreInvoice(response.has_more? true: false)
+      }
+      const res = await getCustomerPaymentMethods()
+      if(res){
+        setPaymentMethods(res.data)
       }
     };
     getData();
@@ -109,9 +101,7 @@ export default function AccountBilling({ cards, addressBook }: Props) {
                            
       </Card>
 
-          <AccountBillingPaymentMethod cards={cards} />
-
-          <AccountBillingAddressBook addressBook={addressBook} />
+          <AccountBillingPaymentMethod paymentMethods={paymentMethods} />
         </Stack>
       </Grid>
 

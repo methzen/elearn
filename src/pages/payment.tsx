@@ -51,7 +51,6 @@ export default function PaymentPage() {
   useEffect(()=>{
     const fetchPrices = async () => {
       const prices = await getGroupSubscriptionPrice();
-      console.log(prices)
       setSelectedPrice(prices.month)
       setHiddenPrice(prices.year)
     };

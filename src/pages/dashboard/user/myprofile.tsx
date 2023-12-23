@@ -7,16 +7,6 @@ import { Tab, Card, Tabs, Container, Box } from '@mui/material';
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // auth
 import { useAuthContext } from '../../../auth/useAuthContext';
-// _mock_
-import {
-  _userList,
-  _userAbout,
-  _userFeeds,
-  _userFriends,
-  _userGallery,
-  _userFollowers,
-  _userPayment, _userAddressBook, _userInvoices,
-} from '../../../_mock/arrays';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
 // components
@@ -95,13 +85,7 @@ export default function MyProfilePage() {
       value: 'billing',
       label: 'Billing',
       icon: <Iconify icon="ic:round-receipt" />,
-      component: (
-        <AccountBilling
-          cards={_userPayment}
-          addressBook={_userAddressBook}
-          invoices={_userInvoices}
-        />
-      ),
+      component: <AccountBilling/>
     },
   ];
 
@@ -160,7 +144,6 @@ export default function MyProfilePage() {
       )}
     </Container>
       }
-      
     </>
   );
 }

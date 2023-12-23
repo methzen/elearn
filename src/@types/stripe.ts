@@ -250,3 +250,51 @@ export interface CustomerStripeInvoice {
     transfer_data: any,
     webhooks_delivered_at: number
 }
+
+export type PaymentType = 'card'
+export type StripeCardBrand = 'american axpress'| 'diners club'| 'discover'| 'eftpos australia'|'mastercard'| 'unionpay'| 'visa'| 'unknown'
+export interface StripeCard {
+    brand: StripeCardBrand,
+    checks: {
+        address_line1_check: any,
+        address_postal_code_check: string,
+        cvc_check: string
+    },
+    country: string,
+    exp_month: number,
+    exp_year: number,
+    fingerprint: string,
+    funding: "credit" | any,
+    generated_from: any,
+    last4: string,
+    networks: {
+        available: string[],
+        preferred: any
+    },
+    three_d_secure_usage: {
+        supported: true
+    },
+    wallet: any
+}
+export interface StripePaymentMethod {
+    id: string,
+    billing_details: {
+        address: {
+            city: any,
+            country: any,
+            line1: any,
+            line2: any,
+            postal_code: string,
+            state: any
+        },
+        email: any,
+        name: string,
+        phone: any
+    },
+    card: StripeCard,
+    created: number,
+    customer: string,
+    livemode: false,
+    metadata: any,
+    type: PaymentType
+}
