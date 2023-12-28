@@ -65,3 +65,16 @@ export interface Course extends Base {
     ownershipLevel?: ownershipLevel;
 }
 
+export interface Plan{
+    price: number,
+    interval: "month" |"year"|"onetime"| undefined,
+    group: string
+}
+export interface Circle extends Base {
+    imageUrl: string;
+    by?: string;
+    isPaying: boolean | undefined;
+    category: string;
+    plans: Plan[]
+}
+

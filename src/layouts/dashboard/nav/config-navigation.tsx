@@ -57,9 +57,24 @@ const ICONS = {
 const GroupNav = (id:string)=> [
   {
     items: [
-      { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
-      { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
-      { title: 'Account', path: PATH_DASHBOARD.user.myprofile}
+      {
+        title: 'Circle',
+        path: PATH_DASHBOARD.group.community(id),
+        icon: ICONS.dashboard,
+        children: [
+          { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
+          { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
+          { title: 'Admin', path: PATH_DASHBOARD.group.admin(id)},
+        ],
+      },
+      {
+        title: 'Account',
+        path: PATH_DASHBOARD.user.myprofile,
+        icon: ICONS.user,
+        children: [
+          { title: 'user', path: PATH_DASHBOARD.user.myprofile}
+        ],
+      },
     ],
   },
 ];

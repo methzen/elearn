@@ -37,7 +37,7 @@ export default function MyProfilePage() {
   const { themeStretch } = useSettingsContext();
   const { user, logout } = useAuthContext()
 
-  const [currentTab, setCurrentTab] = useState('profile');
+  const [currentTab, setCurrentTab] = useState('Circles');
   const [currentUser, setCurrentUser] = useState<IUserAccountGeneral | null>(null);
 
   useEffect(() => {
@@ -58,16 +58,16 @@ export default function MyProfilePage() {
 
   const TABS = [
     {
-      value: 'profile',
+      value: 'Circles',
+      label: 'Circles',
+      icon: <Iconify icon="ic:round-perm-media" />,
+      component: <ProfileCircles />,
+    },
+    {
+      value: 'Profile',
       label: 'Profile',
       icon: <Iconify icon="ic:round-account-box" />,
       component: <Profile info={currentUser} />,
-    },
-    {
-      value: 'Circles',
-      label: 'circles',
-      icon: <Iconify icon="ic:round-perm-media" />,
-      component: <ProfileCircles />,
     },
     {
       value: 'Edit',

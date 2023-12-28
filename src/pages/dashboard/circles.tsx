@@ -26,17 +26,13 @@ import getAllGroupsByPage from '../../api/getAllGroupsByPage';
 import { useSnackbar } from '../../components/snackbar';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
+import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 // ----------------------------------------------------------------------
-type FormValuesProps = {
-  name: string;
-  editor: string;
-  singleUpload: File | null;
-};
 
 interface CreateGroupDialogProps{
   open: boolean;
   cancel: ()=> void;
-  submit: (data: FormValuesProps)=> void;
+  submit: (data: CircleFormProps)=> void;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -52,9 +48,6 @@ function CreateAGroupDialog({open, cancel}: CreateGroupDialogProps) {
 
   const isDesktop = useResponsive('up', 'sm');
   const fullWidth = isDesktop ? 700 : 400
-
-  const nameLabel = "name"
-  const editorLabel = "What is this group about ?"
   return (
       <BootstrapDialog
         onClose={cancel}
@@ -85,10 +78,9 @@ function CreateAGroupDialog({open, cancel}: CreateGroupDialogProps) {
             <Iconify icon="eva:close-fill" />
           </IconButton>
         </Stack>
+        <Divider />
         <CreateGroupForm {...{
           FormSchema, 
-          nameLabel, 
-          editorLabel, 
           submitData : createGroup
         }}  />
         <Divider />
@@ -110,14 +102,14 @@ export default function PageTwo() {
   const { data , error, mutate } = useSWR(`/groups/get/all?page=${page}`, fetcher)
 
   const handleOpenModal = () =>{
-    push('/dashboard/prices')
-    // setOpenModal(true)
+    // push('/dashboard/prices')
+    setOpenModal(true)
   }
   const cancelCourseCreation = () =>{
     setOpenModal(false)
   }
 
-  const submitGroup = async (data: FormValuesProps) => {
+  const submitGroup = async (data: CircleFormProps) => {
     try {
       setOpenModal(false)
       await createGroup(data)

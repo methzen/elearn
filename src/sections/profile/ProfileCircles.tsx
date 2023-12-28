@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 // @mui
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import getAllGroupsByPage from 'src/api/getAllGroupsByPage';
 import CourseCard, {Circle} from 'src/components/CourseCard';
 // ----------------------------------------------------------------------
@@ -21,10 +21,6 @@ export default function ProfileCircles() {
 
   return (
     <>
-      <Typography variant="h4" sx={{ my: 5 }}>
-        Your circles
-      </Typography>
-
       <Box
         gap={3}
         display="grid"

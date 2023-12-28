@@ -68,16 +68,16 @@ export default function AccountBilling() {
 
             <Typography variant="body2">
               <Box component="span" sx={{ color: 'text.secondary', mr: 0.5 }}>
-                active:
+                status:
               </Box>
-              {subscription.status!=="active"? "false": "true"}
+              {subscription.status}
             </Typography>
 
             <Typography variant="body2">
               <Box component="span" sx={{ color: 'text.secondary', mr: 0.5 }}>
-                amount:
+                price:
               </Box>
-              {`${subscription.items.data[0].plan.amount/100} per ${subscription.items.data[0].plan.interval}`}
+              {`${subscription.items.data[0].plan.amount/100}${subscription.currency==='usd'? '$': '€'} /${subscription.items.data[0].plan.interval}`}
             </Typography>
 
             <Stack direction="row" spacing={1}>

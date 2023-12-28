@@ -1,57 +1,66 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 // @mui
 import {
-  Grid,
   Box,
   Stack,
   Backdrop,
   Typography,
-  StackProps,
   CircularProgress,
+  InputAdornment,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 
 import FormProvider, {
-  RHFEditor,
   RHFUpload,
   RHFTextField,
+  RHFRadioGroup,
+  RHFSwitch,
 } from '../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
+const PAYMENT_OPTION = [
+  { label: 'Month', value: 'month' },
+  { label: 'Year', value: 'year' },
+  { label: 'One Time', value: 'OneTime' },
+];
 
-type FormValuesProps = {
+export type CircleFormProps = {
   name: string;
-  editor: string;
-  singleUpload: File | null;
-};
-
-export const defaultValues = {
-  name: '',
-  editor: '',
-  singleUpload: null,
+  description: string;
+  image: File | null;
+  isPaying: boolean;
+  price: number;
+  community:boolean;
+  plan: string
 };
 
 interface CreateForm {
+  isEdit?: boolean,
   FormSchema: any
-  nameLabel: string
-  editorLabel: string
-  submitData: (data : FormValuesProps) => void;
+  submitData: (data : CircleFormProps) => void;
 }
 
 export default function CreateAgroup(
-  { FormSchema, 
-    nameLabel, 
-    editorLabel, 
-    submitData } : CreateForm) {
-
+  { isEdit=false, FormSchema, submitData } : CreateForm) {
   const [fileData, setFileData] = useState<File | null>(null)
 
-  const methods = useForm<FormValuesProps>({
+
+  const defaultValues = useMemo(()=>({
+    name: FormSchema?.name || '',
+    description: FormSchema?.description || '',
+    image: FormSchema?.image || null,
+    isPaying: FormSchema?.isPaying || false,
+    price: FormSchema?.price || 0.0,
+    community: FormSchema?.community || true,
+    plan: FormSchema?.plan || 'month'
+  }), [FormSchema])
+
+  const methods = useForm<CircleFormProps>({
     resolver: yupResolver(FormSchema),
     defaultValues,
   });
@@ -65,18 +74,6 @@ export default function CreateAgroup(
     formState: { isSubmitting },
   } = methods;
 
-  const values = watch();
-
-  // const onSubmit = async (data: FormValuesProps) => {
-  //   try {
-  //     await submitData(data)
-  //     reset();
-  //   }catch (err) {
-  //     console.error(err);
-  //   }
-
-  // };
-
   const handleDropSingleFile = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -87,7 +84,7 @@ export default function CreateAgroup(
 
       if (newFile) {
         setFileData(file)
-        setValue('singleUpload', newFile, { shouldValidate: true });
+        setValue('image', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -115,27 +112,75 @@ export default function CreateAgroup(
           }}
         >
             <Stack spacing={2}>
-            <Block label="Select a banner">
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  Banner
+                </Typography>
                 <RHFUpload
-                  name="singleUpload"
+                  name="image"
                   maxSize={3145728}
                   onDrop={handleDropSingleFile}
-                  onDelete={() => setValue('singleUpload', null, { shouldValidate: true })}
+                  onDelete={() => setValue('image', null, { shouldValidate: true })}
                 />
-              </Block>
             </Stack>
-            <Stack spacing={2}>
-              <Block label="Give a name">
-                <RHFTextField name="name" label={nameLabel} />
-              </Block>
 
-              <Block label={editorLabel}>
-                {/* <RHFEditor simple name="editor"  showMedia={false}/> */}
-                <RHFTextField name="editor" label={nameLabel} 
+            <Stack spacing={2}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Name
+              </Typography>
+              <RHFTextField name="name" label={'Give a name'} />
+            </Stack>
+
+            <Stack spacing={2}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Give a description
+              </Typography>
+                <RHFTextField name="description" label={'What is this circle for...'} 
                 multiline
+                minRows={4}
                 maxRows={8}
                 />
-              </Block>
+            </Stack>
+
+            <Stack spacing={1} >
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Payment
+              </Typography>
+                <RHFSwitch name="isPaying" label={watch().isPaying? 'Paying Circle': 'Free circle'}/>
+            </Stack>
+
+            {watch().isPaying && <Stack spacing={1}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                    Payment Plan
+              </Typography>
+              <RHFRadioGroup row spacing={4} name="plan" options={PAYMENT_OPTION} />
+              <Stack spacing={1}>
+                  <RHFTextField
+                  name="price"
+                  label="Price"
+                  placeholder="0.00"
+                  onChange={(event) =>
+                    setValue('price', Number(event.target.value), { shouldValidate: true })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box component="span" sx={{ color: 'text.disabled' }}>
+                          $
+                        </Box>
+                      </InputAdornment>
+                    ),
+                    type: 'number',
+                  }}
+                />
+                </Stack>
+            </Stack>}
+
+            <Stack spacing={1} >
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Community
+              </Typography>
+                <RHFSwitch name="community" label="Activate" />
             </Stack>
             <Stack spacing={3}>
               <LoadingButton
@@ -145,7 +190,7 @@ export default function CreateAgroup(
                 variant="contained"
                 loading={isSubmitting}
               >
-                Create
+                {!isEdit? 'Create': 'Update'}
               </LoadingButton>
             </Stack>
           </Box>
@@ -154,27 +199,3 @@ export default function CreateAgroup(
   );
 }
 
-// ----------------------------------------------------------------------
-
-interface BlockProps extends StackProps {
-  label?: string;
-  children: React.ReactNode;
-}
-
-function Block({ label = 'RHFTextField', sx, children }: BlockProps) {
-  return (
-    <Stack spacing={1} sx={{ width: 1, ...sx }}>
-      <Typography
-        variant="caption"
-        sx={{
-          textAlign: 'left',
-          fontStyle: 'italic',
-          color: 'text.disabled',
-        }}
-      >
-        {label}
-      </Typography>
-      {children}
-    </Stack>
-  );
-}
