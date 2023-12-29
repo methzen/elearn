@@ -7,13 +7,14 @@ import Image from 'next/image'
 
 type Props={
     name: string
-    id: string
+    id?: string
     imageUrl: string
     description: string
-    ownerShipLevel: number
+    ownerShipLevel?: number
 }
 
 export default function CourseCardAside({name, description, imageUrl}: Props) {
+  console.log('imageUrl', imageUrl)
   return (
     <Card sx={{ marginTop: 2}}>
       <CardMedia

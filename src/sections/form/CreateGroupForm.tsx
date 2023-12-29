@@ -32,7 +32,7 @@ const PAYMENT_OPTION = [
 export type CircleFormProps = {
   name: string;
   description: string;
-  image: File | null;
+  imageUrl: File | string | null;
   isPaying: boolean;
   price: number;
   community:boolean;
@@ -48,12 +48,12 @@ interface CreateForm {
 export default function CreateAgroup(
   { isEdit=false, FormSchema, submitData } : CreateForm) {
   const [fileData, setFileData] = useState<File | null>(null)
-
+  console.log('currentCircle', FormSchema)
 
   const defaultValues = useMemo(()=>({
     name: FormSchema?.name || '',
     description: FormSchema?.description || '',
-    image: FormSchema?.image || null,
+    imageUrl: FormSchema?.imageUrl || null,
     isPaying: FormSchema?.isPaying || false,
     price: FormSchema?.price || 0.0,
     community: FormSchema?.community || true,
@@ -84,7 +84,7 @@ export default function CreateAgroup(
 
       if (newFile) {
         setFileData(file)
-        setValue('image', newFile, { shouldValidate: true });
+        setValue('imageUrl', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -116,10 +116,10 @@ export default function CreateAgroup(
                   Banner
                 </Typography>
                 <RHFUpload
-                  name="image"
+                  name="imageUrl"
                   maxSize={3145728}
                   onDrop={handleDropSingleFile}
-                  onDelete={() => setValue('image', null, { shouldValidate: true })}
+                  onDelete={() => setValue('imageUrl', null, { shouldValidate: true })}
                 />
             </Stack>
 
