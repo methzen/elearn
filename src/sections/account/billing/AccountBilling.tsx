@@ -6,7 +6,6 @@ import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory';
 import { useEffect, useState } from 'react';
 import { cancelSubscription, getCustomerInvoices, getCustomerPaymentMethods, getSubscription } from 'src/api/stripe';
 import { CustomerStripeInvoice, StripePaymentMethod, StripeSubscription } from 'src/@types/stripe';
-import Iconify from 'src/components/iconify';
 
 
 // ----------------------------------------------------------------------
@@ -45,6 +44,10 @@ export default function AccountBilling() {
     }
   }
 
+  const handleReactivate = async (id:string) =>{
+    console.log('usr want to reactivate susbcription')
+  }
+
   const getMoreInvoices = async () =>{
     console.log('show more invoices to user')
   }
@@ -54,11 +57,8 @@ export default function AccountBilling() {
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
         <Card sx={{ p: 3 }}>
-          <Typography
-                    variant="overline"
-                    sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
-                  >
-                    Your subscription
+          <Typography variant="overline" sx={{ mb: 3, display: 'block', color: 'text.secondary' }}>
+            Subscriptions
           </Typography>
 
         <Stack spacing={3} divider={<Divider sx={{ borderStyle: 'dashed' }} />}>
@@ -68,31 +68,25 @@ export default function AccountBilling() {
 
             <Typography variant="body2">
               <Box component="span" sx={{ color: 'text.secondary', mr: 0.5 }}>
-                status:
+                Status:
               </Box>
               {subscription.status}
             </Typography>
 
             <Typography variant="body2">
               <Box component="span" sx={{ color: 'text.secondary', mr: 0.5 }}>
-                price:
+                Price:
               </Box>
-              {`${subscription.items.data[0].plan.amount/100}${subscription.currency==='usd'? '$': '€'} /${subscription.items.data[0].plan.interval}`}
+              {subscription.currency==='usd' && '$'}{subscription.items.data[0].plan.amount/100}{subscription.currency==='eur' && '€'} /{subscription.items.data[0].plan.interval}
             </Typography>
 
             <Stack direction="row" spacing={1}>
               <Button 
-              color="error"
+              color={subscription.status==="canceled"? "success": "error"}
               size="small"
-              startIcon={<Iconify icon="eva:trash-2-outline" />}
-              onClick={()=>handleCancel(subscription.id)}
-              disabled={subscription.status==="canceled"}
+              onClick={() => subscription.status==="canceled"? handleReactivate(subscription.id): handleCancel(subscription.id)}
               >
-                {subscription.status==="canceled"? "canceled": "cancel"}
-              </Button>
-
-              <Button size="small" startIcon={<Iconify icon="eva:edit-fill" />}>
-                Edit
+                {subscription.status==="canceled"? "Reactivate subscription": "Cancel subscription"}
               </Button>
             </Stack>
           </Stack>
