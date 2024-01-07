@@ -34,7 +34,7 @@ export default function PaymentCard({
   const [paymentIntent, setPaymentIntent] = useState<any>();
   const [isLoading, setIsLoading] = useState(false)
   const {push} = useRouter()
-  console.log('selectedPrice',selectedPrice)
+
   const handleSubmitInside = async (e:any) =>{
     e.preventDefault();
     setIsLoading(true)
@@ -44,7 +44,7 @@ export default function PaymentCard({
       return;
     }
     const {subscriptionId, clientSecret} = await createSubscription(selectedPrice.stripe_price_id, selectedPrice.group)
-    console.log('Here is your client secret', clientSecret)
+
     if (!clientSecret){
       setErrorMessage("Subscription has faild...");
       return
@@ -74,9 +74,7 @@ export default function PaymentCard({
     }
     if(paymentIntent){
       const userGroup = await updateUserGroupStatus(subscriptionId)
-      console.log('userGroup', userGroup)
     }
-    console.log('paymentIntent', paymentIntent)
     setPaymentIntent(paymentIntent);
     setIsLoading(false)
   }
