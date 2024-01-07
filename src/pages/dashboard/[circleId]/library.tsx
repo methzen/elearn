@@ -25,7 +25,7 @@ import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
-Library.getLayout = (page: React.ReactElement) => <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>;
+Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {

@@ -5,8 +5,6 @@ import { useRouter } from 'next/router';
 import LoadingScreen from '../components/loading-screen';
 //
 import { PATH_DASHBOARD } from 'src/routes/paths';
-import getGroupById from 'src/api/getGroupById';
-import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 import getGroupCheckoutInfo from 'src/api/getGroupCheckoutInfo';
 import { Price } from 'src/@types/stripe';
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 // next
 import { useRouter } from 'next/router';
 // @mui
@@ -15,7 +15,7 @@ import { NavSectionVertical } from '../../../components/nav-section';
 import {GroupNav, HomeNav} from './config-navigation';
 import NavAccount from './NavAccount';
 import NavToggleButton from './NavToggleButton';
-import { useAuthContext } from '../../../auth/useAuthContext';
+import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -25,9 +25,10 @@ type Props = {
 
 export default function NavVertical({ openNav, onCloseNav }: Props) {
   const { pathname, query: { circleId }, } = useRouter();
-  const { user } = useAuthContext();
+  const context = useContext(CircleAccessRoleContext)
+  const isAdmin = context?.role === RoleType.admin
 
-  const NavConfig = circleId ? GroupNav(circleId as string) : HomeNav
+  const NavConfig = circleId ? GroupNav(circleId as string, isAdmin as boolean) : HomeNav
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {

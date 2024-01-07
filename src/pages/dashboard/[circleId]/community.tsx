@@ -80,7 +80,7 @@ interface commentDataType {
 }
 // ----------------------------------------------------------------------
 
-Community.getLayout = (page: React.ReactElement) => <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>;
+Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
 

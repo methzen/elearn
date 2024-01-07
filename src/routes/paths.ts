@@ -32,15 +32,12 @@ export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   circles: path(ROOTS_DASHBOARD, '/circles'),
   group: {
-    list : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/list`),
     admin : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/admin`),
-    create : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/create`),
     library: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/library`),
     community: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/community`),
   },
   user: {
     root: path(ROOTS_DASHBOARD, `/user`),
     myprofile: path(ROOTS_DASHBOARD, `/user/myprofile`),
-    // profile: (name: string) => path(ROOTS_DASHBOARD, `/user/${name}/profile`),
   },
 };

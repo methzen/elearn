@@ -1,5 +1,7 @@
 import axios from "src/utils/axios";
 
+export type Role = 'admin'|'member'|'moderator'
+
 export default async function checkGroupAccess(groupId:string){
   const token = localStorage.getItem('x-auth-token')
   try{
@@ -8,7 +10,7 @@ export default async function checkGroupAccess(groupId:string){
           "x-auth-token" : token,
         }
       })
-      return response.data.access
+      return response.data as {role: Role, access:boolean}
   }catch(e){
     throw e;
   }

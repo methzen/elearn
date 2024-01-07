@@ -10,17 +10,19 @@ import { NavSectionMini } from '../../../components/nav-section';
 //
 import {GroupNav, HomeNav} from './config-navigation';
 import NavToggleButton from './NavToggleButton';
-import { useAuthContext } from '../../../auth/useAuthContext';
 import { useRouter } from 'next/router'
+import { useContext } from 'react';
+import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
-  const { user } = useAuthContext();
+
   const {
     query: { circleId },
   } = useRouter();
-
-  const NavConfig = circleId ? GroupNav(circleId as string) : HomeNav
+  const context = useContext(CircleAccessRoleContext)
+  const isAdmin = context?.role === RoleType.admin
+  const NavConfig = circleId ? GroupNav(circleId as string, isAdmin as boolean) : HomeNav
 
   return (
     <Box

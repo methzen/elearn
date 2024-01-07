@@ -16,56 +16,23 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
 };
 
-// const NavConfig = [
-//   // GENERAL
-//   // ----------------------------------------------------------------------
-//   {
-//     subheader: 'general v4.2.0',
-//     items: [
-//       { title: 'Two', path: PATH_DASHBOARD.circles, icon: ICONS.ecommerce },
-//     ],
-//   },
-//   // GROUP
-//   // ----------------------------------------------------------------------
-//   {
-//     subheader: 'groups',
-//     items: [
-//       { title: 'list of group', path: PATH_DASHBOARD.group.list, icon: ICONS.dashboard },
-//       { title: 'create', path: PATH_DASHBOARD.group.create, icon: ICONS.analytics },
-//     ],
-//   },
-//   // MANAGEMENT
-//   // ----------------------------------------------------------------------
-//   {
-//     subheader: 'management',
-//     items: [
-//       {
-//         title: 'user',
-//         path: PATH_DASHBOARD.user.root,
-//         icon: ICONS.user,
-//         children: [
-//           { title: 'Four', path: PATH_DASHBOARD.user.four },
-//           { title: 'Five', path: PATH_DASHBOARD.user.five },
-//           { title: 'Six', path: PATH_DASHBOARD.user.six },
-//           { title: 'Account', path: PATH_DASHBOARD.user.myprofile },
-//         ],
-//       },
-//     ],
-//   },
-// ];
-
-const GroupNav = (id:string)=> [
+const GroupNav = (id:string, isAdmin:boolean)=> {
+  const circleChildren = [
+    { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
+    { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
+  ]
+  
+  if(isAdmin){
+    circleChildren.push({ title: 'Admin', path: PATH_DASHBOARD.group.admin(id)})
+  }
+  return [
   {
     items: [
       {
         title: 'Circle',
         path: PATH_DASHBOARD.group.community(id),
         icon: ICONS.dashboard,
-        children: [
-          { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
-          { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
-          { title: 'Admin', path: PATH_DASHBOARD.group.admin(id)},
-        ],
+        children: circleChildren,
       },
       {
         title: 'Account',
@@ -77,7 +44,7 @@ const GroupNav = (id:string)=> [
       },
     ],
   },
-];
+]};
 
 const HomeNav = [
   // GENERAL
