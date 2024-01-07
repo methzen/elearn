@@ -22,9 +22,10 @@ import {
 } from '../../../redux/slices/course';
 import { Chapter, CourseOwnerShip, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
+import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
-Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+Library.getLayout = (page: React.ReactElement) => <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>;
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {

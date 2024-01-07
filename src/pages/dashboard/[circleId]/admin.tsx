@@ -20,10 +20,11 @@ import { Box } from '@mui/system';
 import EditCircle from 'src/sections/group/EditCircle';
 import getGroupById from 'src/api/getGroupById';
 import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
+import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 
 // ----------------------------------------------------------------------
 
-Admin.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+Admin.getLayout = (page: React.ReactElement) => <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>;
 
 export default function Admin() {
   const [filterStatus, setFilterStatus] = useState('circle');

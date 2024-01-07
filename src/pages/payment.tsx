@@ -140,12 +140,12 @@ export default function PaymentPage() {
                 }),
               }}
             >
-              <PaymentCard 
+              {/* <PaymentCard 
                 handleSubmit={handleSubmit}
                 errorMessage={errorMessage}
                 groupName={groupName}
                 isLoading={isLoading}
-                handleGroupNameChange={(name)=>setGroupName(name)}/>
+                handleGroupNameChange={(name)=>setGroupName(name)}/> */}
             </Box>
           </Grid>
         </Grid>

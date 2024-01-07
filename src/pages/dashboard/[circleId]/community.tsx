@@ -63,6 +63,7 @@ import likeAPost from '../../../api/likeAPost';
 import unlikeAPost from '../../../api/unlikeAPost';
 import commentAPost from '../../../api/commentAPost';
 import CourseCardAside from '../../../components/CourseCardAside';
+import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
 
@@ -79,7 +80,7 @@ interface commentDataType {
 }
 // ----------------------------------------------------------------------
 
-Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+Community.getLayout = (page: React.ReactElement) => <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>;
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
 

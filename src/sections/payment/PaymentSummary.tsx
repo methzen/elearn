@@ -5,27 +5,22 @@ import { LoadingButton } from '@mui/lab';
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import { useState } from 'react';
+import { Price } from 'src/@types/stripe';
 
 // ----------------------------------------------------------------------
-type Recurring = "month" | "year"
-
-enum RecurringString {
-  yearly = "year",
-  monthly = "month"
-}
-
-type Price = {
-  recurring: Recurring
-  amount: number
-  id: string
-}
 
 interface PaymentSummuryProps extends BoxProps{
   handleChange: () =>void;
-  price: Price | undefined;
-  selection: boolean
+  price: Price | null;
+  selection: boolean;
+  plans: number;
 }
-export default function PaymentSummary({ handleChange,  price, selection, sx, ...other}: PaymentSummuryProps) {
+
+export default function PaymentSummary({ handleChange, plans, price, selection, sx, ...other}: PaymentSummuryProps) {
+  const multiPlans = plans > 1
+  const showPrice = price && plans >= 1 ? (
+    price.currency === 'usd' ? `$${price?.price}`: `${price?.price}€`
+  ): false
 
   return (
     <Box
@@ -38,7 +33,7 @@ export default function PaymentSummary({ handleChange,  price, selection, sx, ..
       {...other}
     >
       <Typography variant="h6" sx={{ mb: 5 }}>
-        Summary
+        Subscription details
       </Typography>
 
       <Stack spacing={2.5}>
@@ -47,27 +42,25 @@ export default function PaymentSummary({ handleChange,  price, selection, sx, ..
             Subscription
           </Typography>
 
-          <Label color="success">PREMIUM</Label>
+          <Label color="success">{showPrice? 'PREMIUM': 'FREE'}</Label>
         </Stack>
-
+        {showPrice && <>
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {`Billed ${price?.recurring}ly`}
+            {`Billed ${price?.interval}ly`}
           </Typography>
-          <Switch
+          {
+          multiPlans && <Switch
             checked={selection}
             onChange={handleChange}
             inputProps={{ 'aria-label': 'controlled' }}
           />
+          }
         </Stack>
-
         <Stack spacing={1} direction="row" justifyContent="flex-end">
-          <Typography variant="h5">$</Typography>
-
-          <Typography variant="h2">{price?.amount && price?.amount/100}</Typography>
-
+          <Typography variant="h2">{showPrice}</Typography>
           <Typography component="span" sx={{ mb: 1, alignSelf: 'center', color: 'text.secondary' }}>
-          {`/${price?.recurring}`}
+          {`/${price?.interval}`}
           </Typography>
         </Stack>
 
@@ -75,20 +68,11 @@ export default function PaymentSummary({ handleChange,  price, selection, sx, ..
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h6">Total Billed</Typography>
-
-          <Typography variant="h6">$9.99*</Typography>
+          <Typography variant="h6">{showPrice}</Typography>
         </Stack>
-
         <Divider sx={{ borderStyle: 'dashed' }} />
+        </>}
       </Stack>
-
-      <Typography component="div" variant="caption" sx={{ color: 'text.secondary', mt: 1 }}>
-        * Plus applicable taxes
-      </Typography>
-
-      {/* <LoadingButton fullWidth size="large" type="submit" variant="contained" sx={{ mt: 5, mb: 3 }}>
-        Upgrade My Plan
-      </LoadingButton> */}
 
       <Stack alignItems="center" spacing={1}>
         <Stack direction="row" alignItems="center" spacing={1}>

@@ -298,3 +298,19 @@ export interface StripePaymentMethod {
     metadata: any,
     type: PaymentType
 }
+
+export type Recurring = "month" | "year"
+
+export enum RecurringString {
+  yearly = "year",
+  monthly = "month"
+}
+
+export type Price = {
+    interval: Recurring
+    price: number
+    id: string;
+    currency: string;
+    stripe_price_id: string
+    group: string;
+}

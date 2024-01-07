@@ -11,10 +11,11 @@ export async function getGroupSubscriptionPrice(){
     return response.data
 }
 
-export async function createSubscription(priceId:string){
+export async function createSubscription(priceId:string, groupId:string){
     const token = localStorage.getItem('x-auth-token')
-      const response =  await axios.post(`/create-subscription`, {
-        priceId: priceId
+      const response =  await axios.post(`/group/member/create-subscription`, {
+        priceId: priceId,
+        groupId: groupId
       }, {
         headers: {
           "x-auth-token" : token,
