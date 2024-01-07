@@ -111,7 +111,7 @@ export default function Community() {
 
   const sendPost = async (content: any) => {
     try {
-      const response = await submitNewPost(content);
+      const response = await submitNewPost(content, circleId as string);
       SetWriteSomething(false)
       enqueueSnackbar(response.data);
       push(PATH_DASHBOARD.group.community(circleId as String));
@@ -261,11 +261,11 @@ function PostCard( { post, sendComment, mutate }: Post) {
       <CardHeader
         disableTypography
         avatar={
-          <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
+          <CustomAvatar src={post.by?.avatarUrl} alt={post.by?.name} name={post.by?.name} />
         }
         title={
           <Link color="inherit" variant="subtitle2">
-            {user?.displayName}
+            {post.by?.name}
           </Link>
         }
         subheader={
@@ -319,7 +319,7 @@ function PostCard( { post, sendComment, mutate }: Post) {
 
         <CustomAvatarGroup>
           {post?.personLikes?.map((person) => (
-            <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} />
+            <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} name={person.name}/>
           ))}
         </CustomAvatarGroup>
 
@@ -334,7 +334,7 @@ function PostCard( { post, sendComment, mutate }: Post) {
         <Stack spacing={1.5} sx={{ px: 3, pb: 2 }}>
           {post.comments.map((comment) => (
             <Stack key={comment.id} direction="row" spacing={2}>
-              <CustomAvatar alt={comment.author.name} src={comment.author.avatarUrl} />
+              <CustomAvatar alt={comment.author.name} src={comment.author.avatarUrl} name={comment.author.name} />
 
               <Paper
                 sx={{
@@ -406,7 +406,7 @@ function PostCard( { post, sendComment, mutate }: Post) {
           }}
         />
               <Button variant="contained" sx={{ mr: 0 }} onClick={() => sendComment(message)}>
-              Post
+              Comment
             </Button>
         {/* <input type="file" ref={fileInputRef} style={{ display: 'none' }} /> */}
       </Stack>
