@@ -35,10 +35,11 @@ const enum LibraryPageType {
   ONLY_VIEW = 'ONLY_VIEW'
 }
 
-const GetCustomBreadcrumbsAction =({userName, pageType, actionHandler}:
+const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
   {
     userName: string
     pageType: string
+    isAdmin: boolean
     actionHandler: () => void;
   }
   )=>{
@@ -69,7 +70,7 @@ const GetCustomBreadcrumbsAction =({userName, pageType, actionHandler}:
       case LibraryPageType.ONLY_VIEW:
         return {
           icon : null,
-          linkName: 'What will you learn today ?',
+          linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
           action: false,
           btnText: ''
         }
@@ -123,7 +124,7 @@ export default function Library() {
     if(!courseStore){
       setPageType(LibraryPageType.NO_COURSE)
     }
-    if(courseStore){
+    else{
       if (courseStore.ownershipLevel!==CourseOwnerShip.admin){
         setPageType(LibraryPageType.ONLY_VIEW)
       }
@@ -207,7 +208,8 @@ export default function Library() {
         <title> Library | SmallCircle </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
-      <GetCustomBreadcrumbsAction 
+      <GetCustomBreadcrumbsAction
+          isAdmin={courseStore.ownershipLevel===CourseOwnerShip.admin}
           userName={user!.displayName} 
           pageType={pageType} 
           actionHandler={actionHandler}

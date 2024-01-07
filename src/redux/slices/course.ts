@@ -195,7 +195,10 @@ export function getCourse(groupId:string) {
     dispatch(startLoading());
     try {
       const response = await getCourseByGroupId(groupId);
-      if (response.groupHasNoCourse) return 
+      if (response.groupHasNoCourse){
+        dispatch(endLoading());
+        return
+      }
       dispatch(updateState(response))
       dispatch(endLoading());
     } catch (error) {
