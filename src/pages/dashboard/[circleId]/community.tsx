@@ -56,7 +56,6 @@ import { fShortenNumber } from '../../../utils/formatNumber';
 import Iconify from '../../../components/iconify';
 import submitNewPost from '../../../api/submitNewPost';
 import { CustomAvatar, CustomAvatarGroup } from '../../../components/custom-avatar';
-import { PATH_DASHBOARD } from '../../../routes/paths';
 import Markdown from '../../../components/markdown/Markdown';
 import getAllPostsByPage from '../../../api/getAllPostsByPage';
 import likeAPost from '../../../api/likeAPost';
@@ -85,7 +84,7 @@ const getAllPosts = (url: string) => getAllPostsByPage(url);
 
 
 export default function Community() {
-  const { push, query:{ circleId}} = useRouter();
+  const { query:{ circleId}} = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const { themeStretch } = useSettingsContext();
@@ -114,9 +113,10 @@ export default function Community() {
       const response = await submitNewPost(content, circleId as string);
       SetWriteSomething(false)
       enqueueSnackbar(response.data);
-      push(PATH_DASHBOARD.group.community(circleId as String));
+      mutate()
     } catch (error) {
       console.error(error);
+      enqueueSnackbar(error.message);
     }
   };
 
@@ -129,9 +129,10 @@ export default function Community() {
       SetWriteAComment(v => ({...v, status: false}))
       const response = await commentAPost(data)
       enqueueSnackbar(response.data);
-      push(PATH_DASHBOARD.group.community(circleId as String));
+      mutate()
     }catch(e){
       console.error(e);
+      enqueueSnackbar(e.message);
     }
   }
   return (
@@ -255,6 +256,12 @@ function PostCard( { post, sendComment, mutate }: Post) {
       current.focus();
     }
   };
+
+  const handleCommentSend = () => {
+    sendComment(message)
+    setMessage('')
+    setMinRows(1)
+  }
 
   return (
     <Card>
@@ -405,7 +412,7 @@ function PostCard( { post, sendComment, mutate }: Post) {
             border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
           }}
         />
-              <Button variant="contained" sx={{ mr: 0 }} onClick={() => sendComment(message)}>
+              <Button variant="contained" sx={{ mr: 0 }} onClick={handleCommentSend}>
               Comment
             </Button>
         {/* <input type="file" ref={fileInputRef} style={{ display: 'none' }} /> */}
