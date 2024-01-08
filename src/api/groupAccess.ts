@@ -10,7 +10,7 @@ export default async function checkGroupAccess(groupId:string){
           "x-auth-token" : token,
         }
       })
-      return response.data as {role: Role, access:boolean}
+      return response.data as {role: Role, access:boolean, name: string}
   }catch(e){
     throw e;
   }

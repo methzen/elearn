@@ -14,6 +14,7 @@ type CircleAccessProps = {
 };
 export interface RoleContextProps {
   role: Role
+  name:string
 }
 
 export enum RoleType {
@@ -30,14 +31,14 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
   } = useRouter();
 
   const [access, setAccess] = useState<boolean|null>(null)
-  const [myRole, setMyRole] = useState<Role>()
+  const [myRole, setMyRole] = useState<RoleContextProps>()
 
   useEffect(() => { 
     const getAccess = async () => {
       const response =  await checkGroupAccess(circleId as string)
       if(!response.access){ return push(PATH_DASHBOARD.root)};
       setAccess(response.access)
-      setMyRole(response.role)
+      setMyRole({role: response.role, name:response.name})
   }
     if(circleId){
         getAccess()
@@ -46,7 +47,8 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
 
   const memoizedValue = useMemo(
     () => ({
-      role: myRole,
+      role: myRole?.role,
+      name: myRole?.name
     } as RoleContextProps),
     [myRole]
   );

@@ -28,7 +28,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
 
-  const NavConfig = circleId ? GroupNav(circleId as string, isAdmin as boolean) : HomeNav
+  const NavConfig = circleId ? GroupNav(circleId as string, isAdmin as boolean, context?.name as string) : HomeNav
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {

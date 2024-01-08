@@ -16,7 +16,7 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
 };
 
-const GroupNav = (id:string, isAdmin:boolean)=> {
+const GroupNav = (id:string, isAdmin:boolean, groupName: string)=> {
   const circleChildren = [
     { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
     { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
@@ -29,18 +29,20 @@ const GroupNav = (id:string, isAdmin:boolean)=> {
   {
     items: [
       {
-        title: 'Circle',
+        title: groupName.charAt(0)+groupName.slice(1),
         path: PATH_DASHBOARD.group.community(id),
         icon: ICONS.dashboard,
         children: circleChildren,
       },
+      { 
+        title: 'All Circles', 
+        path: PATH_DASHBOARD.circles,
+        icon: ICONS.dashboard,
+      },
       {
-        title: 'Account',
+        title: 'My Account',
         path: PATH_DASHBOARD.user.myprofile,
         icon: ICONS.user,
-        children: [
-          { title: 'user', path: PATH_DASHBOARD.user.myprofile}
-        ],
       },
     ],
   },
@@ -51,12 +53,20 @@ const HomeNav = [
   // ----------------------------------------------------------------------
   {
     items: [
-      { title: 'Groups', path: PATH_DASHBOARD.circles}
+      { 
+        title: 'All Circles', 
+        path: PATH_DASHBOARD.circles,
+        icon: ICONS.dashboard,
+      },
     ],
   },
   {
     items: [
-      { title: 'Account', path: PATH_DASHBOARD.user.myprofile}
+      {
+        title: 'My Account',
+        path: PATH_DASHBOARD.user.myprofile,
+        icon: ICONS.user,
+      },
     ],
   },
 ];
