@@ -8,7 +8,7 @@ import { hideScrollbarX } from '../../../utils/cssStyles';
 import Logo from '../../../components/logo';
 import { NavSectionMini } from '../../../components/nav-section';
 //
-import {GroupNav, HomeNav} from './config-navigation';
+import {GroupNav} from './config-navigation';
 import NavToggleButton from './NavToggleButton';
 import { useRouter } from 'next/router'
 import { useContext } from 'react';
@@ -22,7 +22,7 @@ export default function NavMini() {
   } = useRouter();
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
-  const NavConfig = circleId ? GroupNav(circleId as string, isAdmin as boolean, context?.name as string) : HomeNav
+  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string)
 
   return (
     <Box

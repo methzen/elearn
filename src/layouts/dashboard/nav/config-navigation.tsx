@@ -16,62 +16,43 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
 };
 
-const GroupNav = (id:string, isAdmin:boolean, groupName: string)=> {
-  const circleChildren = [
-    { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
-    { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
+const GroupNav = (id:string, isAdmin:boolean, groupName: string) => {
+
+  const defaultItems = [
+    { 
+      title: 'My Circles', 
+      path: PATH_DASHBOARD.circles,
+      icon: ICONS.dashboard,
+    },
+    {
+      title: 'My Account',
+      path: PATH_DASHBOARD.user.myprofile,
+      icon: ICONS.user,
+    },
   ]
-  
-  if(isAdmin){
-    circleChildren.push({ title: 'Admin', path: PATH_DASHBOARD.group.admin(id)})
-  }
-  return [
-  {
-    items: [
-      {
+  if(id){
+    const circleChildren = [
+      { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
+      { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
+    ]
+    if(isAdmin){
+      circleChildren.push({ title: 'Admin', path: PATH_DASHBOARD.group.admin(id)})
+    }
+    if(groupName){
+      defaultItems.unshift({
         title: groupName.charAt(0)+groupName.slice(1),
         path: PATH_DASHBOARD.group.community(id),
         icon: ICONS.dashboard,
         children: circleChildren,
-      },
-      { 
-        title: 'All Circles', 
-        path: PATH_DASHBOARD.circles,
-        icon: ICONS.dashboard,
-      },
-      {
-        title: 'My Account',
-        path: PATH_DASHBOARD.user.myprofile,
-        icon: ICONS.user,
-      },
-    ],
+      })
+    }
+  }
+  return [
+  {
+    items: defaultItems
   },
 ]};
 
-const HomeNav = [
-  // GENERAL
-  // ----------------------------------------------------------------------
-  {
-    items: [
-      { 
-        title: 'All Circles', 
-        path: PATH_DASHBOARD.circles,
-        icon: ICONS.dashboard,
-      },
-    ],
-  },
-  {
-    items: [
-      {
-        title: 'My Account',
-        path: PATH_DASHBOARD.user.myprofile,
-        icon: ICONS.user,
-      },
-    ],
-  },
-];
-
 export {
-  HomeNav,
   GroupNav,
 }

@@ -1,9 +1,9 @@
 import axios from "src/utils/axios";
 
-export default async function getGroupById(groupId:string){
+export default async function getGroupDataForAdmin(groupId:string){
   const token = localStorage.getItem('x-auth-token')
   try{
-    const response = await axios.get(`/groups/admin/get/by-id?groupId=${groupId}`, {
+    const response = await axios.get(`/groups/data/for/admin?groupId=${groupId}`, {
         headers: {
           "x-auth-token" : token,
         }

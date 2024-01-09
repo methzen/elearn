@@ -11,6 +11,7 @@ import checkGroupAccess, { Role } from 'src/api/groupAccess';
 
 type CircleAccessProps = {
   children: React.ReactNode;
+  pageName: string
 };
 export interface RoleContextProps {
   role: Role

@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { Suspense, useEffect, useState} from 'react'
+import { Suspense, useContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
@@ -20,12 +20,12 @@ import {
   CreateCourseData,
   apiEditOrSaveCourse,
 } from '../../../redux/slices/course';
-import { Chapter, CourseOwnerShip, Section } from '../../../@types/course';
+import { Chapter, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
-import CircleAccessGuard from 'src/auth/CircleAccessGuard';
+import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
-Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard pageName='Library'><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {
@@ -108,6 +108,9 @@ export default function Library() {
   const { query: { circleId} } = useRouter();
   const courseStore = useSelector((state) => state.course)
   const [pageType, setPageType] = useState(LibraryPageType.EDITING_COURSE)
+  const [hasCourse, setHasCourse] = useState<boolean|undefined>()
+  const context = useContext(CircleAccessRoleContext)
+  const isAdmin = context?.role === RoleType.admin
 
   useEffect(() => {
     if (circleId){
@@ -121,28 +124,28 @@ export default function Library() {
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
 
   useEffect(() => {
-    if(!courseStore){
-      setPageType(LibraryPageType.NO_COURSE)
-    }
-    else{
-      if (courseStore.ownershipLevel!==CourseOwnerShip.admin){
+    const hasCourse = courseStore && courseStore.name &&  (!!courseStore.sections.length)
+    setHasCourse(hasCourse as boolean)
+      if(isAdmin){
+        if(!hasCourse){
+          setPageType(LibraryPageType.NO_COURSE)
+        }else{
+          if(courseStore.isSaved){
+            setPageType(LibraryPageType.SAVED_COURSE)
+          }
+          else{
+            setPageType(LibraryPageType.EDITING_COURSE)
+          }
+        }
+      }else{
         setPageType(LibraryPageType.ONLY_VIEW)
       }
-      else{
-        if(courseStore.isSaved){
-          setPageType(LibraryPageType.SAVED_COURSE)
-        }
-        else{
-          setPageType(LibraryPageType.EDITING_COURSE)
-        }
-      }
-      if(courseStore?.sections){
+      if(hasCourse){
         setSectionList(courseStore?.sections)
         const indexOfLastSection = courseStore.sections.length - 1
         const lastSection = courseStore.sections[indexOfLastSection]
         setIsLastSectionValidated(!!lastSection?.isValidated)
       }
-    }
   },[courseStore])
 
   useEffect(() => {
@@ -209,7 +212,7 @@ export default function Library() {
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
       <GetCustomBreadcrumbsAction
-          isAdmin={courseStore.ownershipLevel===CourseOwnerShip.admin}
+          isAdmin={!!hasCourse}
           userName={user!.displayName} 
           pageType={pageType} 
           actionHandler={actionHandler}

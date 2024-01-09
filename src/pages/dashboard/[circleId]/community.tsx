@@ -79,7 +79,7 @@ interface commentDataType {
 }
 // ----------------------------------------------------------------------
 
-Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard pageName='Community'><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
 
@@ -88,7 +88,6 @@ export default function Community() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { themeStretch } = useSettingsContext();
-  const [open, setOpen] = useState<boolean>(false);
   const [writeSomething, SetWriteSomething] = useState<boolean>(false);
   const [writeAComment, SetWriteAComment] = useState({status: false, postId: ""});
 

@@ -18,14 +18,14 @@ import {
 import { useRouter } from 'next/router'
 import { Box } from '@mui/system';
 import EditCircle from 'src/sections/group/EditCircle';
-import getGroupById from 'src/api/getGroupById';
+import getGroupDataForAdmin from 'src/api/getGroupDataForAdmin';
 import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
-Admin.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Admin.getLayout = (page: React.ReactElement) => <CircleAccessGuard pageName='Admin'><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 
 export default function Admin() {
   const [filterStatus, setFilterStatus] = useState('circle');
@@ -40,7 +40,7 @@ export default function Admin() {
 
   useEffect(() => {
     const getGroup = async () => {
-        const response =  await getGroupById(circleId as string)
+        const response =  await getGroupDataForAdmin(circleId as string)
         if(!response){ return push(PATH_DASHBOARD.root)};
         const plan = response.plans[0]
         const Group = {

@@ -9,7 +9,7 @@ import { bgBlur } from '../../../utils/cssStyles';
 // components
 import { NavSectionHorizontal } from '../../../components/nav-section';
 //
-import {GroupNav, HomeNav} from './config-navigation';
+import {GroupNav} from './config-navigation';
 import { useRouter } from 'next/router'
 import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
@@ -22,7 +22,7 @@ function NavHorizontal() {
 
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
-  const NavConfig = circleId ? GroupNav(circleId as string, isAdmin as boolean, context?.name as string) : HomeNav
+  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string)
 
   return (
     <AppBar
