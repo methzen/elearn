@@ -22,6 +22,7 @@ import getGroupDataForAdmin from 'src/api/getGroupDataForAdmin';
 import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import { PATH_DASHBOARD } from 'src/routes/paths';
+import UserListPage from 'src/sections/group/groupUsers';
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +71,7 @@ export default function Admin() {
     {
       value: 'users',
       label: 'users',
-      component: <span>Users</span>,
+      component: <UserListPage/>,
     },
   ];
 
@@ -81,7 +82,7 @@ export default function Admin() {
       </Head>
 
       <Container sx={{ my: 10 }}>
-      <Card >
+      <Card sx={{ mt: 2 }}>
           <Tabs
             value={filterStatus}
             onChange={handleFilterStatus}

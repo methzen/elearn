@@ -137,14 +137,14 @@ export type IUserCard = {
 export type IUserAccountGeneral = {
   id: string;
   photoURL: string;
-  cover: string;
+  cover?: string;
   firstname: string;
   lastname: string;
   email: string;
   phoneNumber?: string;
-  created: Date | string | number;
-  karma: number | null;
-  about: string;
+  created?: Date | string | number;
+  karma?: number | null;
+  about?: string;
   showDead?: boolean;
   address?: string;
   state?: string;
@@ -155,8 +155,8 @@ export type IUserAccountGeneral = {
   isVerified?: boolean;
   status?: string;
   job: string;
-  groups: string[];
-  contribution: number | null;
+  groups?: string[];
+  contribution?: number | null;
   showPrivateUserData?: boolean;
 };
 
