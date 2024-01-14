@@ -7,10 +7,8 @@ import Image from 'next/image'
 
 type Props={
     name: string
-    id?: string
     imageUrl: string
     description: string
-    ownerShipLevel?: number
 }
 
 export default function CourseCardAside({name, description, imageUrl}: Props) {

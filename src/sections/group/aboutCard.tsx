@@ -67,7 +67,7 @@ export default function AboutCard({ group }: Props) {
 
         <StyledOverlay />
 
-        <Image src={imageUrl as string} alt={'cover'} ratio="16/9" />
+        <Image src={imageUrl as string} alt='cover' ratio="16/9" />
       </Box>
 
       <Typography variant="subtitle1" sx={{ mt: 6, mb: 0.5 }}>

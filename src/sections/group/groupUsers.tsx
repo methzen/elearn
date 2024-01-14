@@ -10,20 +10,20 @@ import {
   Tooltip,
   Divider,
   TableBody,
-  Container,
   IconButton,
   TableContainer,
 } from '@mui/material';
+
+import getGroupMembers from 'src/api/getGroupMembers';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // _mock_
-import { UserGroupMember, _userGroupMember, _userList } from '../../_mock/arrays';
+import { UserGroupMember, _userGroupMember } from '../../_mock/arrays';
 
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 import ConfirmDialog from '../../components/confirm-dialog';
-import { useSettingsContext } from '../../components/settings';
 import {
   useTable,
   getComparator,
@@ -35,8 +35,7 @@ import {
   TablePaginationCustom,
 } from '../../components/table';
 // sections
-import { UserTableToolbar, UserTableRow } from '../../sections//user/list';
-import getGroupMembers from 'src/api/getGroupMembers';
+import { UserTableToolbar, UserTableRow } from '../user/list';
 
 // ----------------------------------------------------------------------
 
@@ -93,12 +92,12 @@ export default function UserListPage() {
     const getMembers = async () => {
         const response =  await getGroupMembers(circleId as string, page+1)
         if(!response){ return push(PATH_DASHBOARD.root)};
-        console.log('response', response)
+        return setTableData(response.users)
     }
     if(circleId){
       getMembers()
     }
-  }, [circleId])
+  }, [circleId, page, push])
 
   const dataFiltered = applyFilter({
     inputData: tableData,

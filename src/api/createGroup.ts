@@ -4,7 +4,7 @@ import axios from "./axios";
 
 export default async function createGroup(data: CircleFormProps){
   const token = localStorage.getItem('x-auth-token')
-    return await axios.post(`/groups/create/group`, {
+  const response = await axios.post(`/groups/create/group`, {
       data: _.omit(data, 'image'),
       file: data.imageUrl
     }, {
@@ -13,5 +13,5 @@ export default async function createGroup(data: CircleFormProps){
         'Content-Type': 'multipart/form-data'
       }
     })
-
+  return response
 }

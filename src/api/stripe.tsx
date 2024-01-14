@@ -2,72 +2,72 @@ import axios from "./axios";
 
 export async function getGroupSubscriptionPrice(){
   const token = localStorage.getItem('x-auth-token')
-    const response =  await axios.get(`/admin/get/product/prices`,{
+  const response =  await axios.get(`/admin/get/product/prices`,{
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-    return response.data
+  return response.data
 }
 
 export async function createSubscription(priceId:string, groupId:string){
-    const token = localStorage.getItem('x-auth-token')
-      const response =  await axios.post(`/group/member/create-subscription`, {
-        priceId: priceId,
-        groupId: groupId
+  const token = localStorage.getItem('x-auth-token')
+  const response =  await axios.post(`/group/member/create-subscription`, {
+        priceId,
+        groupId
       }, {
         headers: {
           "x-auth-token" : token,
           'Content-Type': 'application/json'
         }
       })
-      return response.data
+  return response.data
 }
 
 export async function cancelSubscription(subscriptionId:string){
   const token = localStorage.getItem('x-auth-token')
-    const response =  await axios.post(`/cancel-subscription`, {
-      subscriptionId: subscriptionId
+  const response =  await axios.post(`/cancel-subscription`, {
+      subscriptionId
     }, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-    return response.data
+  return response.data
 }
 
 export async function getSubscription(){
-    const token = localStorage.getItem('x-auth-token')
-      const response =  await axios.get(`/subscriptions`, {
+  const token = localStorage.getItem('x-auth-token')
+  const response =  await axios.get(`/subscriptions`, {
         headers: {
           "x-auth-token" : token,
           'Content-Type': 'application/json'
         }
       })
-      return response.data
+  return response.data
 }
 
 export async function getCustomerInvoices(){
   const token = localStorage.getItem('x-auth-token')
-    const response =  await axios.get(`/invoice-preview`, {
+  const response =  await axios.get(`/invoice-preview`, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-    return response.data
+  return response.data
 }
 
 
 export async function getCustomerPaymentMethods(){
   const token = localStorage.getItem('x-auth-token')
-    const response =  await axios.get('/customer/payment/method', {
+  const response =  await axios.get('/customer/payment/method', {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-    return response.data
+  return response.data
 }

@@ -7,11 +7,10 @@ import CourseCard, {Circle} from 'src/components/CourseCard';
 
 export default function ProfileCircles() {
   const [data, setData] = useState<Circle[]>([])
-  const [page, setPage] = useState(1)
 
   useEffect(() => {
     const getData = async () => {
-      const {items} = await getAllGroupsByPage(`/groups/get/all?page=${page}` as string)
+      const {items} = await getAllGroupsByPage(`/groups/get/all?page=${1}` as string)
       if (items){
         setData([...items])
       }
@@ -20,7 +19,6 @@ export default function ProfileCircles() {
   },[]);
 
   return (
-    <>
       <Box
         gap={3}
         display="grid"
@@ -34,6 +32,5 @@ export default function ProfileCircles() {
             <CourseCard key={course.id} {...course}/>
           )}
       </Box>
-    </>
   );
 }

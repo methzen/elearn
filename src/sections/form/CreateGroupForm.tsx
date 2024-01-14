@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -47,7 +47,6 @@ interface CreateForm {
 
 export default function CreateAgroup(
   { isEdit=false, FormSchema, submitData } : CreateForm) {
-  const [fileData, setFileData] = useState<File | null>(null)
   console.log('currentCircle', FormSchema)
 
   const defaultValues = useMemo(()=>({
@@ -67,8 +66,6 @@ export default function CreateAgroup(
 
   const {
     watch,
-    reset,
-    control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
@@ -83,7 +80,6 @@ export default function CreateAgroup(
       });
 
       if (newFile) {
-        setFileData(file)
         setValue('imageUrl', newFile, { shouldValidate: true });
       }
     },
@@ -127,14 +123,14 @@ export default function CreateAgroup(
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 Name
               </Typography>
-              <RHFTextField name="name" label={'Give a name'} />
+              <RHFTextField name="name" label='Name' />
             </Stack>
 
             <Stack spacing={2}>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 Give a description
               </Typography>
-                <RHFTextField name="description" label={'What is this circle for...'} 
+                <RHFTextField name="description" label='What is this circle for...' 
                 multiline
                 minRows={4}
                 maxRows={8}

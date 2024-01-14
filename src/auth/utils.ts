@@ -36,9 +36,6 @@ export const setSession = (accessToken: string | null) => {
     localStorage.setItem('x-auth-token', accessToken);
 
     axios.defaults.headers.common["x-auth-token"] = `${accessToken}`;
-
-    // This function below will handle when token is expired
-    const { authTokenExpiration } = jwtDecode(accessToken);
     // tokenExpired(authTokenExpiration);
   } else {
     localStorage.removeItem('x-auth-token');

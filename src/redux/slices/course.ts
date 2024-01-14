@@ -60,6 +60,7 @@ const slice = createSlice({
       state.sections = action.payload.sections
       state.id = action.payload.id
       state.editable = action.payload.editable
+      return state
     },
 
     updateState(state, action){
@@ -109,7 +110,7 @@ const slice = createSlice({
 
     addAttachment(state, action){
       const attachment: Attachment = action.payload
-      const section = state.sections.find(section => section.id === attachment.sectionId) as Section
+      const section = state.sections.find(s => s.id === attachment.sectionId) as Section
       section.chapters.map(chap => {
         if (chap.id === attachment.chapter){
           chap.attachments.push(attachment)
@@ -121,7 +122,7 @@ const slice = createSlice({
 
     addVideo(state, action){
       const video: Video = action.payload
-      const section = state.sections.find(section => section.id === video.sectionId) as Section
+      const section = state.sections.find(s => s.id === video.sectionId) as Section
       section.chapters.map(chap => {
         if (chap.id === video.chapterId){
           chap.video = video;
@@ -133,7 +134,7 @@ const slice = createSlice({
 
     addContent(state, action){
       const chapter = action.payload
-      const section = state.sections.find(section => section.id === chapter.sectionId) as Section
+      const section = state.sections.find(s => s.id === chapter.sectionId) as Section
       section.chapters.map(chap => {
         if (chap.id === chapter.id){
           chap.content = chapter.content;
@@ -281,11 +282,11 @@ export function apiDeleteChapter(chapData:chapterData){
   };
 }
 
-export function apiAddAttachment(attachmentData:attachmentData){
+export function apiAddAttachment(aD:attachmentData){
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addAttachmentApi(attachmentData);
+      const data = await addAttachmentApi(aD);
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {
@@ -295,11 +296,11 @@ export function apiAddAttachment(attachmentData:attachmentData){
   };
 }
 
-export function apiAddTextContent(contentData:contentData){
+export function apiAddTextContent(cd:contentData){
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addTextContentApi(contentData);
+      const data = await addTextContentApi(cd);
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {
@@ -309,11 +310,11 @@ export function apiAddTextContent(contentData:contentData){
   };
 }
 
-export function apiAddVideoContent(videoData:videoData){
+export function apiAddVideoContent(vd:videoData){
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addVideoContentApi(videoData);
+      const data = await addVideoContentApi(vd);
       dispatch(updateState(data))
       dispatch(endLoading());
     } catch (error) {

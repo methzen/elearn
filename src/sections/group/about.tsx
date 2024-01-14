@@ -6,7 +6,6 @@ import useResponsive from '../../hooks/useResponsive';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 // layouts
-import { _userCards } from '../../_mock/arrays';
 import AboutCard from 'src/sections/group/aboutCard';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import { useRouter } from 'next/router';
@@ -122,7 +121,7 @@ function About() {
       if(isAuthenticated && user){
         if (group.by === user.id){
           // user is the owner of this group get them in the group admin page
-          return push(PATH_DASHBOARD.group.admin(group.id))
+          push(PATH_DASHBOARD.group.admin(group.id))
         }
         setCanCheckOut(true)
       }

@@ -11,14 +11,12 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
-// @types
-import { IUserAccountGeneral } from '../../../@types/user';
+import { UserGroupMember } from 'src/_mock/arrays';
 // components
 import Label from '../../../components/label';
 import Iconify from '../../../components/iconify';
 import MenuPopover from '../../../components/menu-popover';
 import ConfirmDialog from '../../../components/confirm-dialog';
-import { UserGroupMember } from 'src/_mock/arrays';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +35,7 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { firstname, lastname, photoURL, email, isBanned, ownerShipLevel, status } = row;
+  const { firstname, lastname, photoURL, email, isBanned, ownerShipLevel } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 

@@ -9,9 +9,10 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {Chapter, Videodata } from '../@types/course';
-import Markdown from '../components/markdown/Markdown';
+import Markdown from './markdown/Markdown';
 import { AttachmentDisplayer } from './AttachmentDisplayer';
-import { Suspense } from 'react'
+
+
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }

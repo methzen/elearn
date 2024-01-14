@@ -14,11 +14,6 @@ import updateUserGroupStatus from 'src/api/updateUserGroupStatus';
 
 // ----------------------------------------------------------------------
 interface PaymentCardProps {
-  handleSubmit?: (e:any) => void;
-  errorMessage?: string|null
-  isLoading?: boolean;
-  groupName?: string;
-  handleGroupNameChange?: (value:string) => void;
   selectedPrice: Price;
 }
 
@@ -31,7 +26,7 @@ export default function PaymentCard({
   const elements = useElements();
   const { user } = useAuthContext();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
-  const [paymentIntent, setPaymentIntent] = useState<any>();
+  const [stripePaymentIntent, setStripePaymentIntent] = useState<any>();
   const [isLoading, setIsLoading] = useState(false)
   const {push} = useRouter()
 
@@ -55,7 +50,7 @@ export default function PaymentCard({
     const cardElement = elements.getElement(CardElement);
 
     // Use card Element to tokenize payment details
-    let { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret as string, {
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret as string, {
       setup_future_usage: 'off_session',
       receipt_email: user?.email,
       payment_method: {
@@ -73,17 +68,17 @@ export default function PaymentCard({
       return;
     }
     if(paymentIntent){
-      const userGroup = await updateUserGroupStatus(subscriptionId)
+      await updateUserGroupStatus(subscriptionId)
     }
-    setPaymentIntent(paymentIntent);
+    setStripePaymentIntent(paymentIntent);
     setIsLoading(false)
   }
 
   useEffect(() => {
-    if(paymentIntent){
+    if(stripePaymentIntent){
       push(PATH_DASHBOARD.group.community(selectedPrice.group))
     }
-  }, [paymentIntent])
+  }, [stripePaymentIntent, push, selectedPrice.group])
 
   const css_style = {
       style: {
@@ -129,10 +124,10 @@ export default function PaymentCard({
           size="large"
           sx={{
             bgcolor: 'text.primary',
-            color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+            color: (t) => (t.palette.mode === 'light' ? 'common.white' : 'grey.800'),
             '&:hover': {
               bgcolor: 'text.primary',
-              color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+              color: (t) => (t.palette.mode === 'light' ? 'common.white' : 'grey.800'),
             },
           }}
           >

@@ -10,8 +10,6 @@ import {
   IconButton,
   Dialog,
   Button,
-  DialogContent,
-  DialogActions,
   Paper
 } from '@mui/material';
 // hooks
@@ -21,10 +19,10 @@ import useResponsive from '../hooks/useResponsive';
 import Iconify from '../components/iconify';
 import MenuPopover from '../components/menu-popover';
 //
-import { CldUploadWidget, CldVideoPlayer ,CldUploadWidgetPropsOptions } from 'next-cloudinary';
+import { CldUploadWidget, CldUploadWidgetPropsOptions } from 'next-cloudinary';
 // import { FileShareDialog, FileDetailsDrawer } from '../../file';
 import { styled } from '@mui/material/styles';
-import { Video as VideoType, Attachment, Chapter as ChapterType} from '../@types/course';
+import { Chapter as ChapterType} from '../@types/course';
 import { useDispatch } from '../redux/store';
 import {
   apiAddVideoContent,
@@ -38,7 +36,7 @@ import {
 } from '../redux/slices/course';
 import Editor from '../components/editor';
 import Markdown from '../components/markdown/Markdown';
-import { AttachmentUploader } from '../sections/form';
+import { AttachmentUploader } from './form';
 import { AttachmentProps } from '../@types/file'
 // ----------------------------------------------------------------------
 
@@ -103,24 +101,24 @@ export default function ChapterComponent({
   const dispatch = useDispatch()
 
   const handleAddVideo = (info: any) => {
-    const videoData : videoData = {
+    const vd : videoData = {
       title: "",
       chapterId: chapter.id as string,
-      courseId: courseId,
+      courseId,
       data: {...info}
     }
-    dispatch(apiAddVideoContent(videoData))
+    dispatch(apiAddVideoContent(vd))
   };
 
   const handleAddArticle = (content: string) => {
     setDisplayChapterContentText(false)
     setOpenContentTextDialog(false)
-    const contentData: contentData = {
+    const cd: contentData = {
       chapterId: chapter.id as string,
-      content: content,
-      courseId: courseId, 
+      content,
+      courseId, 
     }
-    dispatch(apiAddTextContent(contentData))
+    dispatch(apiAddTextContent(cd))
   };
 
   const handleSubmitAttachment=(data:AttachmentProps)=>{
@@ -128,7 +126,7 @@ export default function ChapterComponent({
     const InputData: attachmentData ={
       title: data.name,
       chapterId: chapter.id as string,
-      courseId: courseId,
+      courseId,
       singleUpload: data.singleUpload
       
     }
@@ -175,8 +173,8 @@ export default function ChapterComponent({
       />
     }
       <Stack
-        direction={'row'}
-        alignItems={'center'}
+        direction='row'
+        alignItems='center'
         sx={{
           position: 'relative',
           ...sx,
@@ -258,9 +256,7 @@ export default function ChapterComponent({
             onSuccess={
                 (result, _) => handleAddVideo(result.info)
             }>
-            {({ open }) => {
-              return (
-              <MenuItem
+            {({ open }) => <MenuItem
                   onClick={(e) => {
                   e.preventDefault();
                   handleClosePopover();
@@ -270,8 +266,7 @@ export default function ChapterComponent({
                 <Iconify icon="mdi:youtube" />
                 {!chapter.video? "Add a video": "Replace video"}
               </MenuItem>
-              );
-            }}
+            }
         </CldUploadWidget>
 
         <MenuItem
@@ -391,7 +386,7 @@ function AddTextContentDialog({
           simple
           id="compose-mail"
           value={content as string}
-          onChange={(content)=>setContent(content)}
+          onChange={(c)=>setContent(c)}
           placeholder="Type a message"
           sx={{ flexGrow: 1, borderColor: 'transparent'}}
         />
@@ -462,14 +457,11 @@ function ChapterOnReadOnly({
   courseId,
   isSelected,
   sx, ...other }: ChapterProps) {
-
-const isDesktop = useResponsive('up', 'sm');
-
 const dispatch = useDispatch()
 return (
     <Stack
-      direction={'row'}
-      alignItems={'center'}
+      direction='row'
+      alignItems='center'
       sx={{
         position: 'relative',
         ...sx,

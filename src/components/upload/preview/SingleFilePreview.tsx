@@ -79,7 +79,7 @@ export function FileGeneralRecentCard({ file, sx, ...other }: ViewPdfProps) {
         }}
         {...other}
       >
-        <FileThumbnail file={'pdf'} />
+        <FileThumbnail file='pdf' />
         <Stack
           sx={{
             width: 1,

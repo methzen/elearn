@@ -12,9 +12,6 @@ import { useSettingsContext } from '../../components/settings';
 import CourseCard from '../../components/CourseCard';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import Iconify from '../../components/iconify';
-import {
-  _userGroups
-} from '../../_mock/arrays';
 import { useAuthContext } from '../../auth/useAuthContext';
 
 import { CreateGroupForm } from '../../sections/form';
@@ -25,7 +22,6 @@ import useResponsive from '../../hooks/useResponsive';
 import getAllGroupsByPage from '../../api/getAllGroupsByPage';
 import { useSnackbar } from '../../components/snackbar';
 import useSWR from 'swr';
-import { useRouter } from 'next/router';
 import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 // ----------------------------------------------------------------------
 
@@ -93,13 +89,11 @@ const fetcher = (url: string) => getAllGroupsByPage(url);
 
 
 export default function PageTwo() {
-  const {push} = useRouter()
   const { enqueueSnackbar } = useSnackbar();
   const { themeStretch } = useSettingsContext();
   const { user } = useAuthContext();
   const [openModal, setOpenModal] = useState(false)
-  const [page, setPage] = useState<number>(1)
-  const { data , error, mutate } = useSWR(`/groups/get/all?page=${page}`, fetcher)
+  const { data , mutate } = useSWR(`/groups/get/all?page=${1}`, fetcher)
 
   const handleOpenModal = () =>{
     // push('/dashboard/prices')
@@ -109,10 +103,10 @@ export default function PageTwo() {
     setOpenModal(false)
   }
 
-  const submitGroup = async (data: CircleFormProps) => {
+  const submitGroup = async (d: CircleFormProps) => {
     try {
       setOpenModal(false)
-      await createGroup(data)
+      await createGroup(d)
       mutate()
       enqueueSnackbar("The group has been created successfully.")
     }catch (err) {

@@ -4,7 +4,6 @@ module.exports = {
   env: {
     // HOST
     HOST_API_KEY: 'http://localhost:5000',
-
     STRIPE_PUBLIC_KEY: 'pk_test_51N03KWLpx5FbhsTKcTBMwVT9E6OrNjaixT2L0axSdg5Uircuq3XjuuG6nAVhX1duoWMNoJ4fEZ41wuao0lSQJCE300bO55xsrS',
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:"dtxaaoouf",
   },

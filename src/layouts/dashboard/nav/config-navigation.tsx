@@ -2,6 +2,7 @@
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // components
 import SvgColor from '../../../components/svg-color';
+import { NavListProps } from 'src/components/nav-section';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +19,7 @@ const ICONS = {
 
 const GroupNav = (id:string, isAdmin:boolean, groupName: string) => {
 
-  const defaultItems = [
+  const defaultItems:NavListProps[] = [
     { 
       title: 'My Circles', 
       path: PATH_DASHBOARD.circles,

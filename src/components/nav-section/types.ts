@@ -25,7 +25,7 @@ export type NavListProps = {
 
 export interface NavSectionProps extends StackProps {
   data: {
-    subheader: string;
+    subheader?: string;
     items: NavListProps[];
   }[];
 }

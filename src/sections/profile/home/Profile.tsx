@@ -1,16 +1,12 @@
 // @mui
 import { Grid, Stack } from '@mui/material';
 // @types
-import { IUserAccountGeneral, IUserProfilePost } from 'src/@types/user';
+import { IUserAccountGeneral } from 'src/@types/user';
 import ProfileAbout from './ProfileAbout';
-import ProfilePostCard from './ProfilePostCard';
-import Contributions from './Contributions';
-
 // ----------------------------------------------------------------------
 
 type Props = {
   info: IUserAccountGeneral | null;
-  posts?: IUserProfilePost[];
 };
 
 export default function Profile({ info }: Props) {

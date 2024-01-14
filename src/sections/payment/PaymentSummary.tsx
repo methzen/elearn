@@ -1,11 +1,9 @@
 // @mui
 import { Switch, Divider, Typography, Stack, Box, BoxProps } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Price } from 'src/@types/stripe';
 // components
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
-import { useState } from 'react';
-import { Price } from 'src/@types/stripe';
 
 // ----------------------------------------------------------------------
 

@@ -34,16 +34,11 @@ export default function AttachmentUploader(
       submitData : (data : AttachmentProps) => void;
     }) {
 
-  const [fileData, setFileData] = useState<File | null>(null)
-
   const methods = useForm<AttachmentProps>({
     defaultValues,
   });
 
   const {
-    watch,
-    reset,
-    control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
@@ -58,7 +53,6 @@ export default function AttachmentUploader(
       });
 
       if (newFile) {
-        setFileData(file)
         setValue('singleUpload', newFile, { shouldValidate: true });
       }
     },

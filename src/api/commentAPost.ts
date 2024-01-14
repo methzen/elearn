@@ -10,7 +10,7 @@ interface commentDataType {
 
 export default async function commentAPost(commentData: commentDataType){
 const token = localStorage.getItem('x-auth-token')
-    return await axios.post(`/comments/add/comment`, {
+    const response = await axios.post(`/comments/add/comment`, {
         commentData,
       }, {
         
@@ -21,4 +21,5 @@ const token = localStorage.getItem('x-auth-token')
       withCredentials: true
   
       })
+      return response
 }

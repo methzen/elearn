@@ -60,16 +60,16 @@ export default function CircleGuard({ children }: GuestGuardProps) {
     const getGroup = async () => {
       const response =  await getGroupCheckoutInfo(circle as string)
       if(!response){ return push(PATH_DASHBOARD.root)};
-      setGroup(response)
+      return setGroup(response)
   }
     if(circle){
         getGroup()
     }
-  }, [circle])
+  }, [circle, push])
 
   const memoizedValue = useMemo(
     () => ({
-      group: group,
+      group,
     }),
     [group]
   );

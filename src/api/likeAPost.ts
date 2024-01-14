@@ -1,9 +1,8 @@
 import axios from "src/utils/axios";
 
 export default async function likeAPost({postId}: any){
-const token = localStorage.getItem('x-auth-token')
-  try{
-    return await axios.post(`/posts/like/post`, {
+  const token = localStorage.getItem('x-auth-token')
+  const response = await axios.post(`/posts/like/post`, {
       postId,
     }, {
       
@@ -14,8 +13,5 @@ const token = localStorage.getItem('x-auth-token')
     withCredentials: true
 
     })
-  }catch(e){
-    console.log(e)
-    return
-  }
+  return response
 }

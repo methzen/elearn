@@ -6,12 +6,6 @@ import { Box, Grid, Container, Typography } from '@mui/material';
 import useResponsive from '../../../hooks/useResponsive';
 // layouts
 import SimpleLayout from '../../../layouts/simple';
-// sections
-import { PaymentSummary, PaymentCard } from '../../../sections/payment';
-import { useEffect, useState } from 'react';
-import { createSubscription, getGroupSubscriptionPrice } from 'src/api/stripe';
-import { useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
-import { StripeCardElement } from '@stripe/stripe-js';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +39,7 @@ export default function PaymentPage() {
 
         <Grid container spacing={isDesktop ? 3 : 5}>
           <Grid item xs={12} md={6}>
-            
+            empty grid
           </Grid>
 
           <Grid item xs={12} md={6}>

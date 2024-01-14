@@ -11,7 +11,6 @@ import checkGroupAccess, { Role } from 'src/api/groupAccess';
 
 type CircleAccessProps = {
   children: React.ReactNode;
-  pageName: string
 };
 export interface RoleContextProps {
   role: Role
@@ -39,12 +38,12 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
       const response =  await checkGroupAccess(circleId as string)
       if(!response.access){ return push(PATH_DASHBOARD.root)};
       setAccess(response.access)
-      setMyRole({role: response.role, name:response.name})
+      return setMyRole({role: response.role, name:response.name})
   }
     if(circleId){
         getAccess()
     }
-  }, [circleId])
+  }, [circleId, push])
 
   const memoizedValue = useMemo(
     () => ({

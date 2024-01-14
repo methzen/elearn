@@ -53,7 +53,7 @@ export default function MyProfilePage() {
     if (!currentUser){
       getData();
     }
-  },[currentUser]);
+  },[currentUser, logout, user?.id]);
 
 
   const TABS = [

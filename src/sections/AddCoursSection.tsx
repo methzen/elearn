@@ -12,6 +12,12 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import {ExpandMore as MUIExpandMore} from '@mui/icons-material';
+
 import { ExpandMore } from '../components/CardExpender'
 // utils
 // components
@@ -80,18 +86,17 @@ const SectionUpdate=({section, edit}:ChangeNameProps) => {
     )
 }
 
-interface CourseSection extends CardProps {
+interface CourseSectionProps extends CardProps {
   section: Section;
   isCurrentSection?: boolean
   currentChapter?: string
-  chapterList?: ChapterType[]
-  readMode?: boolean;
+  readOnly?: boolean;
 }
 
-export function CourseSection({ section, isCurrentSection, currentChapter, readMode,...other }: CourseSection) {
+export function CourseSection({ section, isCurrentSection, currentChapter, readOnly=true,...other }: CourseSectionProps) {
   const dispatch = useDispatch()
   const [expanded, setExpanded] = useState(false);
-
+  const [readMode] = useState(readOnly)
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -99,7 +104,9 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readM
   const [chapterList, setChapterList] = useState<ChapterType[]>([])
 
   useEffect(() => {
-    setChapterList(section.chapters)
+    if(section.chapters){
+      setChapterList(section.chapters)
+    }
   }, [section])
 
   const subheader = chapterList.length === 0 ? "This section has 0 chapter" : `${chapterList.length} Chatper(s)`
@@ -116,12 +123,13 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readM
     dispatch(apiAddChapter({name : addedChapterName, sectionId: section.id} as chapterData))
   }
 
-  if(readMode) return <SectionReader 
+  if(readMode){
+    return <SectionReader 
     section={section}
-    chapterList={chapterList}
     currentChapter={currentChapter}
     isCurrentSection={isCurrentSection}
   />
+  }
 
   return (
     <Card {...other} sx={{mb:2}}>
@@ -129,7 +137,7 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readM
         title={section.name}
         subheader={subheader}
         action={section.isValidated? 
-        <Label variant={'soft'} color={'success'}> validated </Label>: <SectionUpdate section={section}/>}
+        <Label variant='soft' color='success'> validated </Label>: <SectionUpdate section={section}/>}
         sx={{
           '& .MuiCardHeader-action': { alignSelf: 'center', mt:-2},
           py:1,
@@ -210,20 +218,11 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readM
   );
 }
 
-
-// //////////////////////////////////////////////////////////////////////////////////
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import {ExpandMore as MUIExpandMore} from '@mui/icons-material';
-
 export function SectionReader({ 
   section,
   isCurrentSection,
   currentChapter,
-  chapterList
-}: CourseSection
+}: CourseSectionProps
 ) {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(!!isCurrentSection);
@@ -247,7 +246,7 @@ export function SectionReader({
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {
-            chapterList?.map(
+            section.chapters?.map(
               chapter =>
               <ListItemButton sx={{ pl: 4 }} 
                   key={chapter.id} 

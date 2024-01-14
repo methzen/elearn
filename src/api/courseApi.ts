@@ -9,7 +9,7 @@ export type attachmentData = {
 
 export async function addAttachmentApi(data: attachmentData){
   const token = localStorage.getItem('x-auth-token')
-  try{    const response =  await axios.post(`/groups/course/attachment`, {
+    const response =  await axios.post(`/groups/course/attachment`, {
         title: data.title,
         chapterId: data.chapterId,
         courseId: data.courseId,
@@ -21,9 +21,6 @@ export async function addAttachmentApi(data: attachmentData){
       }
     })
     return response.data
-  }catch(e){
-    throw(e)
-  }
 }
 
 export interface chapterData {
@@ -36,7 +33,6 @@ export interface chapterData {
 
 export async function addChapterApi(data: chapterData){
   const token = localStorage.getItem('x-auth-token')
-  try{
     const response = await axios.post(`/groups/course/chapter`, data, {
       headers: {
         "x-auth-token" : token,
@@ -44,27 +40,18 @@ export async function addChapterApi(data: chapterData){
       }
     })
     return response.data
-  }
-  catch(e){
-    throw (e)
-  }
 }
 
 export async function deleteChapterApi(data: chapterData){
   const token = localStorage.getItem('x-auth-token')
-  try{
     const response = await axios.delete(`/groups/course/chapter`, {
-      data: data,
+      data,
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
     return response.data
-  }
-  catch(e){
-    throw (e)
-  }
 }
 export interface sectionData {
     name?: string
@@ -77,32 +64,24 @@ export interface sectionData {
 
 export async function addSectionApi(data: sectionData){
   const token = localStorage.getItem('x-auth-token')
-  try{
-    const response = await axios.post(`/groups/course/section`, data, {
+  const response = await axios.post(`/groups/course/section`, data, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-      return response.data
-  }catch(e){
-    throw (e);
-  }
+  return response.data
 }
 
 export async function updateSectionApi(data: sectionData){
   const token = localStorage.getItem('x-auth-token')
-  try{
-    const response = await axios.put(`/groups/course/section`, data, {
+  const response = await axios.put(`/groups/course/section`, data, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-      return response.data
-  }catch(e){
-    throw (e);
-  }
+  return response.data
 }
 
 export async function editOrSaveCourseApi({ groupId, courseId, forSave } : {
@@ -110,17 +89,13 @@ export async function editOrSaveCourseApi({ groupId, courseId, forSave } : {
 }){
   const token = localStorage.getItem('x-auth-token')
   const baseUrl = forSave? '/groups/course/save' : '/groups/course/edit'
-  try{
-    const response = await axios.put(`${baseUrl}?groupId=${groupId}&courseId=${courseId}`, {}, {
+  const response = await axios.put(`${baseUrl}?groupId=${groupId}&courseId=${courseId}`, {}, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-      return response.data
-  }catch(e){
-    throw (e);
-  }
+  return response.data
 }
 
 export type contentData = {
@@ -133,17 +108,13 @@ export type contentData = {
 
 export async function addTextContentApi(data: contentData){
   const token = localStorage.getItem('x-auth-token')
-    try {
-      const response = await axios.post(`/groups/course/textcontent`, data, {
+  const response = await axios.post(`/groups/course/textcontent`, data, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-    return response.data
-  }catch(e){
-      throw (e);
-    }
+  return response.data
 }
 
 export type videoData = {
@@ -167,17 +138,13 @@ export type videoData = {
 
 export async function addVideoContentApi(data: videoData){
   const token = localStorage.getItem('x-auth-token')
-  try{
-    const response = await axios.post(`/groups/course/videocontent`, data, {
+  const response = await axios.post(`/groups/course/videocontent`, data, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
-    return response.data
-  }catch(e){
-    throw (e)
-  }
+  return response.data
 }
 
 export interface CreateCourseData {
@@ -189,10 +156,11 @@ export interface CreateCourseData {
 
 export async function createACourse(data: CreateCourseData){
   const token = localStorage.getItem('x-auth-token')
-    return await axios.post(`/groups/create/course`, data, {
+  const response = await axios.post(`/groups/create/course`, data, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'application/json'
       }
     })
+  return response
 }

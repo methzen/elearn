@@ -1,10 +1,9 @@
-import { Box, Card, Grid} from '@mui/material';
+import { Card, Grid} from '@mui/material';
 // routes
 // @types
 import { CircleFormProps } from '../form/CreateGroupForm';
 import { CreateGroupForm } from '../form';
 import CourseCardAside from 'src/components/CourseCardAside';
-import { description } from 'src/_mock/assets';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +27,7 @@ export default function EditCircle({ isEdit=true, currentCircle }: Props) {
           <CreateGroupForm {...{
             isEdit: true,
             FormSchema : currentCircle, 
-            submitData : (data) => console.log('update data', data)
+            submitData : (content) => console.log('update data', content)
           }}/>
 
           </Card>

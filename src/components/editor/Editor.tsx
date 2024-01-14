@@ -10,6 +10,7 @@ import EditorToolbar, { formats } from './EditorToolbar';
 import { ReactQuillProps } from 'react-quill';
 import { useCallback, useMemo, useRef } from 'react';
 import uploadPostImage from '../../api/UploadPostImage';
+
 interface MyProps extends ReactQuillProps {
   fowardRef : any
 }
@@ -92,7 +93,7 @@ export default function Editor({
     clipboard: {
       matchVisual: false,
     },
-  }), [])
+  }), [id, selectLocalImage])
 
   return (
     <>

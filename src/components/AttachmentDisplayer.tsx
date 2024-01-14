@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 // hooks
 
-import FileThumbnail from '../components/file-thumbnail';
+import FileThumbnail from './file-thumbnail';
 import { Attachment } from 'src/@types/course';
 
 interface ViewPdfProps extends PaperProps {
@@ -19,8 +19,8 @@ interface ViewPdfProps extends PaperProps {
     return (
       <>
         <Stack
-          direction={'row'}
-          alignItems={'center'}
+          direction='row'
+          alignItems='center'
           sx={{
             p:1,
             borderRadius: 2,
@@ -29,7 +29,7 @@ interface ViewPdfProps extends PaperProps {
           }}
           {...other}
         >
-          <FileThumbnail file={'pdf'} />
+          <FileThumbnail file='pdf' />
           <Stack
             sx={{
               ml: 1,

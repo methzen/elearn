@@ -26,7 +26,7 @@ import UserListPage from 'src/sections/group/groupUsers';
 
 // ----------------------------------------------------------------------
 
-Admin.getLayout = (page: React.ReactElement) => <CircleAccessGuard pageName='Admin'><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Admin.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 
 export default function Admin() {
   const [filterStatus, setFilterStatus] = useState('circle');
@@ -55,12 +55,12 @@ export default function Admin() {
           plan: plan.interval,
           currency: plan.currency
         }
-        setCurrentGroup({...Group})
+        return setCurrentGroup({...Group})
     }
     if(circleId){
       getGroup()
     }
-  }, [circleId])
+  }, [circleId, push])
 
   const TABS = [
     {

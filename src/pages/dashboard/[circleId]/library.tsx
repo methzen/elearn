@@ -25,7 +25,7 @@ import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
-Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard pageName='Library'><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {
@@ -44,8 +44,8 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
   }
   )=>{
   
-  const getInputs = (pageType:string) => {
-    switch(pageType){
+  const getInputs = (pt:string) => {
+    switch(pt){
       case LibraryPageType.EDITING_COURSE:
         return {
           icon : null,
@@ -68,6 +68,13 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
           btnText: 'Add Course'
         }
       case LibraryPageType.ONLY_VIEW:
+        return {
+          icon : null,
+          linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
+          action: false,
+          btnText: ''
+        }
+      default: 
         return {
           icon : null,
           linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
@@ -103,12 +110,16 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
 }
 
 export default function Library() {
+  const dispatch = useDispatch()
   const { user } = useAuthContext();
   const { themeStretch } = useSettingsContext();
   const { query: { circleId} } = useRouter();
   const courseStore = useSelector((state) => state.course)
   const [pageType, setPageType] = useState(LibraryPageType.EDITING_COURSE)
   const [hasCourse, setHasCourse] = useState<boolean|undefined>()
+  const [sectionList, setSectionList] = useState<Section[]>([])
+  const [currentChapter, setCurrentChapter] = useState<Chapter>()
+  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
 
@@ -116,37 +127,27 @@ export default function Library() {
     if (circleId){
       dispatch(getCourse(circleId as string))
     }
-  },[circleId])
-
-  const dispatch = useDispatch()
-  const [sectionList, setSectionList] = useState<Section[]>([])
-  const [currentChapter, setCurrentChapter] = useState<Chapter>()
-  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
+  },[circleId, dispatch])
 
   useEffect(() => {
-    const hasCourse = courseStore && courseStore.name &&  (!!courseStore.sections.length)
-    setHasCourse(hasCourse as boolean)
+    const hc = courseStore && courseStore.name &&  (!!courseStore.sections.length)
+    setHasCourse(hc as boolean)
       if(isAdmin){
-        if(!hasCourse){
+        if(!hc){
           setPageType(LibraryPageType.NO_COURSE)
         }else{
-          if(courseStore.isSaved){
-            setPageType(LibraryPageType.SAVED_COURSE)
-          }
-          else{
-            setPageType(LibraryPageType.EDITING_COURSE)
-          }
+          setPageType(courseStore.isSaved ? LibraryPageType.SAVED_COURSE:LibraryPageType.EDITING_COURSE)
         }
       }else{
         setPageType(LibraryPageType.ONLY_VIEW)
       }
-      if(hasCourse){
+      if(hc){
         setSectionList(courseStore?.sections)
         const indexOfLastSection = courseStore.sections.length - 1
         const lastSection = courseStore.sections[indexOfLastSection]
         setIsLastSectionValidated(!!lastSection?.isValidated)
       }
-  },[courseStore])
+  },[courseStore, isAdmin])
 
   useEffect(() => {
     if(courseStore.currentChapter && courseStore.currentSection){
@@ -155,7 +156,7 @@ export default function Library() {
       const currentChap = currentSec?.chapters.find(chap=>chap.id===courseStore.currentChapter)
       setCurrentChapter(currentChap)
   }
-  },[courseStore.currentChapter, courseStore.currentSection])
+  },[courseStore])
 
   const createCourse = () => {
     dispatch(CreateACourse({groupId: circleId} as CreateCourseData))
@@ -200,7 +201,9 @@ export default function Library() {
       case LibraryPageType.SAVED_COURSE:
         return editCourse()
       case LibraryPageType.ONLY_VIEW:
-        return
+        return null
+      default:
+        return null
     }
   }
 
@@ -225,7 +228,7 @@ export default function Library() {
               section={section}
               isCurrentSection={section.id===courseStore.currentSection}
               currentChapter={courseStore.currentChapter}
-              readMode={[
+              readOnly={[
                 LibraryPageType.ONLY_VIEW,
                 LibraryPageType.SAVED_COURSE
               ].includes(pageType)}

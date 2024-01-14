@@ -1,9 +1,7 @@
 import { useState, useRef } from 'react';
 
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
+import { styled, alpha } from '@mui/material/styles';
 // @mui
-import { alpha } from '@mui/material/styles';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 // components
@@ -23,28 +21,21 @@ import {
   InputAdornment,
   FormControlLabel,
   Divider,
-  Button
+  Button,
+  Container,
+  Dialog
 } from '@mui/material';
-import {
-    _userFeeds,
-  } from '../../../_mock/arrays';
-
 
 // next
 import Head from 'next/head';
 import useSWR from 'swr';
 // next
 import { useRouter } from 'next/router';
-import { Container } from '@mui/material';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
 // components
 import { useSettingsContext } from '../../../components/settings';
 import { useSnackbar } from '../../../components/snackbar';
-
-import {
-  _userGroups
-} from '../../../_mock/arrays';
 // @types
 import { IUserProfilePost } from '../../../@types/user';
 // auth
@@ -79,7 +70,7 @@ interface commentDataType {
 }
 // ----------------------------------------------------------------------
 
-Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard pageName='Community'><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
 
@@ -113,20 +104,20 @@ export default function Community() {
       SetWriteSomething(false)
       enqueueSnackbar(response.data);
       mutate()
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar(error.message);
+    } catch (ResponseError) {
+      console.error(ResponseError);
+      enqueueSnackbar(ResponseError.message);
     }
   };
 
   const sendComment = async (comment: any, id:any) =>{
-    const data = {
+    const d = {
       parentItemId: id,
       text: comment
     }
     try{
       SetWriteAComment(v => ({...v, status: false}))
-      const response = await commentAPost(data)
+      const response = await commentAPost(d)
       enqueueSnackbar(response.data);
       mutate()
     }catch(e){
@@ -215,7 +206,7 @@ function PostCard( { post, sendComment, mutate }: Post) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userHasLikedTheirPost = post?.personLikes?.filter(like => like.id === user?.id)
 
-  const [isLiked, setLiked] = useState(userHasLikedTheirPost?.length >=1 ? true: false);
+  const [isLiked, setLiked] = useState(userHasLikedTheirPost?.length >=1);
 
   const [likes, setLikes] = useState(post?.personLikes?.length);
 
@@ -422,98 +413,7 @@ function PostCard( { post, sendComment, mutate }: Post) {
 }
 
 
-const CardSx = {
-  boxShadow: 5, 
-  cursor:"pointer",
-  "&:hover": {
-    boxShadow: 10,
-  },
-};
-
-function Post({ post, onClick }: Props) {
-    const { user } = useAuthContext();  
-    const [isLiked, setLiked] = useState(post.isLiked);
-  
-    const [likes, setLikes] = useState(post?.personLikes?.length);
-  
-    const handleLike = () => {
-      setLiked(true);
-      setLikes((prevLikes) => prevLikes + 1);
-    };
-  
-    const handleUnlike = () => {
-      setLiked(false);
-      setLikes((prevLikes) => prevLikes - 1);
-    };
-
-    return (
-      <Card sx={CardSx} onClick={onClick}>
-        <CardHeader
-          disableTypography
-          avatar={
-            <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
-          }
-          title={
-            <Link color="inherit" variant="subtitle2">
-              {user?.displayName}
-            </Link>
-          }
-          subheader={
-            <Typography variant="caption" component="div" sx={{ color: 'text.secondary' }}>
-              {fDate(post.createdAt)}
-            </Typography>
-          }
-        />
-        <Typography
-          sx={{
-            fontWeight: "bold",
-            px: { md: 2 },
-            py: { md: 2 },
-          }}
-        >
-          {post?.title}
-        </Typography>
-
-        <Markdown
-            key={post.id}
-            children={post.content}
-            sx={{
-              px: { md: 2 },
-              py: { md: 2 },
-            }} />
-  
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            p: (theme) => theme.spacing(2, 3, 3, 3),
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Checkbox
-                color="error"
-                checked={isLiked}
-                icon={<Iconify icon="eva:heart-fill" />}
-                checkedIcon={<Iconify icon="eva:heart-fill" />}
-                onChange={isLiked ? handleUnlike : handleLike}
-              />
-            }
-            label={fShortenNumber(likes)}
-          />
-  
-          <CustomAvatarGroup>
-            {post?.personLikes?.map((person) => (
-              <CustomAvatar key={person.name} alt={person.name} src={person.avatarUrl} />
-            ))}
-          </CustomAvatarGroup>
-        </Stack>
-      </Card>
-    );
-  }
-  
-
-  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
       padding: theme.spacing(2),
     },
@@ -535,7 +435,7 @@ function Post({ post, onClick }: Props) {
     attachment : string;
   }
 
-  function CreateAPostDialog({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
+function CreateAPostDialog({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
     const { user } = useAuthContext();
 
     const isDesktop = useResponsive('up', 'sm');
@@ -544,7 +444,7 @@ function Post({ post, onClick }: Props) {
     const [fullScreen, setFullScreen] = useState(false);
   
     const handleChangeMessage = (message: string) => {
-      setContent( value=> ({...value, message: message}));
+      setContent( v=> ({...v, message}));
     };
 
     const handleChangeTitle = (event: React.ChangeEvent) => {
@@ -582,7 +482,7 @@ function Post({ post, onClick }: Props) {
             }}
           >
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              What's on your mind {user?.displayName} ?
+              {`What's on your mind ${user?.displayName} ?`}
             </Typography>
 
             <IconButton onClick={() => setFullScreen(!fullScreen)}>

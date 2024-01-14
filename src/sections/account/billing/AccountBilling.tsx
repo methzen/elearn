@@ -22,12 +22,12 @@ export default function AccountBilling() {
       const {has_more, data} = await getSubscription()
       if (data){
         setSubscriptions(data)
-        setHasMoreSubs(has_more? true: false)
+        setHasMoreSubs(!!has_more)
       }
       const response = await getCustomerInvoices()
       if (response){
         setInvoices(response.data)
-        setHasMoreInvoice(response.has_more? true: false)
+        setHasMoreInvoice(!!response.has_more)
       }
       const res = await getCustomerPaymentMethods()
       if(res){
