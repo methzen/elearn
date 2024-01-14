@@ -1,8 +1,4 @@
-import { paramCase } from 'change-case';
-import { useState } from 'react';
-// next
-import Head from 'next/head';
-import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 // @mui
 import {
@@ -20,16 +16,13 @@ import {
 } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
-// @types
-import { IUserAccountGeneral } from '../../@types/user';
 // _mock_
-import { _userList } from '../../_mock/arrays';
+import { UserGroupMember, _userGroupMember, _userList } from '../../_mock/arrays';
 
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 import ConfirmDialog from '../../components/confirm-dialog';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
 import {
   useTable,
@@ -43,6 +36,7 @@ import {
 } from '../../components/table';
 // sections
 import { UserTableToolbar, UserTableRow } from '../../sections//user/list';
+import getGroupMembers from 'src/api/getGroupMembers';
 
 // ----------------------------------------------------------------------
 
@@ -50,26 +44,18 @@ const STATUS_OPTIONS = ['all', 'active', 'banned'];
 
 const ROLE_OPTIONS = [
   'all',
-  'ux designer',
-  'full stack designer',
-  'backend developer',
-  'project manager',
-  'leader',
-  'ui designer',
-  'ui/ux designer',
-  'front end developer',
-  'full stack developer',
+  'admin',
+  'moderator',
+  'member'
 ];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
+  { id: 'email', label: 'Email', align: 'left' },
   { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ];
-
 
 export default function UserListPage() {
   const {
@@ -91,11 +77,9 @@ export default function UserListPage() {
     onChangeRowsPerPage,
   } = useTable();
 
-  const { themeStretch } = useSettingsContext();
+  const { push, query: {circleId} } = useRouter();
 
-  const { push } = useRouter();
-
-  const [tableData, setTableData] = useState(_userList);
+  const [tableData, setTableData] = useState(_userGroupMember);
 
   const [filterName, setFilterName] = useState('');
 
@@ -103,7 +87,18 @@ export default function UserListPage() {
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterStatus, setFilterStatus] = useState<string | boolean>('all');
+
+  useEffect(() => {
+    const getMembers = async () => {
+        const response =  await getGroupMembers(circleId as string, page+1)
+        if(!response){ return push(PATH_DASHBOARD.root)};
+        console.log('response', response)
+    }
+    if(circleId){
+      getMembers()
+    }
+  }, [circleId])
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -133,8 +128,9 @@ export default function UserListPage() {
   };
 
   const handleFilterStatus = (event: React.SyntheticEvent<Element, Event>, newValue: string) => {
+    const filter = (newValue==='active')? false : (newValue==='banned')? true: 'all'
     setPage(0);
-    setFilterStatus(newValue);
+    setFilterStatus(filter);
   };
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,7 +156,7 @@ export default function UserListPage() {
   };
 
   const handleDeleteRows = (selectedRows: string[]) => {
-    const deleteRows = tableData.filter((row) => !selectedRows.includes(row.id));
+    const deleteRows = tableData.filter((row) => !selectedRows.includes(row.id as string));
     setSelected([]);
     setTableData(deleteRows);
 
@@ -199,7 +195,7 @@ export default function UserListPage() {
 
         <Card>
           <Tabs
-            value={filterStatus}
+            value={typeof filterStatus==='string'? 'all': (filterStatus===true)? 'banned' : 'active'}
             onChange={handleFilterStatus}
             sx={{
               px: 2,
@@ -332,10 +328,10 @@ function applyFilter({
   filterStatus,
   filterRole,
 }: {
-  inputData: IUserAccountGeneral[];
+  inputData: UserGroupMember[];
   comparator: (a: any, b: any) => number;
   filterName: string;
-  filterStatus: string;
+  filterStatus: boolean|string;
   filterRole: string;
 }) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
@@ -355,11 +351,11 @@ function applyFilter({
   }
 
   if (filterStatus !== 'all') {
-    inputData = inputData.filter((user) => user.status === filterStatus);
+    inputData = inputData.filter((user) => user.isBanned === filterStatus);
   }
 
   if (filterRole !== 'all') {
-    inputData = inputData.filter((user) => user.job === filterRole);
+    inputData = inputData.filter((user) => user.ownerShipLevel === filterRole);
   }
 
   return inputData;

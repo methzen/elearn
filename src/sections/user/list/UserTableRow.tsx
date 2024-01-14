@@ -18,11 +18,12 @@ import Label from '../../../components/label';
 import Iconify from '../../../components/iconify';
 import MenuPopover from '../../../components/menu-popover';
 import ConfirmDialog from '../../../components/confirm-dialog';
+import { UserGroupMember } from 'src/_mock/arrays';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUserAccountGeneral;
+  row: UserGroupMember;
   selected: boolean;
   onEditRow: VoidFunction;
   onSelectRow: VoidFunction;
@@ -36,7 +37,7 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { firstname, photoURL, company, job, isVerified, status } = row;
+  const { firstname, lastname, photoURL, email, isBanned, ownerShipLevel, status } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -68,42 +69,25 @@ export default function UserTableRow({
         <TableCell>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar alt={firstname} src={photoURL} />
-
             <Typography variant="subtitle2" noWrap>
-              {firstname}
+              {firstname} {lastname}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell align="left">{company}</TableCell>
-
-        <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-          {job}
-        </TableCell>
-
-        <TableCell align="center">
-          <Iconify
-            icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-            sx={{
-              width: 20,
-              height: 20,
-              color: 'success.main',
-              ...(!isVerified && { color: 'warning.main' }),
-            }}
-          />
-        </TableCell>
-
+        <TableCell align="left">{email}</TableCell>
+        <TableCell align="left">{ownerShipLevel}</TableCell>
         <TableCell align="left">
           <Label
             variant="soft"
-            color={(status === 'banned' && 'error') || 'success'}
+            color={(isBanned && 'error') || 'success'}
             sx={{ textTransform: 'capitalize' }}
           >
-            {status}
+            {isBanned? "banned" : "active"}
           </Label>
         </TableCell>
 
-        <TableCell align="right">
+        <TableCell align="left">
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
