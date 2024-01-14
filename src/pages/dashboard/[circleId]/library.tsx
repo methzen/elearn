@@ -211,7 +211,7 @@ export default function Library() {
   return (
     <>
       <Head>
-        <title> Library | SmallCircle </title>
+        <title> Library | Inner Circle </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
       <GetCustomBreadcrumbsAction

@@ -119,7 +119,7 @@ export default function PageTwo() {
   return (
     <>
       <Head>
-        <title> Circles | Minimal UI</title>
+        <title> Login | Inner Circle</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>

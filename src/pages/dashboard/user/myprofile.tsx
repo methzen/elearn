@@ -94,7 +94,7 @@ export default function MyProfilePage() {
   return (
     <>
       <Head>
-        <title> User: Profile | Minimal UI</title>
+        <title> Profile | Inner Circle</title>
       </Head>
       {!currentUser? loading :
       <Container maxWidth={themeStretch ? false : 'lg'}>

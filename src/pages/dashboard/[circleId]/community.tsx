@@ -128,7 +128,7 @@ export default function Community() {
   return (
     <>
       <Head>
-        <title> Circles | Minimal UI</title>
+        <title> Community | Inner Circle</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
