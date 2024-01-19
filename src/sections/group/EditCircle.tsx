@@ -10,9 +10,11 @@ import CourseCardAside from 'src/components/CourseCardAside';
 type Props = {
   isEdit?: boolean;
   currentCircle: CircleFormProps;
+  update: (data:CircleFormProps) =>void;
+  isLoading: boolean
 };
 
-export default function EditCircle({ isEdit=true, currentCircle }: Props) {
+export default function EditCircle({ isEdit=true, currentCircle, update, isLoading }: Props) {
 
   const data = {
     imageUrl: currentCircle.imageUrl as string,
@@ -27,7 +29,8 @@ export default function EditCircle({ isEdit=true, currentCircle }: Props) {
           <CreateGroupForm {...{
             isEdit: true,
             FormSchema : currentCircle, 
-            submitData : (content) => console.log('update data', content)
+            submitData : (data) => update({...data, id: currentCircle.id}),
+            isLoading: isLoading
           }}/>
 
           </Card>

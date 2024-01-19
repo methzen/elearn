@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { Suspense, useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
@@ -20,9 +20,12 @@ import {
   CreateCourseData,
   apiEditOrSaveCourse,
 } from '../../../redux/slices/course';
-import { Chapter, Section } from '../../../@types/course';
+import { Chapter, Course, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
+import { useQuery } from '@tanstack/react-query';
+import getCourseByGroupId from 'src/api/getCourseByGroupId';
+import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
@@ -45,6 +48,12 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
   )=>{
   
   const getInputs = (pt:string) => {
+    const defaut = {
+      icon : null,
+      linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
+      action: false,
+      btnText: ''
+    }
     switch(pt){
       case LibraryPageType.EDITING_COURSE:
         return {
@@ -68,19 +77,9 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
           btnText: 'Add Course'
         }
       case LibraryPageType.ONLY_VIEW:
-        return {
-          icon : null,
-          linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
-          action: false,
-          btnText: ''
-        }
+        return defaut
       default: 
-        return {
-          icon : null,
-          linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
-          action: false,
-          btnText: ''
-        }
+        return defaut
     }
     }
   const welcomeHeading = `Welcome ${userName} !`
@@ -123,31 +122,40 @@ export default function Library() {
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
 
-  useEffect(() => {
-    if (circleId){
-      dispatch(getCourse(circleId as string))
-    }
-  },[circleId, dispatch])
+  const {data, error, isLoading} = useQuery<Course, string>({
+    queryKey: ['course'],
+    queryFn: () => getCourseByGroupId(circleId as string)
+  })
+
+  console.log('query data', data, error)
 
   useEffect(() => {
-    const hc = courseStore && courseStore.name &&  (!!courseStore.sections.length)
-    setHasCourse(hc as boolean)
+    if (data){
+      dispatch(getCourse(circleId as string))
+    }
+  },[circleId, dispatch, data])
+
+  useEffect(() => {
+    setHasCourse(!!data)
       if(isAdmin){
-        if(!hc){
+        if(!data){
           setPageType(LibraryPageType.NO_COURSE)
         }else{
-          setPageType(courseStore.isSaved ? LibraryPageType.SAVED_COURSE:LibraryPageType.EDITING_COURSE)
+          setPageType(data.isSaved ? LibraryPageType.SAVED_COURSE : LibraryPageType.EDITING_COURSE)
         }
       }else{
         setPageType(LibraryPageType.ONLY_VIEW)
       }
-      if(hc){
-        setSectionList(courseStore?.sections)
-        const indexOfLastSection = courseStore.sections.length - 1
-        const lastSection = courseStore.sections[indexOfLastSection]
+      if(data){
+        setSectionList(data?.sections)
+        const indexOfLastSection = data.sections.length - 1
+        const lastSection = data.sections[indexOfLastSection]
         setIsLastSectionValidated(!!lastSection?.isValidated)
+        const currentSec = courseStore.sections[0]
+        const currentChap = currentSec?.chapters[0]
+        setCurrentChapter(currentChap)
       }
-  },[courseStore, isAdmin])
+  },[data, isAdmin])
 
   useEffect(() => {
     if(courseStore.currentChapter && courseStore.currentSection){
@@ -207,7 +215,8 @@ export default function Library() {
     }
   }
 
-  if (!circleId || !courseStore) return <>loading...</>
+  if (!circleId || !courseStore || isLoading) return <LoadingScreen />
+
   return (
     <>
       <Head>
@@ -246,9 +255,7 @@ export default function Library() {
           />}
           </Grid>
           <Grid item xs={12} md={6}>
-          <Suspense fallback={<>loading...</>}>
            {currentChapter && <Video chapter={currentChapter as Chapter}/>}
-          </Suspense>
           </Grid>
         </Grid>
       </Container>

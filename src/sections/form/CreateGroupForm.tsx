@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import * as Yup from 'yup';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -20,47 +21,52 @@ import FormProvider, {
   RHFRadioGroup,
   RHFSwitch,
 } from '../../components/hook-form';
+import { courseDataSchema } from './schema';
 
 // ----------------------------------------------------------------------
 
 const PAYMENT_OPTION = [
-  { label: 'Month', value: 'month' },
-  { label: 'Year', value: 'year' },
-  { label: 'One Time', value: 'OneTime' },
+  { label: 'Subscription', value: 'subscription' },
+  { label: 'One Time', value: 'onetime' },
 ];
 
 export type CircleFormProps = {
+  id: string
   name: string;
   description: string;
   imageUrl: File | string | null;
   isPaying: boolean;
-  price: number;
   community:boolean;
-  plan: string
+  payment_plan?:string;
+  month?: number
+  year?: number
+  oneTime?: number
 };
 
 interface CreateForm {
   isEdit?: boolean,
-  FormSchema: any
+  FormSchema?: CircleFormProps
   submitData: (data : CircleFormProps) => void;
+  isLoading?: boolean
 }
 
 export default function CreateAgroup(
-  { isEdit=false, FormSchema, submitData } : CreateForm) {
-  console.log('currentCircle', FormSchema)
+  { isEdit=false, FormSchema, submitData, isLoading} : CreateForm) {
 
   const defaultValues = useMemo(()=>({
     name: FormSchema?.name || '',
     description: FormSchema?.description || '',
     imageUrl: FormSchema?.imageUrl || null,
     isPaying: FormSchema?.isPaying || false,
-    price: FormSchema?.price || 0.0,
     community: FormSchema?.community || true,
-    plan: FormSchema?.plan || 'month'
+    payment_plan: FormSchema?.payment_plan || 'subscription',
+    month: FormSchema?.month || 0.0,
+    year: FormSchema?.year || 0.0,
+    oneTime: FormSchema?.oneTime || 0.0
   }), [FormSchema])
 
   const methods = useForm<CircleFormProps>({
-    resolver: yupResolver(FormSchema),
+    resolver: yupResolver(courseDataSchema),
     defaultValues,
   });
 
@@ -130,7 +136,7 @@ export default function CreateAgroup(
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 Give a description
               </Typography>
-                <RHFTextField name="description" label='What is this circle for...' 
+                <RHFTextField name="description" label='What is this circle about?' 
                 multiline
                 minRows={4}
                 maxRows={8}
@@ -146,16 +152,24 @@ export default function CreateAgroup(
 
             {watch().isPaying && <Stack spacing={1}>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                    Payment Plan
+                Payment Plan
               </Typography>
-              <RHFRadioGroup row spacing={4} name="plan" options={PAYMENT_OPTION} />
-              <Stack spacing={1}>
-                  <RHFTextField
-                  name="price"
-                  label="Price"
+              <RHFRadioGroup row spacing={4} name="payment_plan" options={PAYMENT_OPTION} value={watch().payment_plan}/>
+              <Stack
+                  spacing={2}
+                  alignItems="center"
+                  direction={{
+                    xs: 'column',
+                    sm: 'row',
+                  }}
+              >
+                { watch().payment_plan === 'subscription' &&
+                  <><RHFTextField
+                  name="month"
+                  label="Monthly Price"
                   placeholder="0.00"
                   onChange={(event) =>
-                    setValue('price', Number(event.target.value), { shouldValidate: true })
+                    setValue('month', Number(event.target.value), { shouldValidate: true })
                   }
                   InputLabelProps={{ shrink: true }}
                   InputProps={{
@@ -169,6 +183,46 @@ export default function CreateAgroup(
                     type: 'number',
                   }}
                 />
+                <RHFTextField
+                  name="year"
+                  label="Yearly Price"
+                  placeholder="0.00"
+                  onChange={(event) =>
+                    setValue('year', Number(event.target.value), { shouldValidate: true })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box component="span" sx={{ color: 'text.disabled' }}>
+                          $
+                        </Box>
+                      </InputAdornment>
+                    ),
+                    type: 'number',
+                  }}
+                /></>}{
+                  watch().payment_plan === 'onetime' &&
+                <RHFTextField
+                  name="oneTime"
+                  label="OneTime Price"
+                  placeholder="0.00"
+                  onChange={(event) =>
+                    setValue('oneTime', Number(event.target.value), { shouldValidate: true })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box component="span" sx={{ color: 'text.disabled' }}>
+                          $
+                        </Box>
+                      </InputAdornment>
+                    ),
+                    type: 'number',
+                }}
+              />
+                }
                 </Stack>
             </Stack>}
 
@@ -184,7 +238,7 @@ export default function CreateAgroup(
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={isSubmitting}
+                loading={isLoading || isSubmitting}
               >
                 {!isEdit? 'Create': 'Update'}
               </LoadingButton>

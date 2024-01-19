@@ -7,7 +7,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import '../styles/quill.css';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // ----------------------------------------------------------------------
 import { Provider as ReduxProvider } from 'react-redux';
 import { CacheProvider, EmotionCache } from '@emotion/react';
@@ -37,7 +37,7 @@ import { store } from '../redux/store';
 // ----------------------------------------------------------------------
 
 const clientSideEmotionCache = createEmotionCache();
-
+const clientReactQuery = new QueryClient()
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
@@ -59,6 +59,7 @@ export default function MyApp(props: MyAppProps) {
       </Head>
 
       <AuthProvider>
+      <QueryClientProvider client={clientReactQuery}>
       <ReduxProvider store={store}>
         <SettingsProvider>
           <MotionLazyContainer>
@@ -77,6 +78,7 @@ export default function MyApp(props: MyAppProps) {
           </MotionLazyContainer>
         </SettingsProvider>
         </ReduxProvider>
+      </QueryClientProvider>
       </AuthProvider>
     </CacheProvider>
   );

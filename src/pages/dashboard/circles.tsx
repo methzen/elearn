@@ -16,7 +16,6 @@ import { useAuthContext } from '../../auth/useAuthContext';
 
 import { CreateGroupForm } from '../../sections/form';
 import createGroup from 'src/api/createGroup';
-import { FormSchema } from '../../sections/form/schema';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 import getAllGroupsByPage from '../../api/getAllGroupsByPage';
@@ -75,8 +74,7 @@ function CreateAGroupDialog({open, cancel}: CreateGroupDialogProps) {
           </IconButton>
         </Stack>
         <Divider />
-        <CreateGroupForm {...{
-          FormSchema, 
+        <CreateGroupForm {...{ 
           submitData : createGroup
         }}  />
         <Divider />
@@ -105,8 +103,8 @@ export default function PageTwo() {
 
   const submitGroup = async (d: CircleFormProps) => {
     try {
-      setOpenModal(false)
       await createGroup(d)
+      setOpenModal(false)
       mutate()
       enqueueSnackbar("The group has been created successfully.")
     }catch (err) {

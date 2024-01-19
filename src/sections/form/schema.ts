@@ -2,14 +2,14 @@ import * as Yup from 'yup';
 
 // ----------------------------------------------------------------------
 
-export const FormSchema = Yup.object().shape({
-  name: Yup.string()
-    .required('name is required')
-    .min(6, 'Mininum 6 characters')
-    .max(32, 'Maximum 32 characters'),
-  image: Yup.mixed().required('Single upload is required').nullable(true),
-  description: Yup.string().required('Editor is required'),
-  price: Yup.number(),
+export const courseDataSchema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  description: Yup.string().required('Description is required'),
+  imageUrl: Yup.mixed().required('Images is required'),
+  isPaying: Yup.boolean(),
   community: Yup.boolean(),
-  plan: Yup.string()
+  plans: Yup.string(),
+  month: Yup.number(),
+  year: Yup.number(),
+  oneTime: Yup.number()
 });

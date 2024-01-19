@@ -23,14 +23,18 @@ import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import UserListPage from 'src/sections/group/groupUsers';
+import updateGroup from 'src/api/updateGroup';
+import { useSnackbar } from '../../../components/snackbar';
 
 // ----------------------------------------------------------------------
 
 Admin.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 
 export default function Admin() {
+  const { enqueueSnackbar } = useSnackbar();
   const [filterStatus, setFilterStatus] = useState('circle');
   const [currentGroup, setCurrentGroup] = useState<CircleFormProps>()
+  const [isLoading, setIsLoading] = useState(false)
   const handleFilterStatus = (event: React.SyntheticEvent<Element, Event>, newValue: string) => {
     setFilterStatus(newValue);
   };
@@ -43,30 +47,34 @@ export default function Admin() {
     const getGroup = async () => {
         const response =  await getGroupDataForAdmin(circleId as string)
         if(!response){ return push(PATH_DASHBOARD.root)};
-        const plan = response.plans[0]
-        const Group = {
-          name: response.name,
-          imageUrl: response.imageUrl,
-          description: response.description,
-          image: response.image,
-          isPaying: response.isPaying,
-          price: plan.price,
-          community: response.community,
-          plan: plan.interval,
-          currency: plan.currency
-        }
-        return setCurrentGroup({...Group})
+        return setCurrentGroup({...response})
     }
-    if(circleId){
+    if(circleId && !isLoading){
       getGroup()
     }
-  }, [circleId, push])
+  }, [circleId, push, isLoading ])
 
+  const handleUpdate = async (data:CircleFormProps) =>{
+    setIsLoading(true)
+    try{
+      await updateGroup(data)
+      setIsLoading(false)
+      enqueueSnackbar("The circle has been updated successfully.")
+    }catch(error){
+      console.log(error)
+      setIsLoading(false)
+      enqueueSnackbar("Could not update circle", {variant: 'error'})
+    }
+  }
   const TABS = [
     {
       value: 'circle',
       label: 'circle',
-      component: currentGroup? <EditCircle currentCircle={currentGroup as CircleFormProps}/> : <span>loading...</span>,
+      component: currentGroup? <EditCircle 
+          currentCircle={currentGroup as CircleFormProps} 
+          update={handleUpdate}
+          isLoading={isLoading}
+          /> : <span>loading...</span>,
     },
     {
       value: 'users',
