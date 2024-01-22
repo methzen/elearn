@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 // next
 import { useRouter } from 'next/router';
 // @mui
@@ -12,10 +12,10 @@ import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import { NavSectionVertical } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
+import {GroupNav} from './config-navigation';
 import NavAccount from './NavAccount';
 import NavToggleButton from './NavToggleButton';
-
+import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -24,8 +24,11 @@ type Props = {
 };
 
 export default function NavVertical({ openNav, onCloseNav }: Props) {
-  const { pathname } = useRouter();
+  const { pathname, query: { circleId }, } = useRouter();
+  const context = useContext(CircleAccessRoleContext)
+  const isAdmin = context?.role === RoleType.admin
 
+  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string)
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
         <NavAccount />
       </Stack>
 
-      <NavSectionVertical data={navConfig} />
+      <NavSectionVertical data={NavConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

@@ -14,7 +14,7 @@ const appearance = {
 
 
 
-var style = {
+const style = {
       base: {
         iconColor: '#c4f0ff',
         color: '#fff',

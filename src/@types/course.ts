@@ -1,24 +1,80 @@
-export type basic ={
+export type Base = {
+    id?: string ;
     name: string | null,
     created?: Date | null,
-    description: string | null,   
+    description?: string | null,
 }
 
-export interface Chapter extends basic {
-    videoUrl: string | null,
-    contentText: string | null,
+export interface Attachment {
+    id?: string;
+    title:string;
+    fileUrl:string;
+    type:string;
+    originalName?:string;
+    sectionId?:string;
+    chapter: string;
 }
 
-export interface Module extends basic {
-    chaperList: Chapter[] | null,
+export interface Videodata {
+    name?: string;
+    url?: string;
+    type?: string;
+    format?: string;
+    bytes?: number;
+    asset_id?: string;
+    thumbnail_url?: string;
+    secure_url?: string;
+    path?: string;
+    original_filename?: string;
+    public_id: string;
 }
 
-export interface Course extends basic {
-    avatar?: string,
-    creatorId?: string,
-    groupId?: string,
-    content: Module[] | Chapter[] | null,
-    contentStructure : "STRUCTURED" | "UNSTRUCTURED" | null
-    isLoading?: boolean
-    error ? : string | null
+export interface Video {
+    data: Videodata;
+    type: string;
+    sectionId?: string;
+    chapterId?:string
 }
+export interface Chapter extends Base {
+    video: Video | null;
+    content: string | null;
+    attachments: Attachment[];
+    section?: string
+    isSelected?: boolean
+}
+
+export interface Section extends Base {
+    chapters: Chapter[];
+    isValidated?: boolean;
+    course?: string;
+}
+
+type ownershipLevel = "admin" | "member" | "moderator"
+
+export enum CourseOwnerShip {
+    admin = "admin",
+    member = "member",
+    moderator = "moderator"
+}
+
+export interface Course extends Base {
+    creatorId?: string;
+    groupId?: string;
+    sections: Section[];
+    isSaved: boolean | undefined;
+    ownershipLevel?: ownershipLevel;
+}
+
+export interface Plan{
+    price: number,
+    interval: "month" |"year"|"onetime"| undefined,
+    group: string
+}
+export interface Circle extends Base {
+    imageUrl: string;
+    by?: string;
+    isPaying: boolean | undefined;
+    category: string;
+    plans: Plan[]
+}
+

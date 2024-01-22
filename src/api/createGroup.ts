@@ -1,22 +1,17 @@
-import { FormValuesProps } from "src/@types/create";
+import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
+import _ from "lodash";
 import axios from "./axios";
 
-interface groupData {
-    name: string,
-    description : string,
-  }
-
-export default async function createGroup(data: FormValuesProps){
-  const newData = {name : data.name, description : data.editor} 
+export default async function createGroup(data: CircleFormProps){
   const token = localStorage.getItem('x-auth-token')
-    return await axios.post(`/groups/create/group`, {
-      data: newData,
-      file: data.singleUpload
+  const response = await axios.post(`/groups/create/group`, {
+      data: _.omit(data, 'imageUrl'),
+      file: data.imageUrl
     }, {
       headers: {
         "x-auth-token" : token,
         'Content-Type': 'multipart/form-data'
       }
     })
-
+  return response
 }

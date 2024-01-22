@@ -8,12 +8,22 @@ import { hideScrollbarX } from '../../../utils/cssStyles';
 import Logo from '../../../components/logo';
 import { NavSectionMini } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
+import {GroupNav} from './config-navigation';
 import NavToggleButton from './NavToggleButton';
-
+import { useRouter } from 'next/router'
+import { useContext } from 'react';
+import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
+
+  const {
+    query: { circleId },
+  } = useRouter();
+  const context = useContext(CircleAccessRoleContext)
+  const isAdmin = context?.role === RoleType.admin
+  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string)
+
   return (
     <Box
       component="nav"
@@ -41,7 +51,7 @@ export default function NavMini() {
       >
         <Logo sx={{ mx: 'auto', my: 2 }} />
 
-        <NavSectionMini data={navConfig} />
+        <NavSectionMini data={NavConfig} />
       </Stack>
     </Box>
   );

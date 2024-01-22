@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-
+import { PATH_DASHBOARD } from '../../../routes/paths';
 // ----------------------------------------------------------------------
 
 export default function Index() {
@@ -8,7 +8,7 @@ export default function Index() {
 
   useEffect(() => {
     if (router.pathname === '/dashboard/user') {
-      router.push('/dashboard/user/four');
+      router.push(PATH_DASHBOARD.user.myprofile);
     }
   });
 

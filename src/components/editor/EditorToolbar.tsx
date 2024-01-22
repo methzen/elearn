@@ -91,13 +91,11 @@ export default function EditorToolbar({ id, isSimple, showMedia, ...other }: Edi
           <select className="ql-align" />
         </div>
 
-          {showMedia ?
-          (<div className="ql-formats">
+        <div className="ql-formats">
             <button type="button" className="ql-link" />
             <button type="button" className="ql-image" />
-            <button type="button" className="ql-video" />
-          </div>) : null
-          }        
+            {showMedia && <button type="button" className="ql-video" />}
+        </div>    
 
         <div className="ql-formats">
           {!isSimple && <button type="button" className="ql-formula" />}

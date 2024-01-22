@@ -1,3 +1,4 @@
+import { IUserAccountGeneral } from 'src/@types/user';
 import _mock from '../_mock';
 import { randomNumberRange, randomInArray } from '../utils';
 
@@ -38,14 +39,22 @@ export const _userFriends = [...Array(18)].map((_, index) => ({
   role: _mock.role(index),
 }));
 
-export const _userGallery = [...Array(12)].map((_, index) => ({
+export const _userGallery = [...Array(3)].map((_, index) => ({
   id: _mock.id(index),
   title: _mock.text.title(index),
   postAt: _mock.time(index),
   imageUrl: _mock.image.cover(index),
 }));
 
-export const _userFeeds = [...Array(3)].map((_, index) => ({
+export const _userGroups = [...Array(3)].map((_, index) => ({
+  id: _mock.id(index),
+  name: _mock.course.name(index),
+  createdAt: _mock.time(index),
+  description: _mock.text.description(index),
+  imageUrl: _mock.course.cover(index),
+}));
+
+export const _userFeeds = [...Array(10)].map((_, index) => ({
   id: _mock.id(index),
   author: {
     id: _mock.id(8),
@@ -119,10 +128,22 @@ export const _userInvoices = [...Array(10)].map((_, index) => ({
   price: _mock.number.price(index),
 }));
 
+export interface UserGroupMember {
+  id: string
+  firstname: string,
+  lastname: string,
+  email: string,
+  photoURL: string,
+  ownerShipLevel: string,
+  status: string,
+  isBanned: boolean
+}
+
 export const _userList = [...Array(24)].map((_, index) => ({
   id: _mock.id(index),
-  avatarUrl: _mock.image.avatar(index),
-  name: _mock.name.fullName(index),
+  photoURL: _mock.image.avatar(index),
+  firstname: _mock.name.firstName(index),
+  lastname: _mock.name.lastName(index),
   email: _mock.email(index),
   phoneNumber: _mock.phoneNumber(index),
   address: '908 Jack Locks',
@@ -133,5 +154,16 @@ export const _userList = [...Array(24)].map((_, index) => ({
   company: _mock.company(index),
   isVerified: _mock.boolean(index),
   status: randomInArray(['active', 'banned']),
-  role: _mock.role(index),
-}));
+  job: _mock.role(index),
+})) as IUserAccountGeneral[];
+
+export const _userGroupMember = [...Array(24)].map((_, index) => ({
+  id: _mock.id(index),
+  photoURL: _mock.image.avatar(index),
+  firstname: _mock.name.firstName(index),
+  lastname: _mock.name.lastName(index),
+  email: _mock.email(index),
+  ownerShipLevel: randomInArray(['admin', 'member', 'moderator']),
+  status: randomInArray(['active', 'inactive']),
+  isBanned: randomInArray([false, true])
+})) as UserGroupMember[];

@@ -7,9 +7,9 @@ import 'simplebar-react/dist/simplebar.min.css';
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import '../styles/quill.css';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // ----------------------------------------------------------------------
-
+import { Provider as ReduxProvider } from 'react-redux';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 // next
 import { NextPage } from 'next';
@@ -26,16 +26,18 @@ import ProgressBar from '../components/progress-bar';
 import SnackbarProvider from '../components/snackbar';
 import { MotionLazyContainer } from '../components/animate';
 import { ThemeSettings, SettingsProvider } from '../components/settings';
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
 
 // Check our docs
 // https://docs.minimals.cc/authentication/ts-version
 
 import { AuthProvider } from '../auth/JwtContext';
-
+import { store } from '../redux/store'; 
 // ----------------------------------------------------------------------
 
 const clientSideEmotionCache = createEmotionCache();
-
+const clientReactQuery = new QueryClient()
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
@@ -57,6 +59,8 @@ export default function MyApp(props: MyAppProps) {
       </Head>
 
       <AuthProvider>
+      <QueryClientProvider client={clientReactQuery}>
+      <ReduxProvider store={store}>
         <SettingsProvider>
           <MotionLazyContainer>
             <ThemeProvider>
@@ -64,13 +68,17 @@ export default function MyApp(props: MyAppProps) {
                 <ThemeLocalization>
                   <SnackbarProvider>
                     <ProgressBar />
+                    <Elements stripe={loadStripe(process.env.STRIPE_PUBLIC_KEY as string)}>
                     {getLayout(<Component {...pageProps} />)}
+                    </Elements>
                   </SnackbarProvider>
                 </ThemeLocalization>
               </ThemeSettings>
             </ThemeProvider>
           </MotionLazyContainer>
         </SettingsProvider>
+        </ReduxProvider>
+      </QueryClientProvider>
       </AuthProvider>
     </CacheProvider>
   );

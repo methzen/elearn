@@ -1,80 +1,81 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import * as Yup from 'yup';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 // @mui
 import {
-  Grid,
+  Box,
   Stack,
   Backdrop,
   Typography,
-  StackProps,
   CircularProgress,
+  InputAdornment,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 
 import FormProvider, {
-  RHFEditor,
   RHFUpload,
   RHFTextField,
+  RHFRadioGroup,
+  RHFSwitch,
 } from '../../components/hook-form';
+import { courseDataSchema } from './schema';
 
 // ----------------------------------------------------------------------
 
+const PAYMENT_OPTION = [
+  { label: 'Subscription', value: 'subscription' },
+  { label: 'One Time', value: 'onetime' },
+];
 
-type FormValuesProps = {
+export type CircleFormProps = {
+  id: string
   name: string;
-  editor: string;
-  singleUpload: File | null;
-};
-
-export const defaultValues = {
-  name: '',
-  editor: '',
-  singleUpload: null,
+  description: string;
+  imageUrl: File | string | null;
+  isPaying: boolean;
+  community:boolean;
+  payment_plan?:string;
+  month?: number
+  year?: number
+  oneTime?: number
 };
 
 interface CreateForm {
-  FormSchema : any
-  nameLabel: string
-  editorLabel: string
-  submitData : (data : FormValuesProps) => void;
+  isEdit?: boolean,
+  FormSchema?: CircleFormProps
+  submitData: (data : CircleFormProps) => void;
+  isLoading?: boolean
 }
 
-export default function ReactHookForm(
-  { FormSchema, 
-    nameLabel, 
-    editorLabel, 
-    submitData } : CreateForm) {
+export default function CreateAgroup(
+  { isEdit=false, FormSchema, submitData, isLoading} : CreateForm) {
 
-  const [fileData, setFileData] = useState<File | null>(null)
+  const defaultValues = useMemo(()=>({
+    name: FormSchema?.name || '',
+    description: FormSchema?.description || '',
+    imageUrl: FormSchema?.imageUrl || null,
+    isPaying: FormSchema?.isPaying || false,
+    community: FormSchema?.community || true,
+    payment_plan: FormSchema?.payment_plan || 'subscription',
+    month: FormSchema?.month || 0.0,
+    year: FormSchema?.year || 0.0,
+    oneTime: FormSchema?.oneTime || 0.0
+  }), [FormSchema])
 
-  const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(FormSchema),
+  const methods = useForm<CircleFormProps>({
+    resolver: yupResolver(courseDataSchema),
     defaultValues,
   });
 
   const {
     watch,
-    reset,
-    control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
-  const values = watch();
-
-  const onSubmit = async (data: FormValuesProps) => {
-    try {
-      await submitData(data)
-      reset();
-    }catch (err) {
-      console.error(err);
-    }
-
-  };
 
   const handleDropSingleFile = useCallback(
     (acceptedFiles: File[]) => {
@@ -85,8 +86,7 @@ export default function ReactHookForm(
       });
 
       if (newFile) {
-        setFileData(file)
-        setValue('singleUpload', newFile, { shouldValidate: true });
+        setValue('imageUrl', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -100,70 +100,152 @@ export default function ReactHookForm(
         </Backdrop>
       )}
 
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={5}>
-          <Grid item xs={12} md={6}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(submitData)}>
+        <Box 
+          sx={{
+            marginLeft:"auto",
+            marginRight:"auto",
+            marginBottom: "40px",
+            borderRadius: 1,
+            display:"flex",
+            flexDirection:"column",
+            gap: "15px",
+            padding:"0 20px",
+          }}
+        >
             <Stack spacing={2}>
-              <Block label="">
-                <RHFTextField name="name" label={nameLabel} />
-              </Block>
-
-              <Block label={editorLabel}>
-                <RHFEditor simple name="editor"  showMedia={false}/>
-              </Block>
-            </Stack>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Stack spacing={2}>
-              <Block label="">
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  Banner
+                </Typography>
                 <RHFUpload
-                  name="singleUpload"
+                  name="imageUrl"
                   maxSize={3145728}
                   onDrop={handleDropSingleFile}
-                  onDelete={() => setValue('singleUpload', null, { shouldValidate: true })}
+                  onDelete={() => setValue('imageUrl', null, { shouldValidate: true })}
                 />
-              </Block>
+            </Stack>
 
+            <Stack spacing={2}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Name
+              </Typography>
+              <RHFTextField name="name" label='Name' />
+            </Stack>
+
+            <Stack spacing={2}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Give a description
+              </Typography>
+                <RHFTextField name="description" label='What is this circle about?' 
+                multiline
+                minRows={4}
+                maxRows={8}
+                />
+            </Stack>
+
+            <Stack spacing={1} >
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Payment
+              </Typography>
+                <RHFSwitch name="isPaying" label={watch().isPaying? 'Paying Circle': 'Free circle'}/>
+            </Stack>
+
+            {watch().isPaying && <Stack spacing={1}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Payment Plan
+              </Typography>
+              <RHFRadioGroup row spacing={4} name="payment_plan" options={PAYMENT_OPTION} value={watch().payment_plan}/>
+              <Stack
+                  spacing={2}
+                  alignItems="center"
+                  direction={{
+                    xs: 'column',
+                    sm: 'row',
+                  }}
+              >
+                { watch().payment_plan === 'subscription' &&
+                  <><RHFTextField
+                  name="month"
+                  label="Monthly Price"
+                  placeholder="0.00"
+                  onChange={(event) =>
+                    setValue('month', Number(event.target.value), { shouldValidate: true })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box component="span" sx={{ color: 'text.disabled' }}>
+                          $
+                        </Box>
+                      </InputAdornment>
+                    ),
+                    type: 'number',
+                  }}
+                />
+                <RHFTextField
+                  name="year"
+                  label="Yearly Price"
+                  placeholder="0.00"
+                  onChange={(event) =>
+                    setValue('year', Number(event.target.value), { shouldValidate: true })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box component="span" sx={{ color: 'text.disabled' }}>
+                          $
+                        </Box>
+                      </InputAdornment>
+                    ),
+                    type: 'number',
+                  }}
+                /></>}{
+                  watch().payment_plan === 'onetime' &&
+                <RHFTextField
+                  name="oneTime"
+                  label="OneTime Price"
+                  placeholder="0.00"
+                  onChange={(event) =>
+                    setValue('oneTime', Number(event.target.value), { shouldValidate: true })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box component="span" sx={{ color: 'text.disabled' }}>
+                          $
+                        </Box>
+                      </InputAdornment>
+                    ),
+                    type: 'number',
+                }}
+              />
+                }
+                </Stack>
+            </Stack>}
+
+            <Stack spacing={1} >
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Community
+              </Typography>
+                <RHFSwitch name="community" label="Activate" />
+            </Stack>
+            <Stack spacing={3}>
               <LoadingButton
-                fullWidth
                 color="primary"
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={isSubmitting}
+                loading={isLoading || isSubmitting}
               >
-                Create
+                {!isEdit? 'Create': 'Update'}
               </LoadingButton>
             </Stack>
-          </Grid>
-        </Grid>
+          </Box>
       </FormProvider>
     </>
   );
 }
 
-// ----------------------------------------------------------------------
-
-interface BlockProps extends StackProps {
-  label?: string;
-  children: React.ReactNode;
-}
-
-function Block({ label = 'RHFTextField', sx, children }: BlockProps) {
-  return (
-    <Stack spacing={1} sx={{ width: 1, ...sx }}>
-      <Typography
-        variant="caption"
-        sx={{
-          textAlign: 'left',
-          fontStyle: 'italic',
-          color: 'text.disabled',
-        }}
-      >
-        {label}
-      </Typography>
-      {children}
-    </Stack>
-  );
-}

@@ -32,6 +32,11 @@
     }
   },
   "rules": {
+    "react/no-unused-prop-types": "off",
+    "no-nested-ternary": "off",
+    "simple-import-sort/imports": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/order": "off",
     "no-alert": 0,
     "camelcase": 0,
     "no-console": 0,

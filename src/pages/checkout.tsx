@@ -38,7 +38,7 @@ export default function PaymentPage() {
     const data = JSON.stringify({ items: [{ id: "xl-tshirt" }] })
     checkout(data)
       .then((res) => res.data)
-      .then((data) => setClientSecret(data.clientSecret));
+      .then((d) => setClientSecret(d.clientSecret));
   }, []);
 console.log('client data', clientSecret);
   const appearance : Appearance = {

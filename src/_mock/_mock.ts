@@ -18,9 +18,12 @@ import {
   description,
   fullAddress,
   phoneNumber,
+  GroupName,
+  courseCover,
 } from './assets';
 
 // ----------------------------------------------------------------------
+
 
 const _mock = {
   id: (index: number) => `e99f09a7-dd88-49d5-b1c8-1daf80c2d7b${index + 1}`,
@@ -43,6 +46,10 @@ const _mock = {
     title: (index: number) => title[index],
     sentence: (index: number) => sentence[index],
     description: (index: number) => description[index],
+  },
+  course: {
+    name: (index:number)=>GroupName[index],
+    cover: (index:number)=>courseCover[index],
   },
   number: {
     percent: (index: number) => percent[index],

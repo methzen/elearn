@@ -3,7 +3,7 @@ import { useFormContext, Controller } from 'react-hook-form';
 // @mui
 import { FormHelperText } from '@mui/material';
 //
-import { UploadAvatar, Upload, UploadBox, UploadProps } from '../upload';
+import { UploadAvatar, PdfUpload, Upload, UploadBox, UploadProps } from '../upload';
 
 // ----------------------------------------------------------------------
 
@@ -99,6 +99,33 @@ export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
             {...other}
           />
         )
+      }
+    />
+  );
+}
+
+
+export function RHFPdfUpload({ name, multiple, helperText, ...other }: Props) {
+  const { control } = useFormContext();
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) =>
+          <PdfUpload
+            accept={{ 'application/pdf': [] }}
+            file={field.value}
+            error={!!error}
+            helperText={
+              (!!error || helperText) && (
+                <FormHelperText error={!!error} sx={{ px: 2 }}>
+                  {error ? error?.message : helperText}
+                </FormHelperText>
+              )
+            }
+            {...other}
+          />
       }
     />
   );

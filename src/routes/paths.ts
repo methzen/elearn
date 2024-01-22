@@ -14,19 +14,30 @@ export const PATH_AUTH = {
   register: path(ROOTS_AUTH, '/register'),
 };
 
+export const PATH_PAGE = {
+  comingSoon: '/coming-soon',
+  maintenance: '/maintenance',
+  pricing: '/pricing',
+  payment: '/payment',
+  about: '/about-us',
+  contact: '/contact-us',
+  faqs: '/faqs',
+  page403: '/403',
+  page404: '/404',
+  page500: '/500',
+  components: '/components',
+};
+
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
-  one: path(ROOTS_DASHBOARD, '/one'),
-  two: path(ROOTS_DASHBOARD, '/two'),
-  three: path(ROOTS_DASHBOARD, '/three'),
+  circles: path(ROOTS_DASHBOARD, '/circles'),
   group: {
-    list : path(ROOTS_DASHBOARD, '/group/list'),
-    create : path(ROOTS_DASHBOARD, '/group/create'),
+    admin : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/admin`),
+    library: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/library`),
+    community: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/community`),
   },
   user: {
-    root: path(ROOTS_DASHBOARD, '/user'),
-    four: path(ROOTS_DASHBOARD, '/user/four'),
-    five: path(ROOTS_DASHBOARD, '/user/five'),
-    six: path(ROOTS_DASHBOARD, '/user/six'),
+    root: path(ROOTS_DASHBOARD, `/user`),
+    myprofile: path(ROOTS_DASHBOARD, `/user/myprofile`),
   },
 };

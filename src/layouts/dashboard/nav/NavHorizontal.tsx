@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { AppBar, Box, BoxProps, Toolbar } from '@mui/material';
@@ -9,12 +9,20 @@ import { bgBlur } from '../../../utils/cssStyles';
 // components
 import { NavSectionHorizontal } from '../../../components/nav-section';
 //
-import navConfig from './config-navigation';
-
+import {GroupNav} from './config-navigation';
+import { useRouter } from 'next/router'
+import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
   const theme = useTheme();
+  const {
+    query: { circleId },
+  } = useRouter();
+
+  const context = useContext(CircleAccessRoleContext)
+  const isAdmin = context?.role === RoleType.admin
+  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string)
 
   return (
     <AppBar
@@ -32,7 +40,7 @@ function NavHorizontal() {
           }),
         }}
       >
-        <NavSectionHorizontal data={navConfig} />
+        <NavSectionHorizontal data={NavConfig} />
       </Toolbar>
 
       <Shadow />
