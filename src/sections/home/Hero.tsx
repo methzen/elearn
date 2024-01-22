@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 // @mui
 import { styled, alpha, useTheme } from '@mui/material/styles';
-import { Button, Box, Link, Container, Typography, Stack, Grid, Rating } from '@mui/material';
+import { Button, Box, Container, Typography, Stack, Grid } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
@@ -16,7 +16,6 @@ import { HEADER } from '../../config-global';
 // theme
 import { secondaryFont } from '../../theme/typography';
 // components
-import SvgColor from '../../components/svg-color';
 import Iconify from '../../components/iconify';
 import { MotionContainer, varFade } from '../../components/animate';
 

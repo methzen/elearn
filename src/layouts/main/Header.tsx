@@ -62,7 +62,7 @@ export default function Header() {
 
           {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}
 
-          <Button variant="contained" target="_blank" rel="noopener" href={"/"}>
+          <Button variant="contained" target="_blank" rel="noopener" href={"/"} sx={{ bgcolor: 'text.primary'}}>
             Try For Free
           </Button>
 
