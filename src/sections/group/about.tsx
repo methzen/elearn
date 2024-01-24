@@ -17,6 +17,10 @@ import { GroupAboutProps, GroupCheckoutContext } from 'src/auth/CircleGuard';
 import { PaymentCard, PaymentSummary } from '../payment';
 import { Price, RecurringString } from 'src/@types/stripe';
 import { PATH_DASHBOARD } from 'src/routes/paths';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { createSubscription } from 'src/api/stripe';
+import { StripeCardElement } from '@stripe/stripe-js';
+import updateUserGroupStatus from 'src/api/updateUserGroupStatus';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -108,6 +112,11 @@ function About() {
   const [hiddenPrice, setHiddenPrice] = useState<Price|null>(plans.length>1 ?plans[1]: plans[0])
   const [open, setOpen] = useState(false)
   const [canCheckOut, setCanCheckOut] =  useState(false)
+  const stripe = useStripe();
+  const elements = useElements();
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [stripePaymentIntent, setStripePaymentIntent] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if(isAuthenticated && user){
@@ -137,6 +146,51 @@ function About() {
       setHiddenPrice(currentPrice)
   }
   
+  const handleStripeSubmit = async (e:any)=> {
+    e.preventDefault()
+    setIsLoading(true)
+    if (!stripe || !elements || !selectedPrice) {
+      return;
+    }
+
+    const {subscriptionId, clientSecret} = await createSubscription(selectedPrice.stripe_price_id, selectedPrice.group)
+    if (!clientSecret){
+      setErrorMessage("Subscription has failed...");
+      return
+    }
+
+    const cardElement = elements.getElement(CardElement);
+        // Use card Element to tokenize payment details
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret as string, {
+      setup_future_usage: 'off_session',
+      receipt_email: user?.email,
+      payment_method: {
+        card: cardElement as StripeCardElement,
+        billing_details: {
+          name: user?.displayName,
+        }
+      }
+    });
+
+    if(error) {
+      // show error and collect new card details.
+      setErrorMessage(error.message as string);
+      setIsLoading(false)
+      return;
+    }
+    if(paymentIntent){
+      await updateUserGroupStatus(subscriptionId)
+    }
+    setStripePaymentIntent(paymentIntent);
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    if(stripePaymentIntent && selectedPrice){
+      push(PATH_DASHBOARD.group.community(selectedPrice.group))
+    }
+  }, [stripePaymentIntent, push, selectedPrice])
+
   return (
     <Container
     sx={{
@@ -178,8 +232,10 @@ function About() {
       :
       selectedPrice ?
       <PaymentCard
-          selectedPrice={selectedPrice}
-        /> : null
+          handleSubmit={handleStripeSubmit}
+          errorMessage={errorMessage}
+          isLoading={isLoading}
+      /> : null
       }
       </Grid>
     </Grid>

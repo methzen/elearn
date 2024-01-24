@@ -5,11 +5,12 @@ import { bgGradient } from '../../utils/cssStyles';
 
 // ----------------------------------------------------------------------
 
-export const StyledRoot = styled('main')(() => ({
-  height: '100%',
+export const StyledRoot = styled('div')(() => ({
+  height: '70%',
   display: 'flex',
   position: 'relative',
 }));
+
 
 export const StyledSection = styled('div')(({ theme }) => ({
   display: 'none',
@@ -41,7 +42,7 @@ export const StyledContent = styled('div')(({ theme }) => ({
   width: 480,
   margin: 'auto',
   display: 'flex',
-  minHeight: '100vh',
+  // minHeight: '100vh',
   justifyContent: 'center',
   padding: theme.spacing(15, 2),
   [theme.breakpoints.up('md')]: {

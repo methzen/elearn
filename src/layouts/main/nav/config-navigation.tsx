@@ -1,5 +1,5 @@
 // routes
-import { PATH_PAGE } from '../../../routes/paths';
+import { PATH_AUTH } from '../../../routes/paths';
 // components
 import Iconify from '../../../components/iconify';
 
@@ -13,7 +13,7 @@ const navConfig = [
   {
     title: 'Login',
     icon: <Iconify icon="ic:round-grain" />,
-    path: PATH_PAGE.components,
+    path: PATH_AUTH.login,
   },
 ];
 

@@ -30,7 +30,7 @@ export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
       sx={{
         p: 5,
         boxShadow: (theme) => theme.customShadows.z24,
-        ...((index === 0 || index === 2) && {
+        ...((index === 0 || index === 1) && {
           boxShadow: 'none',
           bgcolor: 'background.default',
           border: (theme) => `dashed 1px ${theme.palette.divider}`,
@@ -101,7 +101,7 @@ export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
         ))}
       </Stack>
 
-      <Button fullWidth size="large" variant="contained" disabled={index === 0}>
+      <Button fullWidth size="large" variant="contained">
         {labelAction}
       </Button>
     </Card>

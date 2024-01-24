@@ -15,10 +15,14 @@ import Logo from '../../components/logo';
 import NavMobile from './nav/mobile';
 import navConfig from './nav/config-navigation';
 import NavDesktop from './nav/desktop';
+import { PATH_AUTH } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
+interface Props{
+pageName?: string
+} 
 
-export default function Header() {
+export default function Header({pageName}: Props) {
   const theme = useTheme();
 
   const isDesktop = useResponsive('up', 'md');
@@ -62,10 +66,11 @@ export default function Header() {
 
           {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}
 
-          <Button variant="contained" target="_blank" rel="noopener" href={"/"} sx={{ bgcolor: 'text.primary'}}>
+          {(pageName && ["login", "register"].includes(pageName))? null: 
+          <Button variant="contained" rel="noopener" href={PATH_AUTH.register} sx={{ bgcolor: 'text.primary'}}>
             Try For Free
           </Button>
-
+          }
           {!isDesktop && <NavMobile isOffset={isOffset} data={navConfig} />}
         </Container>
       </Toolbar>

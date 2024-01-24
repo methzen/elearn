@@ -4,8 +4,10 @@ import Head from 'next/head';
 import GuestGuard from '../../auth/GuestGuard';
 // sections
 import Login from '../../sections/auth/Login';
+import MainLayout from 'src/layouts/main/MainLayout';
 
 // ----------------------------------------------------------------------
+// LoginPage.getLayout = (page: React.ReactElement) => <MainLayout pageName='login'> {page} </MainLayout>;
 
 export default function LoginPage() {
   return (

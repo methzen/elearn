@@ -8,12 +8,16 @@ import LoginLayout from '../../layouts/login';
 import { PATH_AUTH } from '../../routes/paths';
 //
 import AuthRegisterForm from './AuthRegisterForm';
-
+import dynamic from 'next/dynamic';
+const Header = dynamic(() => import('../../layouts/main/Header'), { ssr: false });
+const Footer = dynamic(() => import('../../layouts/main/Footer'), { ssr: false });
 // ----------------------------------------------------------------------
 
 export default function Register() {
   return (
-    <LoginLayout title="Manage the job more effectively with Minimal">
+    <>
+    <Header pageName='login'/>
+    <LoginLayout>
       <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
         <Typography variant="h4">Get started absolutely free.</Typography>
 
@@ -43,5 +47,7 @@ export default function Register() {
         .
       </Typography>
     </LoginLayout>
+    <Footer/>
+    </>
   );
 }

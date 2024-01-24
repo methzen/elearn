@@ -6,7 +6,7 @@ import NextLink from 'next/link';
 import { styled, alpha, useTheme } from '@mui/material/styles';
 import { Button, Box, Container, Typography, Stack, Grid } from '@mui/material';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_AUTH } from '../../routes/paths';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // utils
@@ -16,7 +16,6 @@ import { HEADER } from '../../config-global';
 // theme
 import { secondaryFont } from '../../theme/typography';
 // components
-import Iconify from '../../components/iconify';
 import { MotionContainer, varFade } from '../../components/animate';
 
 // ----------------------------------------------------------------------
@@ -126,13 +125,9 @@ export default function HomeHero() {
             )}
           </Grid>
         </Container>
-
         {isDesktop && <StyledEllipseTop />}
-
         <StyledEllipseBottom />
       </StyledRoot>
-
-      {/* <Box sx={{ height: { md: '100vh' } }} /> */}
     </>
   );
 }
@@ -184,14 +179,14 @@ function Description() {
           <Stack alignItems="center" spacing={2}>
             <Button
               component={NextLink}
-              href={PATH_DASHBOARD.root}
+              href={PATH_AUTH.register}
               color="inherit"
               size="large"
               variant="contained"
-              startIcon={<Iconify icon="eva:flash-fill" width={24} />}
               sx={{
-                width: "300px",
+                width: "250px",
                 bgcolor: 'text.primary',
+                fontSize: '19px',
                 color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
                 '&:hover': {
                   bgcolor: 'text.primary',
