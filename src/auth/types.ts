@@ -17,6 +17,7 @@ export type AuthStateType = {
   isAuthenticated: boolean;
   isInitialized: boolean;
   user: AuthUserType;
+  isVerified: boolean;
 };
 
 // ----------------------------------------------------------------------
@@ -26,7 +27,9 @@ export type JWTContextType = {
   isAuthenticated: boolean;
   isInitialized: boolean;
   user: AuthUserType;
+  isVerified:boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  verify: (code: string) => Promise<void>;
   logout: () => void;
 };

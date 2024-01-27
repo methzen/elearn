@@ -19,19 +19,29 @@ enum Types {
   LOGIN = 'LOGIN',
   REGISTER = 'REGISTER',
   LOGOUT = 'LOGOUT',
+  VERIFY= 'VERIFY'
 }
 
 type Payload = {
   [Types.INITIAL]: {
     isAuthenticated: boolean;
     user: AuthUserType;
+    isVerified: boolean
   };
   [Types.LOGIN]: {
     user: AuthUserType;
+    isAuthenticated: boolean;
+    isVerified: boolean;
   };
   [Types.REGISTER]: {
     user: AuthUserType;
     isAuthenticated: boolean;
+    isVerified: boolean;
+  };
+  [Types.VERIFY]: {
+    user: AuthUserType;
+    isAuthenticated: boolean;
+    isVerified: boolean;
   };
   [Types.LOGOUT]: undefined;
 };
@@ -44,6 +54,7 @@ const initialState: AuthStateType = {
   isInitialized: false,
   isAuthenticated: false,
   user: null,
+  isVerified:false
 };
 
 const reducer = (state: AuthStateType, action: ActionsType) => {
@@ -52,6 +63,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       isInitialized: true,
       isAuthenticated: action.payload.isAuthenticated,
       user: action.payload.user,
+      isVerified: action.payload.isVerified
     };
   }
   if (action.type === Types.LOGIN) {
@@ -59,6 +71,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: true,
       user: action.payload.user,
+      isVerified: action.payload.isVerified
     };
   }
   if (action.type === Types.REGISTER) {
@@ -66,6 +79,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: action.payload.isAuthenticated,
       user: action.payload.user,
+      isVerified: action.payload.isVerified,
     };
   }
   if (action.type === Types.LOGOUT) {
@@ -73,6 +87,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: false,
       user: null,
+      isVerified: false
     };
   }
   return state;
@@ -100,7 +115,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
         const response = await axios.get('/users/authenticate/v2');
-
         const user = response.data;
         user.displayName = `${user.firstname} ${user.lastname}` 
 
@@ -109,6 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           payload: {
             isAuthenticated: true,
             user,
+            isVerified: !!user.isVerified
           },
         });
       } else {
@@ -117,6 +132,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           payload: {
             isAuthenticated: false,
             user: null,
+            isVerified: false
           },
         });
       }
@@ -127,6 +143,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         payload: {
           isAuthenticated: false,
           user: null,
+          isVerified: false
         },
       });
     }
@@ -150,6 +167,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       type: Types.LOGIN,
       payload: {
         user,
+        isAuthenticated: true,
+        isVerified: !!user.isVerified
       },
     });
   }, []);
@@ -175,8 +194,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
           payload: {
             user,
             isAuthenticated : true,
+            isVerified: !!user.isVerified
           },
         });
+      },
+    []
+  );
+
+  const verify = useCallback(
+    async (code: string) => {
+      const accessToken = storageAvailable ? localStorage.getItem('x-auth-token') : '';
+      if (accessToken && isValidToken(accessToken)) {
+        setSession(accessToken);
+        const response = await axios.post('/users/verify/user', {
+          code,
+        },
+        {
+          withCredentials: true
+      });
+        const user = response.data
+        user.displayName = `${user.firstname} ${user.lastname}` 
+        localStorage.setItem('x-auth-token', response.headers["x-auth-token"] as string);
+        dispatch({
+          type: Types.VERIFY,
+          payload: {
+            user,
+            isAuthenticated : true,
+            isVerified: !!user.isVerified
+          },
+        });
+      }
       },
     []
   );
@@ -194,12 +241,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isInitialized: state.isInitialized,
       isAuthenticated: state.isAuthenticated,
       user: state.user,
+      isVerified: state.isVerified,
       method: 'jwt',
       login,
       register,
       logout,
+      verify,
     }),
-    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]
+    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register, verify]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
