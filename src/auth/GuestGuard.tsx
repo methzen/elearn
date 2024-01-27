@@ -5,25 +5,27 @@ import { useRouter } from 'next/router';
 import LoadingScreen from '../components/loading-screen';
 //
 import { useAuthContext } from './useAuthContext';
-import { PATH_DASHBOARD } from 'src/routes/paths';
+import { PATH_AUTH, PATH_DASHBOARD } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
 type GuestGuardProps = {
   children: React.ReactNode;
+  childName?: string;
 };
 
 export default function GuestGuard({ children }: GuestGuardProps) {
   const { push } = useRouter();
-
-  const { isAuthenticated, isInitialized } = useAuthContext();
-
+  const { isAuthenticated, isInitialized, isVerified } = useAuthContext();
   useEffect(() => {
     if (isAuthenticated) {
-      push(PATH_DASHBOARD.root);
+      if(isVerified){
+        push(PATH_DASHBOARD.root);
+      }
+      push(PATH_AUTH.verify)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isVerified]);
 
   if (isInitialized === isAuthenticated) {
     return <LoadingScreen />;

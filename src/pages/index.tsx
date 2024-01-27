@@ -24,7 +24,6 @@ export default function HomePage() {
       </Head>
       <HomeHero />
       <HomeMinimal />
-              {/* <Header/> */}
       <Container
         sx={{
           pt: 15,
