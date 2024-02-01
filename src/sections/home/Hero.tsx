@@ -184,6 +184,7 @@ function Description() {
               size="large"
               variant="contained"
               sx={{
+                cursor: "pointer",
                 width: "250px",
                 bgcolor: 'text.primary',
                 fontSize: '19px',

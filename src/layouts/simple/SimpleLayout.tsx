@@ -19,7 +19,6 @@ export default function SimpleLayout({ children }: Props) {
   return (
     <>
       <Header isOffset={isOffset} />
-
       {children}
     </>
   );

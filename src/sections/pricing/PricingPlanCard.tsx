@@ -101,7 +101,7 @@ export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
         ))}
       </Stack>
 
-      <Button fullWidth size="large" variant="contained">
+      <Button fullWidth size="large" variant="contained" href={`/register?p=${subscription}&billnow=yes`}>
         {labelAction}
       </Button>
     </Card>

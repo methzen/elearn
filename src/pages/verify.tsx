@@ -1,9 +1,9 @@
 // next
 import Head from 'next/head';
 // layouts
-import CompactLayout from '../../layouts/compact';
+import CompactLayout from '../layouts/compact';
 // sections
-import Verify from '../../sections/auth/Verify';
+import Verify from '../sections/auth/Verify';
 import VerifyGard from 'src/auth/VerifyGuard';
 // ----------------------------------------------------------------------
 

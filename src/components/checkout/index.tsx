@@ -1,39 +1,11 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   PaymentElement,
-  LinkAuthenticationElement,
   useStripe,
   useElements
 } from "@stripe/react-stripe-js";
 import { StripeError, StripePaymentElementOptions } from "@stripe/stripe-js";
 import { LoadingButton } from "@mui/lab";
-
-const appearance = {
-    theme: 'stripe'
-  };
-
-
-
-const style = {
-      base: {
-        iconColor: '#c4f0ff',
-        color: '#fff',
-        fontWeight: '500',
-        fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
-        fontSize: '16px',
-        fontSmoothing: 'antialiased',
-        ':-webkit-autofill': {
-          color: '#fce883',
-        },
-        '::placeholder': {
-          color: '#87BBFD',
-        },
-      },
-      invalid: {
-        iconColor: '#FFC7EE',
-        color: '#FFC7EE',
-      },
-    }
 
 export default function CheckoutForm() {
   const stripe = useStripe();

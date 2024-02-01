@@ -36,7 +36,6 @@ MyProfilePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}<
 export default function MyProfilePage() {
   const { themeStretch } = useSettingsContext();
   const { user, logout } = useAuthContext()
-
   const [currentTab, setCurrentTab] = useState('Circles');
   const [currentUser, setCurrentUser] = useState<IUserAccountGeneral | null>(null);
 
