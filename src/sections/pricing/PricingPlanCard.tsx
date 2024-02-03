@@ -9,9 +9,10 @@ import { PlanFreeIcon, PlanStarterIcon, PlanPremiumIcon } from '../../assets/ico
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
+  selected: 'month'| 'year';
   card: {
     subscription: string;
-    price: number;
+    prices: {month: {amount: number, id: string}, year: {amount: number, id: string}};
     caption: string;
     labelAction: string;
     lists: {
@@ -22,8 +23,8 @@ interface Props extends CardProps {
   index: number;
 }
 
-export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
-  const { subscription, price, caption, lists, labelAction } = card;
+export default function PricingPlanCard({ card, index, selected='month', sx, ...other }: Props) {
+  const { subscription, prices, caption, lists, labelAction } = card;
 
   return (
     <Card
@@ -48,19 +49,13 @@ export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
       <Typography variant="overline" sx={{ color: 'text.secondary' }}>
         {subscription}
       </Typography>
-
       <Stack spacing={1} direction="row" sx={{ my: 2 }}>
-        {(index === 1 || index === 2) && <Typography variant="h5">$</Typography>}
-
-        <Typography variant="h2">{price === 0 ? 'Free' : price}</Typography>
-
-        {(index === 1 || index === 2) && (
+         <Typography variant="h5">$</Typography>
+        <Typography variant="h2">{prices[selected].amount === 0 ? 'Free' : prices[selected].amount}</Typography>
           <Typography component="span" sx={{ alignSelf: 'center', color: 'text.secondary' }}>
-            /mo
+            /{selected}
           </Typography>
-        )}
       </Stack>
-
       <Typography
         variant="caption"
         sx={{
@@ -72,8 +67,7 @@ export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
       </Typography>
 
       <Box sx={{ width: 80, height: 80, mt: 5 }}>
-        {(subscription === 'basic' && <PlanFreeIcon />) ||
-          (subscription === 'starter' && <PlanStarterIcon />) || <PlanPremiumIcon />}
+        {subscription === 'Basic'? <PlanStarterIcon />: <PlanPremiumIcon />}
       </Box>
 
       <Stack component="ul" spacing={2} sx={{ p: 0, my: 5 }}>
@@ -101,7 +95,7 @@ export default function PricingPlanCard({ card, index, sx, ...other }: Props) {
         ))}
       </Stack>
 
-      <Button fullWidth size="large" variant="contained" href={`/register?p=${subscription}&billnow=yes`}>
+      <Button fullWidth size="large" variant="contained" href={`/payment?p=${subscription}`}>
         {labelAction}
       </Button>
     </Card>

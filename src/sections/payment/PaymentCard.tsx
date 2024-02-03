@@ -3,6 +3,7 @@ import { Typography, Stack } from '@mui/material';
 import { CardElement } from '@stripe/react-stripe-js';
 import { LoadingButton } from '@mui/lab';
 import { useTheme } from '@mui/material/styles';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 interface PaymentCardProps {
@@ -40,7 +41,9 @@ export default function PaymentCard({
   
   return (
     <div>
-      <Typography variant="h6" sx={{mt:3}}>Enter your credit card info</Typography>
+    <Stack spacing={5}>
+    <Typography variant="h6">Enter your credit card info</Typography>
+    </Stack>
       <form onSubmit={handleSubmit}>
       <Stack spacing={5} mt={5}>
         <div style={{
@@ -70,6 +73,12 @@ export default function PaymentCard({
           Subscribe
         </LoadingButton>
         {errorMessage && <div>{errorMessage}</div>}
+      </Stack>
+      <Stack alignItems="center" spacing={2} sx={{ mt:2}}>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Iconify icon="eva:shield-fill" sx={{ color: 'primary.main' }} />
+          <Typography variant="subtitle2">Secure credit card payment powered by Stripe</Typography>
+        </Stack>
       </Stack>
       </form>
       

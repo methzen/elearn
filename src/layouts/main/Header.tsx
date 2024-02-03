@@ -67,7 +67,7 @@ export default function Header({pageName}: Props) {
           {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}
 
           {(pageName && ["login", "register"].includes(pageName))? null: 
-          <Button variant="contained" rel="noopener" href={PATH_AUTH.register} sx={{ bgcolor: 'text.primary'}}>
+          <Button variant="contained" rel="noopener" href={`/payment?p=Basic&trial`} sx={{ bgcolor: 'text.primary'}}>
             Try For Free
           </Button>
           }

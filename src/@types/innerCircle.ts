@@ -4,8 +4,14 @@ export interface InnerCirclePlan {
     icons: string[];
     subscription: string;
     prices: {
-      month: number;
-      year: number;
+      month: {
+        id: string;
+        amount: number
+      },
+      year: {
+        id: string;
+        amount: number
+      }
     },
     caption: string;
     lists: PlanListItem[];

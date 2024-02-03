@@ -1,13 +1,14 @@
 import Head from 'next/head';
 // @mui
 import { Box, Switch, Container, Typography, Stack } from '@mui/material';
-// _mock_
-import { _pricingPlans } from '../_mock/arrays';
 // sections
 import { PricingPlanCard } from '../sections/pricing';
 import MainLayout from 'src/layouts/main/MainLayout';
 import HomeHero from 'src/sections/home/Hero';
 import HomeMinimal from 'src/sections/home/HomeMinimal';
+import { useEffect, useState } from 'react';
+import getPaymentPlans from 'src/api/getPaymentPlans';
+import { InnerCirclePlan } from 'src/@types/innerCircle';
 // ----------------------------------------------------------------------
 
 HomePage.getLayout = (page: React.ReactElement) => <MainLayout pageName='home'> {page} </MainLayout>;
@@ -16,6 +17,18 @@ HomePage.getLayout = (page: React.ReactElement) => <MainLayout pageName='home'> 
 
 
 export default function HomePage() {
+  const [paymentPlans, setPaymentPlans] = useState<InnerCirclePlan[]>()
+  const [checked, setCheck] = useState(false)
+
+  useEffect(()=>{
+    const getPlans = async () => {
+      const plans: InnerCirclePlan[] = await getPaymentPlans()
+      if(plans){
+        setPaymentPlans(plans)
+      }
+    }
+    getPlans()
+  }, [])
 
   return (
     <>
@@ -46,7 +59,11 @@ export default function HomePage() {
               MONTHLY
             </Typography>
 
-            <Switch />
+            <Switch
+            checked={checked}
+            onChange={( e: React.ChangeEvent) => setCheck(!checked)}
+            inputProps={{ 'aria-label': 'controlled' }}
+            />
             <Typography variant="overline" sx={{ ml: 1.5 }}>
               YEARLY (save 10%)
             </Typography>
@@ -62,8 +79,8 @@ export default function HomePage() {
         </Box>
 
         <Box gap={3} display="grid" gridTemplateColumns={{ md: 'repeat(2, 1fr)' }}>
-          {_pricingPlans.map((card, index) => (
-            <PricingPlanCard key={card.subscription} card={card} index={index} />
+          {paymentPlans && paymentPlans.map((card, index) => (
+            <PricingPlanCard key={card.subscription} selected={checked? 'year': 'month'} card={card} index={index} />
           ))}
         </Box>
       </Container>

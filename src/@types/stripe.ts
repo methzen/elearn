@@ -309,8 +309,8 @@ export enum RecurringString {
 export type Price = {
     interval: Recurring
     price: number
-    id: string;
+    id?: string;
     currency: string;
     stripe_price_id: string
-    group: string;
+    group?: string;
 }

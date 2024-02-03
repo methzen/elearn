@@ -179,7 +179,7 @@ function Description() {
           <Stack alignItems="center" spacing={2}>
             <Button
               component={NextLink}
-              href={PATH_AUTH.register}
+              href={`/payment?p=Basic&trial`}
               color="inherit"
               size="large"
               variant="contained"

@@ -1,12 +1,9 @@
-import { useState } from 'react';
 // @mui
 import {
   Box,
   Stack,
   Paper,
   Radio,
-  Button,
-  TextField,
   Typography,
   RadioGroup,
   FormControlLabel,
@@ -78,7 +75,7 @@ function PaymentOption({
         sx={{ py: 2, pl: 2.5, flexGrow: 1, mr: 0 }}
       />
 
-      <Stack
+      {/* <Stack
         spacing={1}
         direction="row"
         alignItems="center"
@@ -87,7 +84,7 @@ function PaymentOption({
         {plan.icons.map((icon) => (
           <Box component="img" key={icon} src={icon} />
         ))}
-      </Stack>
+      </Stack> */}
       {isSelected && 
               <Stack
               alignItems="flex-start"

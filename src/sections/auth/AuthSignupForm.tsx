@@ -14,15 +14,23 @@ import FormProvider, { RHFTextField } from '../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = {
+type InputData = {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  afterSubmit?: string;
+  company: string;
+}
+
+type FormValuesProps = {
+  inputData: InputData;
+  viewOnly: boolean;
 };
 
-export default function AuthSignupForm() {
+export default function AuthSignupForm({
+  inputData,
+  viewOnly,
+}: FormValuesProps) {
   const { register } = useAuthContext();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -30,18 +38,20 @@ export default function AuthSignupForm() {
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().required('First name required'),
     lastName: Yup.string().required('Last name required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    email: Yup.string().required('Email is required').email('Email must be valid'),
     password: Yup.string().required('Password is required'),
+    company: Yup.string(),
   });
 
   const defaultValues = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    firstName: inputData.firstName || '',
+    lastName: inputData.lastName || '',
+    email: inputData.email || '',
+    password: inputData.password || '',
+    company: inputData.company || ''
   };
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<InputData & {afterSubmit:string}>({
     resolver: yupResolver(RegisterSchema),
     defaultValues,
   });
@@ -53,7 +63,7 @@ export default function AuthSignupForm() {
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = methods;
 
-  const onSubmit = async (data: FormValuesProps) => {
+  const onSubmit = async (data: InputData) => {
     try {
       if (register) {
         await register(data.email, data.password, data.firstName, data.lastName);
@@ -69,15 +79,15 @@ export default function AuthSignupForm() {
 
   return (
     <Stack spacing={5}>
-    <Typography variant="h6">Your Information</Typography>
+    <Typography variant="h6">Enter your Information</Typography>
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2.5}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
-        <RHFTextField name="firstName" label="First name" />
-        <RHFTextField name="lastName" label="Last name" />
-        <RHFTextField name="email" label="Email address" />
-
-        <RHFTextField
+        <RHFTextField name="firstName" label="First name" disabled={viewOnly}/>
+        <RHFTextField name="lastName" label="Last name" disabled={viewOnly}/>
+        <RHFTextField name="email" label="Email address" disabled={viewOnly}/>
+        <RHFTextField name="company" label="Business name" disabled={viewOnly}/>
+        {!viewOnly && <RHFTextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
@@ -90,7 +100,7 @@ export default function AuthSignupForm() {
               </InputAdornment>
             ),
           }}
-        />
+        />}
         <Typography
           component="div"
           sx={{ color: 'text.secondary', my: 4, typography: 'caption', textAlign: 'center' }}
@@ -105,7 +115,7 @@ export default function AuthSignupForm() {
           </Link>
           .
         </Typography>
-        <LoadingButton
+        {!viewOnly && <LoadingButton
           fullWidth
           color="inherit"
           size="large"
@@ -122,7 +132,7 @@ export default function AuthSignupForm() {
           }}
         >
           Create account
-        </LoadingButton>
+        </LoadingButton>}
       </Stack>
     </FormProvider>
   </Stack>
