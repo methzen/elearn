@@ -19,6 +19,7 @@ type FormValuesProps = {
   password: string;
   firstName: string;
   lastName: string;
+  company: string;
   afterSubmit?: string;
 };
 
@@ -32,6 +33,7 @@ export default function AuthRegisterForm() {
     lastName: Yup.string().required('Last name required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
+    company: Yup.string()
   });
 
   const defaultValues = {
@@ -39,6 +41,7 @@ export default function AuthRegisterForm() {
     lastName: '',
     email: '',
     password: '',
+    company:''
   };
 
   const methods = useForm<FormValuesProps>({
@@ -56,7 +59,7 @@ export default function AuthRegisterForm() {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       if (register) {
-        await register(data.email, data.password, data.firstName, data.lastName);
+        await register(data.email, data.password, data.firstName, data.lastName, data.company);
       }
     } catch (error) {
       reset();
@@ -78,7 +81,7 @@ export default function AuthRegisterForm() {
         </Stack>
 
         <RHFTextField name="email" label="Email address" />
-
+        <RHFTextField name="company" label="Business name" />
         <RHFTextField
           name="password"
           label="Password"

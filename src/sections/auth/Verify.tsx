@@ -11,10 +11,23 @@ import AuthVerifyCodeForm from './AuthVerifyCodeForm';
 // assets
 import { EmailInboxIcon } from '../../assets/icons';
 import { useAuthContext } from 'src/auth/useAuthContext';
+import { sendVerificationCode } from 'src/api/sendVerificationCode';
+import { useSnackbar } from '../../components/snackbar';
 
 
 export default function Verify() {
   const { user } = useAuthContext()
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleResendLink = async (e:any)=>{
+    e.preventDefault()
+    try{
+      await sendVerificationCode()
+      enqueueSnackbar("New code has been send successfully.")
+    }catch(error){
+      enqueueSnackbar(error.message, {variant: 'error'})
+    }
+  }
 
   return (
     <>
@@ -32,7 +45,7 @@ export default function Verify() {
 
       <Typography variant="body2" sx={{ my: 3 }}>
         Don’t have a code? &nbsp;
-        <Link variant="subtitle2">Resend code</Link>
+        <Link variant="subtitle2" onClick={handleResendLink}>Resend code</Link>
       </Typography>
 
       <Link

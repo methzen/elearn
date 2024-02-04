@@ -20,6 +20,7 @@ type InputData = {
   firstName: string;
   lastName: string;
   company: string;
+  role?: string
 }
 
 type FormValuesProps = {
@@ -66,7 +67,7 @@ export default function AuthSignupForm({
   const onSubmit = async (data: InputData) => {
     try {
       if (register) {
-        await register(data.email, data.password, data.firstName, data.lastName);
+        await register(data.email, data.password, data.firstName, data.lastName, data.company, 'teacher');
       }
     } catch (error) {
       reset();

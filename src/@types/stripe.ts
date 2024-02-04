@@ -312,5 +312,5 @@ export type Price = {
     id?: string;
     currency: string;
     stripe_price_id: string
-    group?: string;
+    group: string;
 }

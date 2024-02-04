@@ -175,13 +175,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // REGISTER
   const register = useCallback(
-    async (email: string, password: string, firstname: string, lastname: string) => {
+    async (email: string, password: string, firstname: string, lastname: string, company:string, role: string) => {
 
         const response = await axios.post('/users/create/user', {
           email,
           password,
           firstname,
           lastname,
+          company,
+          role
         },
         {
           withCredentials: true

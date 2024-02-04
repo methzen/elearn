@@ -11,7 +11,7 @@ export async function getGroupSubscriptionPrice(){
   return response.data
 }
 
-export async function createSubscription(priceId:string, groupId:string){
+export async function createGroupSubscription(priceId:string, groupId:string){
   const token = localStorage.getItem('x-auth-token')
   const response =  await axios.post(`/group/member/create-subscription`, {
         priceId,
@@ -69,5 +69,34 @@ export async function getCustomerPaymentMethods(){
         'Content-Type': 'application/json'
       }
     })
+  return response.data
+}
+
+export async function subscribeCoach(subscriptionName:string, price:string, trial:boolean){
+  const token = localStorage.getItem('x-auth-token')
+  const response =  await axios.post(`/users/subscribe/coach`,
+        {
+          subscriptionName,
+          price,
+          trial
+        }, {
+        headers: {
+          "x-auth-token" : token,
+          'Content-Type': 'application/json'
+        }
+      })
+  return response.data
+}
+
+export async function updateCoachSubscription(subscriptionId:string){
+  const token = localStorage.getItem('x-auth-token')
+  const response = await axios.put(`/users/coach/update/subscription`, {
+        subscriptionId,
+        }, {
+          headers: {
+            "x-auth-token" : token,
+            'Content-Type': 'application/json'
+          }
+        })
   return response.data
 }

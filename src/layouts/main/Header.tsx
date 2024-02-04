@@ -15,7 +15,6 @@ import Logo from '../../components/logo';
 import NavMobile from './nav/mobile';
 import navConfig from './nav/config-navigation';
 import NavDesktop from './nav/desktop';
-import { PATH_AUTH } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 interface Props{

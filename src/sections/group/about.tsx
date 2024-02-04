@@ -18,7 +18,7 @@ import { PaymentCard, PaymentSummary } from '../payment';
 import { Price, RecurringString } from 'src/@types/stripe';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { createSubscription } from 'src/api/stripe';
+import { createGroupSubscription } from 'src/api/stripe';
 import { StripeCardElement } from '@stripe/stripe-js';
 import updateUserGroupStatus from 'src/api/updateUserGroupStatus';
 
@@ -153,7 +153,7 @@ function About() {
       return;
     }
 
-    const {subscriptionId, clientSecret} = await createSubscription(selectedPrice.stripe_price_id, selectedPrice.group)
+    const {subscriptionId, clientSecret} = await createGroupSubscription(selectedPrice.stripe_price_id, selectedPrice.group)
     if (!clientSecret){
       setErrorMessage("Subscription has failed...");
       return

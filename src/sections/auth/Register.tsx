@@ -9,30 +9,16 @@ import { PATH_AUTH } from '../../routes/paths';
 //
 import AuthRegisterForm from './AuthRegisterForm';
 import dynamic from 'next/dynamic';
-import { NextRouter, useRouter } from 'next/router';
-import { _pricingPlans } from 'src/_mock/arrays';
-import { PricingPlanCard } from '../pricing';
 const Header = dynamic(() => import('../../layouts/main/Header'), { ssr: false });
 const Footer = dynamic(() => import('../../layouts/main/Footer'), { ssr: false });
 // ----------------------------------------------------------------------
 
-interface Query {
-  p?: string;
-  billnow?: string;
-  g?:string
-}
 
 export default function Register() {
-  const { query }:{query: Query} = useRouter()
-  const card = _pricingPlans.find(p=>p.subscription===query.p)
   return (
     <>
     <Header pageName='register'/>
     <LoginLayout>
-    {/* <Box gap={3} display="grid" gridTemplateColumns={{ md: 'repeat(2, 1fr)' }}>
-
-      <PricingPlanCard key={query.p} card={card} index={0} />
-    </Box> */}
       <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
         <Typography variant="h4">Get started absolutely free.</Typography>
 

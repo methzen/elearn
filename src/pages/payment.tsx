@@ -15,7 +15,11 @@ import { InnerCirclePlan } from 'src/@types/innerCircle';
 import getPaymentPlans from 'src/api/getPaymentPlans';
 import { useRouter } from 'next/router';
 import LoadingScreen from 'src/components/loading-screen/LoadingScreen';
-import { object } from 'yup';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { subscribeCoach, updateCoachSubscription } from 'src/api/stripe';
+import { StripeCardElement } from '@stripe/stripe-js';
+import { PATH_DASHBOARD } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -24,13 +28,19 @@ PaymentPage.getLayout = (page: React.ReactElement) => <SimpleLayout>{page}</Simp
 // ----------------------------------------------------------------------
 
 export default function PaymentPage() {
-  const {query} = useRouter()
+  const {query, push} = useRouter()
   const isDesktop = useResponsive('up', 'md');
+  const { user } = useAuthContext()
   const [paymentPlans, setPaymentPlans] = useState<InnerCirclePlan[]>()
   const [susbcriptionName, setSubscriptionName] = useState("")
   const [selectedPrice, setSelectedPrice] = useState<Price|null>(null)
   const [hiddenPrice, setHiddenPrice] = useState<Price|null>(null)
   const [trial, setTrial] = useState(false)
+  const stripe = useStripe();
+  const elements = useElements();
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [stripePaymentIntent, setStripePaymentIntent] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(()=>{
     const getPlans = async () => {
@@ -52,6 +62,7 @@ export default function PaymentPage() {
           price: seletedP.prices.month.amount,
           currency: "usd",
           stripe_price_id: seletedP.prices.month.id,
+          group: ""
         }
       )
       setHiddenPrice({
@@ -59,6 +70,7 @@ export default function PaymentPage() {
         price: seletedP.prices.year.amount,
         currency: "usd",
         stripe_price_id: seletedP.prices.year.id,
+        group: ""
       })
     }
     if(Object.keys(query).includes("trial")){
@@ -66,19 +78,30 @@ export default function PaymentPage() {
     }
   }, [query, paymentPlans])
 
+
+  useEffect(() => {
+    if(stripePaymentIntent && selectedPrice){
+      if(user){
+        push(PATH_DASHBOARD.circles)
+      }
+    }
+  }, [stripePaymentIntent, push, selectedPrice, user])
+
+
   const handleChange = () => {
     const currentPrice = selectedPrice
     setSelectedPrice(hiddenPrice)
     setHiddenPrice(currentPrice)
-}
+  }
 
   const inputData = {
-    firstName: 'Mouhamadou',
-    lastName:'Dia',
-    email:'email@medadom.com',
+    firstName: '',
+    lastName:'',
+    email:'',
     password: '',
-    company: 'VCP'
+    company: ''
   }
+
   const handleChangeMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value
     const selectedP = paymentPlans?.find(p=>p.subscription===value) as InnerCirclePlan
@@ -88,15 +111,52 @@ export default function PaymentPage() {
       price: selectedP.prices.year.amount,
       currency: "usd",
       stripe_price_id: selectedP.prices.year.id,
+      group: ""
     })
-
     setSelectedPrice({
       interval: "month",
       price: selectedP.prices.month.amount,
       currency: "usd",
       stripe_price_id: selectedP.prices.month.id,
+      group:""
     })
   };
+
+
+  const handleStripeSubmit = async (e:any)=> {
+    e.preventDefault()
+    setIsLoading(true)
+    if (!stripe || !elements || !selectedPrice) {
+      return;
+    }
+
+    try{
+      const {subscriptionId, clientSecret} = await subscribeCoach(susbcriptionName, selectedPrice.stripe_price_id, trial)
+      const cardElement = elements.getElement(CardElement);
+      // Use card Element to tokenize payment details
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret as string, {
+        setup_future_usage: 'off_session',
+        receipt_email: user?.email,
+        payment_method: {
+          card: cardElement as StripeCardElement,
+          billing_details: {
+            name: user?.displayName,
+          }
+      }});
+      if(error){
+        throw new Error(error.message)
+      }
+      if(subscriptionId && paymentIntent){
+        await updateCoachSubscription(subscriptionId)
+        setStripePaymentIntent(paymentIntent);
+        setIsLoading(false)
+      }
+    }catch(error){
+      setIsLoading(false)
+      setErrorMessage(error.message);
+      return
+    }
+  }
 
   if(!query || !paymentPlans) return <LoadingScreen/>
 
@@ -152,12 +212,14 @@ export default function PaymentPage() {
                 selectPlan={handleChangeMethod}
                 susbcriptionName={susbcriptionName}
             />
-            <AuthSignupForm inputData={inputData} viewOnly={true}/>
+            <AuthSignupForm inputData={inputData} viewOnly={!!user}/>
+            {user && 
             <PaymentCard
-                handleSubmit={()=>console.log('submit')}
-                errorMessage={""}
-                isLoading={false}
+                handleSubmit={handleStripeSubmit}
+                errorMessage={errorMessage}
+                isLoading={isLoading}
             />
+            }
             </Box>
           </Grid>
         </Grid>

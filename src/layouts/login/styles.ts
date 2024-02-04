@@ -39,7 +39,7 @@ export const StyledSectionBg = styled('div')(({ theme }) => ({
 }));
 
 export const StyledContent = styled('div')(({ theme }) => ({
-  width: 1080,
+  width: 500,
   margin: 'auto',
   display: 'flex',
   // minHeight: '100vh',
