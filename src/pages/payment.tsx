@@ -95,13 +95,14 @@ export default function PaymentPage() {
   }
 
   const inputData = {
-    firstName: '',
-    lastName:'',
-    email:'',
+    firstName: user?.firstname || '',
+    lastName:user?.lastname || '',
+    email:user?.email || '',
     password: '',
-    company: ''
+    company: user?.company || ''
   }
 
+  console.log('inputData', inputData)
   const handleChangeMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value
     const selectedP = paymentPlans?.find(p=>p.subscription===value) as InnerCirclePlan
@@ -173,11 +174,11 @@ export default function PaymentPage() {
         }}
       >
         <Typography variant="h3" align="center" paragraph>
-        Start Using Your Innercircle Account Today!
+        {!!user? `One last step to go !` : `Start Using Your Innercircle Account Today!`}
         </Typography>
 
         <Typography align="center" sx={{ color: 'text.secondary', mb: 5 }}>
-        Tell us about you and your business
+        {!!user? `Enter your credit card ` : `Tell us about you and your business`}
         </Typography>
 
         <Grid container spacing={isDesktop ? 3 : 5}>
@@ -212,7 +213,7 @@ export default function PaymentPage() {
                 selectPlan={handleChangeMethod}
                 susbcriptionName={susbcriptionName}
             />
-            <AuthSignupForm inputData={inputData} viewOnly={!!user}/>
+            {!user && <AuthSignupForm inputData={inputData} viewOnly={!!user}/>}
             {user && 
             <PaymentCard
                 handleSubmit={handleStripeSubmit}

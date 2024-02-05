@@ -12,17 +12,19 @@ import { NavSectionHorizontal } from '../../../components/nav-section';
 import {GroupNav} from './config-navigation';
 import { useRouter } from 'next/router'
 import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
+import { PATH_DASHBOARD } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
   const theme = useTheme();
   const {
+    pathname,
     query: { circleId },
   } = useRouter();
 
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
-  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string)
+  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string, pathname===PATH_DASHBOARD.create)
 
   return (
     <AppBar

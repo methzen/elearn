@@ -17,7 +17,7 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
 };
 
-const GroupNav = (id:string, isAdmin:boolean, groupName: string) => {
+const GroupNav = (id:string, isAdmin:boolean, groupName: string, pathnameCreate=false) => {
 
   const defaultItems:NavListProps[] = [
     { 
@@ -31,6 +31,13 @@ const GroupNav = (id:string, isAdmin:boolean, groupName: string) => {
       icon: ICONS.user,
     },
   ]
+  if(pathnameCreate){
+    defaultItems.unshift({ 
+      title: 'Create Circle', 
+      path: PATH_DASHBOARD.create,
+      icon: ICONS.dashboard,
+    })
+  }
   if(id){
     const circleChildren = [
       { title: 'Community', path: PATH_DASHBOARD.group.community(id)},

@@ -5,6 +5,7 @@ import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 // assets
 import { PlanFreeIcon, PlanStarterIcon, PlanPremiumIcon } from '../../assets/icons';
+import { PATH_PAGE } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -95,7 +96,7 @@ export default function PricingPlanCard({ card, index, selected='month', sx, ...
         ))}
       </Stack>
 
-      <Button fullWidth size="large" variant="contained" href={`/payment?p=${subscription}`}>
+      <Button fullWidth size="large" variant="contained" href={`${PATH_PAGE.payment}?p=${subscription}`}>
         {labelAction}
       </Button>
     </Card>

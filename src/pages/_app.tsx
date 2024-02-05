@@ -36,6 +36,8 @@ import { AuthProvider } from '../auth/JwtContext';
 import { store } from '../redux/store'; 
 // ----------------------------------------------------------------------
 
+const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY as string);
+
 const clientSideEmotionCache = createEmotionCache();
 const clientReactQuery = new QueryClient()
 type NextPageWithLayout = NextPage & {
@@ -68,7 +70,7 @@ export default function MyApp(props: MyAppProps) {
                 <ThemeLocalization>
                   <SnackbarProvider>
                     <ProgressBar />
-                    <Elements stripe={loadStripe(process.env.STRIPE_PUBLIC_KEY as string)}>
+                    <Elements stripe={stripePromise}>
                     {getLayout(<Component {...pageProps} />)}
                     </Elements>
                   </SnackbarProvider>

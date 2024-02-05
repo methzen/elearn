@@ -3,7 +3,7 @@
 function path(root: string, sublink: string) {
   return `${root}${sublink}`;
 }
-const ROOTS_AUTH = '/';
+
 const ROOTS_DASHBOARD = '/dashboard';
 
 // ----------------------------------------------------------------------
@@ -31,6 +31,7 @@ export const PATH_PAGE = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   circles: path(ROOTS_DASHBOARD, '/circles'),
+  create: path(ROOTS_DASHBOARD, `/create`),
   group: {
     admin : (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/admin`),
     library: (id: String) =>  path(ROOTS_DASHBOARD, `/${id}/library`),
