@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,6 +11,11 @@ import {
   Typography,
   CircularProgress,
   InputAdornment,
+  Paper,
+  IconButton,
+  Button,
+  styled,
+  Dialog,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
@@ -22,6 +27,9 @@ import FormProvider, {
   RHFSwitch,
 } from '../../components/hook-form';
 import { courseDataSchema } from './schema';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import Iconify from 'src/components/iconify';
+import useResponsive from 'src/hooks/useResponsive';
 
 // ----------------------------------------------------------------------
 
@@ -52,6 +60,8 @@ interface CreateForm {
 
 export default function CreateAgroup(
   { isEdit=false, FormSchema, submitData, isLoading} : CreateForm) {
+  const [openModal, setOpenModal] = useState(false)
+  const { user } = useAuthContext()
 
   const defaultValues = useMemo(()=>({
     name: FormSchema?.name || '',
@@ -70,12 +80,20 @@ export default function CreateAgroup(
     defaultValues,
   });
 
+
   const {
     watch,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+  useEffect(() => {
+    if(watch().isPaying && user?.subscription.is_active && !user?.subscription.chargesEnabled){
+      setOpenModal(true)
+    }
+  },
+  [watch().isPaying && user?.subscription])
 
   const handleDropSingleFile = useCallback(
     (acceptedFiles: File[]) => {
@@ -99,7 +117,7 @@ export default function CreateAgroup(
           <CircularProgress color="primary" />
         </Backdrop>
       )}
-
+      {openModal && <OnboardConnectDialog open={openModal} cancelPost={()=>setOpenModal(false)}/>}
       <FormProvider methods={methods} onSubmit={handleSubmit(submitData)}>
         <Box 
           sx={{
@@ -249,3 +267,78 @@ export default function CreateAgroup(
   );
 }
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
+
+
+interface PostSomeThingDialogProps {
+  open: boolean;
+  cancelPost: ()=> void;
+  sendPost?: (message :any)=> void;
+}
+
+function OnboardConnectDialog({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
+  const isDesktop = useResponsive('up', 'sm');
+  const width = isDesktop? 570 : 370
+
+  return (
+      <BootstrapDialog
+        onClose={cancelPost}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+      <Paper
+        sx={{
+          width:`${width}px`,
+          top: `25VH`,
+          right: `calc((100% - ${width}px)/2)`,
+          margin: "0px auto",
+          position: 'fixed',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            py: 2,
+            px: 3
+          }}
+        >
+          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+            Set up your stripe account
+          </Typography>
+          <IconButton onClick={cancelPost}>
+            <Iconify icon="eva:close-fill" />
+          </IconButton>
+        </Stack>
+        <Stack
+          direction="column"
+          alignItems="center"
+          sx={{
+            py: 2,
+            px: 3
+          }}
+        >
+          <Typography sx={{ color: 'text.secondary', mb: 5 }}>
+            We have emailed a 6-digit confirmation code to , please enter the code in below
+            box to verify your email.
+          </Typography>
+        </Stack>
+
+        <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
+          <Button variant="contained" size="large" sx={{ mx: 'auto' }} onClick={() => console.log('button click')}>
+            Setup a stripe account
+          </Button>
+        </Stack>
+      </Paper>
+      </BootstrapDialog>
+  );
+}
