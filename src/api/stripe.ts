@@ -100,3 +100,17 @@ export async function updateCoachSubscription(subscriptionId:string){
         })
   return response.data
 }
+
+
+
+export async function getStripeAccountLink(){
+  const token = localStorage.getItem('x-auth-token')
+  const response = await axios.get(`/users/coach/account/link`,
+        {
+          headers: {
+            "x-auth-token" : token,
+            'Content-Type': 'application/json'
+          }
+        })
+  return response.data
+}

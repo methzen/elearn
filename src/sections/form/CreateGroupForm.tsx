@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import * as Yup from 'yup';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -30,6 +29,8 @@ import { courseDataSchema } from './schema';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import Iconify from 'src/components/iconify';
 import useResponsive from 'src/hooks/useResponsive';
+import { getStripeAccountLink } from 'src/api/stripe';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +62,8 @@ interface CreateForm {
 export default function CreateAgroup(
   { isEdit=false, FormSchema, submitData, isLoading} : CreateForm) {
   const [openModal, setOpenModal] = useState(false)
+  const {push} = useRouter()
+  const [stripeLink, setStripeLink] = useState('')
   const { user } = useAuthContext()
 
   const defaultValues = useMemo(()=>({
@@ -89,8 +92,16 @@ export default function CreateAgroup(
   } = methods;
 
   useEffect(() => {
+    const getLink = async () => {
+      const accountLink = await getStripeAccountLink()
+      if(accountLink){
+        setStripeLink(accountLink.url)
+        setOpenModal(true)
+      }
+
+    }
     if(watch().isPaying && user?.subscription.is_active && !user?.subscription.chargesEnabled){
-      setOpenModal(true)
+      getLink()
     }
   },
   [watch().isPaying && user?.subscription])
@@ -117,7 +128,7 @@ export default function CreateAgroup(
           <CircularProgress color="primary" />
         </Backdrop>
       )}
-      {openModal && <OnboardConnectDialog open={openModal} cancelPost={()=>setOpenModal(false)}/>}
+      {openModal && <OnboardConnectDialog open={openModal} cancelPost={()=>setOpenModal(false)} setUpStripe={()=>push(stripeLink)}/>}
       <FormProvider methods={methods} onSubmit={handleSubmit(submitData)}>
         <Box 
           sx={{
@@ -280,10 +291,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 interface PostSomeThingDialogProps {
   open: boolean;
   cancelPost: ()=> void;
-  sendPost?: (message :any)=> void;
+  setUpStripe?: ()=> void;
 }
 
-function OnboardConnectDialog({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
+function OnboardConnectDialog({open, cancelPost, setUpStripe}: PostSomeThingDialogProps) {
   const isDesktop = useResponsive('up', 'sm');
   const width = isDesktop? 570 : 370
 
@@ -328,13 +339,12 @@ function OnboardConnectDialog({open, cancelPost, sendPost}: PostSomeThingDialogP
           }}
         >
           <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-            We have emailed a 6-digit confirmation code to , please enter the code in below
-            box to verify your email.
+            To be able to collect your users payment you need to set up your stripe account.
           </Typography>
         </Stack>
 
         <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
-          <Button variant="contained" size="large" sx={{ mx: 'auto' }} onClick={() => console.log('button click')}>
+          <Button variant="contained" size="large" sx={{ mx: 'auto' }} onClick={setUpStripe}>
             Setup a stripe account
           </Button>
         </Stack>
