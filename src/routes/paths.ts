@@ -41,4 +41,9 @@ export const PATH_DASHBOARD = {
     root: path(ROOTS_DASHBOARD, `/user`),
     myprofile: path(ROOTS_DASHBOARD, `/user/myprofile`),
   },
+  chat: {
+    root: path(ROOTS_DASHBOARD, '/chat'),
+    new: path(ROOTS_DASHBOARD, '/chat/new'),
+    view: (name: string) => path(ROOTS_DASHBOARD, `/chat/${name}`),
+  },
 };

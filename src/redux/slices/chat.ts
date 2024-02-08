@@ -4,6 +4,7 @@ import { createSlice, Dispatch } from '@reduxjs/toolkit';
 import axios from '../../utils/axios';
 // @types
 import { IChatState } from '../../@types/chat';
+import { contactData, conversationData, conversationWithReeceChungData } from 'src/_mock/_chat';
 
 // ----------------------------------------------------------------------
 
@@ -119,8 +120,8 @@ export function getContacts() {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/chat/contacts');
-      dispatch(slice.actions.getContactsSuccess(response.data.contacts));
+      // const response = await axios.get('/api/chat/contacts');
+      dispatch(slice.actions.getContactsSuccess(contactData.contacts));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -133,8 +134,8 @@ export function getConversations() {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/chat/conversations');
-      dispatch(slice.actions.getConversationsSuccess(response.data.conversations));
+      // const response = await axios.get('/api/chat/conversations');
+      dispatch(slice.actions.getConversationsSuccess(conversationData.conversations));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -147,10 +148,10 @@ export function getConversation(conversationKey: string) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/chat/conversation', {
-        params: { conversationKey },
-      });
-      dispatch(slice.actions.getConversationSuccess(response.data.conversation));
+      // const response = await axios.get('/api/chat/conversation', {
+      //   params: { conversationKey },
+      // });
+      dispatch(slice.actions.getConversationSuccess(conversationWithReeceChungData.conversation));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -163,9 +164,9 @@ export function markConversationAsRead(conversationId: string) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      await axios.get('/api/chat/conversation/mark-as-seen', {
-        params: { conversationId },
-      });
+      // await axios.get('/api/chat/conversation/mark-as-seen', {
+      //   params: { conversationId },
+      // });
       dispatch(slice.actions.markConversationAsReadSuccess({ conversationId }));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -176,13 +177,29 @@ export function markConversationAsRead(conversationId: string) {
 // ----------------------------------------------------------------------
 
 export function getParticipants(conversationKey: string) {
+  const data={
+    participants: [
+        {
+            "id": "e99f09a7-dd88-49d5-b1c8-1daf80c2d7b4",
+            "avatar": "https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_4.jpg",
+            "name": "Harrison Stein",
+            "username": "harrison.stein",
+            "address": "110 Lamar Station Apt. 730 - Hagerstown, OK / 49808",
+            "phone": "692-767-2903",
+            "email": "violet.ratke86@yahoo.com",
+            "role": "ux designer",
+            "status": "online",
+            "lastActivity": "2024-02-05T16:20:04.666Z"
+        }
+    ]
+}
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/chat/participants', {
-        params: { conversationKey },
-      });
-      dispatch(slice.actions.getParticipantsSuccess(response.data.participants));
+      // const response = await axios.get('/api/chat/participants', {
+      //   params: { conversationKey },
+      // });
+      dispatch(slice.actions.getParticipantsSuccess(data.participants));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
