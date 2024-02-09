@@ -5,6 +5,7 @@ import { Avatar, Typography, Stack } from '@mui/material';
 import { IChatConversation, IChatMessage } from '../../../@types/chat';
 // components
 import Image from '../../../components/image';
+import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -20,15 +21,15 @@ export default function ChatMessageItem({ message, conversation, onOpenLightbox 
   const sender = conversation.participants.find(
     (participant) => participant.id === message.senderId
   );
-
+  const {user} = useAuthContext()
   const senderDetails =
-    message.senderId === CURRENT_USER_ID
+    message.senderId === user?.id
       ? {
           type: 'me',
         }
       : {
           avatar: sender?.avatar,
-          name: sender?.name,
+          name: `${sender?.firstname} ${sender?.lastname}`,
         };
 
   const currentUser = senderDetails.type === 'me';

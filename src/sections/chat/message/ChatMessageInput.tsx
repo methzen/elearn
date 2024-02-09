@@ -7,6 +7,7 @@ import uuidv4 from '../../../utils/uuidv4';
 import { IChatSendMessage } from '../../../@types/chat';
 // components
 import Iconify from '../../../components/iconify';
+import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +26,7 @@ export default function ChatMessageInput({
   ...other
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const { user } = useAuthContext()
   const [message, setMessage] = useState('');
 
   const handleClickAttach = () => {
@@ -42,7 +43,7 @@ export default function ChatMessageInput({
           contentType: 'text',
           attachments: [],
           createdAt: new Date(),
-          senderId: CURRENT_USER_ID,
+          senderId: user?.id,
         });
       }
       setMessage('');

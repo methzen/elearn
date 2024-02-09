@@ -40,7 +40,7 @@ export type IChatContact = {
   address: string;
   phone: string;
   email: string;
-  lastActivity: Date | string | number;
+  lastActivity: Date;
   status: string;
   role: string;
 };
@@ -48,12 +48,13 @@ export type IChatContact = {
 export type IChatParticipant = {
   id: string;
   name: string;
-  username: string;
-  avatar: string;
+  firstname: string;
+  lastname: string;
+  avatar?: string;
   address?: string;
   phone?: string;
   email?: string;
-  lastActivity?: Date | string | number;
+  lastActivity?: Date;
   status?: 'online' | 'offline' | 'away' | 'busy';
   role?: string;
 };
@@ -71,8 +72,8 @@ export type IChatSendMessage = {
   messageId: string;
   message: string;
   contentType: 'text';
-  attachments: string[];
-  createdAt: Date | string | number;
+  attachments: IChatAttachment[];
+  createdAt: Date;
   senderId: string;
 };
 
