@@ -46,7 +46,7 @@ export default function ChatNavSearchResults({
         <>
           {searchResults.map((result) => (
             <ListItemButton
-              key={result.id}
+              key={result._id}
               onClick={() => onSelectContact(result)}
               sx={{
                 px: 2.5,
@@ -54,8 +54,8 @@ export default function ChatNavSearchResults({
                 typography: 'subtitle2',
               }}
             >
-              <Avatar alt={result.name} src={result.avatar} sx={{ mr: 2 }} />
-              {result.name}
+              <Avatar alt={`${result.firstname} ${result.lastname}`} src={result.photoURL} sx={{ mr: 2 }} />
+              {`${result.firstname} ${result.lastname}`}
             </ListItemButton>
           ))}
         </>

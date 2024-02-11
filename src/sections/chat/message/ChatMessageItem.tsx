@@ -9,8 +9,6 @@ import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
-const CURRENT_USER_ID = '8864c717-587d-472a-929a-8e5f298024da-0';
-
 type Props = {
   message: IChatMessage;
   conversation: IChatConversation;
@@ -19,7 +17,7 @@ type Props = {
 
 export default function ChatMessageItem({ message, conversation, onOpenLightbox }: Props) {
   const sender = conversation.participants.find(
-    (participant) => participant.id === message.senderId
+    (participant) => participant._id === message.senderId
   );
   const {user} = useAuthContext()
   const senderDetails =
@@ -28,7 +26,7 @@ export default function ChatMessageItem({ message, conversation, onOpenLightbox 
           type: 'me',
         }
       : {
-          avatar: sender?.avatar,
+          avatar: sender?.photoURL,
           name: `${sender?.firstname} ${sender?.lastname}`,
         };
 
@@ -86,8 +84,8 @@ export default function ChatMessageItem({ message, conversation, onOpenLightbox 
           {isImage ? (
             <Image
               alt="attachment"
-              src={message.body}
-              onClick={() => onOpenLightbox(message.body)}
+              src={message.content}
+              onClick={() => onOpenLightbox(message.content)}
               sx={{
                 cursor: 'pointer',
                 '&:hover': {
@@ -96,7 +94,7 @@ export default function ChatMessageItem({ message, conversation, onOpenLightbox 
               }}
             />
           ) : (
-            message.body
+            message.content
           )}
         </Stack>
       </Stack>

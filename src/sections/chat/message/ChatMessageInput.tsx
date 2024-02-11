@@ -11,8 +11,6 @@ import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
-const CURRENT_USER_ID = '8864c717-587d-472a-929a-8e5f298024da-0';
-
 interface Props extends InputBaseProps {
   conversationId: string | null;
   onSend: (data: IChatSendMessage) => void;

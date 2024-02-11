@@ -65,7 +65,7 @@ export default function ChatHeaderCompose({
         onChange={(event, value) => handleAddRecipients(value)}
         onInputChange={(event, value) => setSearchRecipients(value)}
         options={contacts}
-        getOptionLabel={(recipient) => recipient.name}
+        getOptionLabel={(recipient) => recipient.firstname}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -74,9 +74,9 @@ export default function ChatHeaderCompose({
           />
         )}
         renderOption={(props, recipient, { inputValue, selected }) => {
-          const { name, avatar } = recipient;
-          const matches = match(name, inputValue);
-          const parts = parse(name, matches);
+          const { firstname, avatar } = recipient;
+          const matches = match(firstname, inputValue);
+          const parts = parse(firstname, matches);
 
           return (
             <Box
@@ -96,7 +96,7 @@ export default function ChatHeaderCompose({
                   position: 'relative',
                 }}
               >
-                <Avatar alt={name} src={avatar} />
+                <Avatar alt={firstname} src={avatar} />
                 <Box
                   sx={{
                     top: 0,
@@ -141,8 +141,8 @@ export default function ChatHeaderCompose({
               {...getTagProps({ index })}
               key={recipient.id}
               size="small"
-              label={recipient.name}
-              avatar={<Avatar alt={recipient.name} src={recipient.avatar} />}
+              label={recipient.firstname}
+              avatar={<Avatar alt={recipient.firstname} src={recipient.avatar} />}
             />
           ))
         }

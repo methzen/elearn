@@ -1663,7 +1663,260 @@ const conversationWithReeceChungData = {
     }
   }
 
+const _message = [
+
+  {
+    id: "0c969036-ded3-493b-a623-57c4a003c5c2",
+    body: "Quis veniam aut saepe aliquid nulla.",
+    contentType: "text",
+    attachments: [
+      {
+        name: "cover_12.jpg",
+        size: 48000000,
+        type: "jpg",
+        path: "cover_12.jpg",
+        preview: "https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_13.jpg",
+        dateCreated: "2024-02-08T19:02:39.566Z",
+        dateModified: "2024-02-08T19:02:39.566Z"
+      }
+    ],
+    createdAt: "2024-02-08T09:20:04.685Z",
+    senderId: "65c54deaec6dcd10ccec610c"
+  },
+  {
+    id: "b0b4907f-6915-4a9f-b0db-064820ac24e1",
+    body: "Reprehenderit ut voluptas sapiente ratione nostrum est.",
+    contentType: "text",
+    attachments: [
+      {
+        name: "cover_18.jpg",
+        size: 24000000,
+        type: "jpg",
+        path: "cover_18.jpg",
+        preview: "https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_19.jpg",
+        dateCreated: "2024-02-07T18:02:39.566Z",
+        dateModified: "2024-02-07T18:02:39.579Z"
+      }
+    ],
+    createdAt: "2024-02-08T17:20:04.685Z",
+    senderId: "65bf81e9143ac1e7e42d872b"
+  },
+  {
+    id: "8c4bc5e1-f19d-4e0a-a7b8-b0c84300e1c0",
+    body: "Error ut sit vel molestias velit.",
+    contentType: "text",
+    attachments: [
+      {
+        name: "design_suriname_2015.mp3",
+        size: 16000000,
+        type: "mp3",
+        path: "design_suriname_2015.mp3",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/design_suriname_2015.mp3",
+        dateCreated: "2024-02-06T17:02:39.579Z",
+        dateModified: "2024-02-06T17:02:39.579Z"
+      }
+    ],
+    createdAt: "2024-02-08T19:12:04.685Z",
+    senderId: "65c54deaec6dcd10ccec610c"
+  },
+  {
+    id: "96070c3d-e3db-4c6c-b45c-d30902851ff5",
+    body: "Quo quia sit nihil nemo doloremque et.",
+    contentType: "text",
+    attachments: [
+      {
+        name: "expertise_2015_conakry_sao-tome-and-principe_gender.mp4",
+        size: 12000000,
+        type: "mp4",
+        path: "expertise_2015_conakry_sao-tome-and-principe_gender.mp4",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/expertise_2015_conakry_sao-tome-and-principe_gender.mp4",
+        dateCreated: "2024-02-05T16:02:39.579Z",
+        dateModified: "2024-02-05T16:02:39.579Z"
+      },
+      {
+        name: "money-popup-crack.pdf",
+        size: 9600000,
+        type: "pdf",
+        path: "money-popup-crack.pdf",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/money-popup-crack.pdf",
+        dateCreated: "2024-02-04T15:02:39.579Z",
+        dateModified: "2024-02-04T15:02:39.579Z"
+      },
+      {
+        name: "large_news.txt",
+        size: 8000000,
+        type: "txt",
+        path: "large_news.txt",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/large_news.txt",
+        dateCreated: "2024-02-03T14:02:39.579Z",
+        dateModified: "2024-02-03T14:02:39.579Z"
+      }
+    ],
+    createdAt: "2024-02-08T19:14:04.685Z",
+    senderId: "65bf81e9143ac1e7e42d872b"
+  },
+  {
+    id: "075c2e5a-2272-4e4a-9ca8-040457a124dd",
+    body: "Autem doloribus harum vero laborum.",
+    contentType: "text",
+    attachments: [
+      {
+        name: "nauru-6015-small-fighter-left-gender.psd",
+        size: 6857142.857142857,
+        type: "psd",
+        path: "nauru-6015-small-fighter-left-gender.psd",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/nauru-6015-small-fighter-left-gender.psd",
+        dateCreated: "2024-02-02T13:02:39.579Z",
+        dateModified: "2024-02-02T13:02:39.579Z"
+      },
+      {
+        name: "gustavia-entertainment-productivity.docx",
+        size: 6000000,
+        type: "docx",
+        path: "gustavia-entertainment-productivity.docx",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/gustavia-entertainment-productivity.docx",
+        dateCreated: "2024-02-01T12:02:39.579Z",
+        dateModified: "2024-02-01T12:02:39.579Z"
+      },
+      {
+        name: "indonesia-quito-nancy-grace-left-glad.xlsx",
+        size: 5333333.333333333,
+        type: "xlsx",
+        path: "indonesia-quito-nancy-grace-left-glad.xlsx",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/indonesia-quito-nancy-grace-left-glad.xlsx",
+        dateCreated: "2024-01-31T11:02:39.579Z",
+        dateModified: "2024-01-31T11:02:39.579Z"
+      },
+      {
+        name: "legislation-grain.zip",
+        size: 4800000,
+        type: "zip",
+        path: "legislation-grain.zip",
+        preview: "https://www.cloud.com/s/c218bo6kjuqyv66/legislation-grain.zip",
+        dateCreated: "2024-01-30T10:02:39.579Z",
+        dateModified: "2024-01-30T10:02:39.579Z"
+      }
+    ],
+    createdAt: "2024-02-08T19:16:04.685Z",
+    senderId: "65c54deaec6dcd10ccec610c"
+  },
+  {
+    id: "d017993b-e9b4-4006-a481-6cf7a181cc5d",
+    attachments: [],
+    contentType: "image",
+    body: "https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_5.jpg",
+    createdAt: "2024-02-08T19:18:04.685Z",
+    senderId: "65c54deaec6dcd10ccec610c"
+  },
+  {
+    id: "dc3369ca-bab9-4298-a3f8-06abb3fe04b0",
+    contentType: "text",
+    attachments: [],
+    body: "Tempora officiis consequuntur architecto nostrum autem nam adipisci.",
+    createdAt: "2024-02-08T19:18:04.685Z",
+    senderId: "65bf81e9143ac1e7e42d872b"
+  },
+  {
+    id: "9deca3a9-042e-4532-82a7-fc3af78da413",
+    body: "Voluptas sunt magni adipisci praesentium saepe.",
+    contentType: "text",
+    attachments: [],
+    createdAt: "2024-02-08T19:18:04.685Z",
+    senderId: "65bf81e9143ac1e7e42d872b"
+  }
+]
+ const amethArnaConversations = [
+    {
+      id: "e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2",
+      participants: [
+        {
+          id:"65bf81e9143ac1e7e42d872b",
+          firstname: "Mouhamadou",
+          lastname: "Dia",
+          email: "email@yesymedadom.com",
+          company: "VCP",
+          address: "",
+          zipCode: "",
+          state: "",
+          phoneNumber: "",
+          photoURL: "",
+          cover: "",
+          city: "",
+          role: "teacher",
+          avatar: "https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_2.jpg",
+          lastActivity: "2024-02-08T19:20:04.684Z",
+          status: "online",
+        },
+      
+        {
+            id: "65c54deaec6dcd10ccec610c",
+            firstname: "Arna",
+            lastname: "Dia",
+            email: "arna@amethdia.com",
+            job: "",
+            company: "Sunshine",
+            address: "",
+            zipCode: "",
+            state: "",
+            phoneNumber: "",
+            photoURL: "",
+            role: "student",
+            avatar: "https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_1.jpg",
+            lastActivity: "2024-02-08T19:20:04.684Z",
+            status: "online",
+          }
+      ],
+      type: "ONE_TO_ONE",
+      unreadCount: 0,
+      messages: []
+}]
+
+const _participants = [
+  {
+    id:"65bf81e9143ac1e7e42d872b",
+    firstname: "Mouhamadou",
+    lastname: "Dia",
+    email: "email@yesymedadom.com",
+    company: "VCP",
+    address: "",
+    zipCode: "",
+    state: "",
+    phoneNumber: "",
+    photoURL: "",
+    cover: "",
+    city: "",
+    role: "teacher",
+    avatar: "https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_2.jpg",
+    lastActivity: "2024-02-08T19:20:04.684Z",
+    status: "online",
+  },
+
+  {
+      id: "65c54deaec6dcd10ccec610c",
+      firstname: "Arna",
+      lastname: "Dia",
+      email: "arna@amethdia.com",
+      job: "",
+      company: "Sunshine",
+      address: "",
+      zipCode: "",
+      state: "",
+      phoneNumber: "",
+      photoURL: "",
+      role: "student",
+      avatar: "https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_1.jpg",
+      lastActivity: "2024-02-08T19:20:04.684Z",
+      status: "status",
+    }
+]
+
+const _contacts = _participants
+
+
 export {
+    amethArnaConversations,
+    _participants,
+    _contacts,
     contactData,
     conversationData,
     conversationWithLucianObirenData,

@@ -12,10 +12,9 @@ import { IChatConversationsState } from '../../../@types/chat';
 import { SkeletonConversationItem } from '../../../components/skeleton';
 //
 import ChatNavItem from './ChatNavItem';
+import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
-
-const CURRENT_USER_ID = '8864c717-587d-472a-929a-8e5f298024da-0';
 
 type Props = {
   conversations: IChatConversationsState;
@@ -41,18 +40,18 @@ export default function ChatNavList({
     let conversationKey = '';
 
     const conversation = conversations.byId[conversationId];
+    conversationKey = conversation._id;
+    // if (conversation.type === 'GROUP') {
+    //   conversationKey = conversation.id;
+    // } else {
+    //   const otherParticipant = conversation.participants.find(
+    //     (participant) => participant.id !== user?.id
+    //   );
 
-    if (conversation.type === 'GROUP') {
-      conversationKey = conversation.id;
-    } else {
-      const otherParticipant = conversation.participants.find(
-        (participant) => participant.id !== CURRENT_USER_ID
-      );
-
-      if (otherParticipant?.username) {
-        conversationKey = otherParticipant?.username;
-      }
-    }
+    //   if (otherParticipant?.firstname) {
+    //     conversationKey = otherParticipant?.firstname;
+    //   }
+    // }
 
     push(PATH_DASHBOARD.chat.view(conversationKey));
   };

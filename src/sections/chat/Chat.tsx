@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 // next
 import { useRouter } from 'next/router';
 // @mui
@@ -21,7 +21,7 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 import { useSettingsContext } from '../../components/settings';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // @types
-import { IChatConversation, IChatMessage, IChatParticipant, IChatSendMessage, IChatTextMessage } from '../../@types/chat';
+import { IChatParticipant, IChatSendMessage } from '../../@types/chat';
 // sections
 import ChatNav from './nav/ChatNav';
 import ChatRoom from './room/ChatRoom';
@@ -29,26 +29,14 @@ import ChatMessageInput from './message/ChatMessageInput';
 import ChatMessageList from './message/ChatMessageList';
 import ChatHeaderDetail from './header/ChatHeaderDetail';
 import ChatHeaderCompose from './header/ChatHeaderCompose';
-import { useSocketContext } from 'src/hooks/useSocket';
 import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
-
-
 export default function Chat() {
   const { themeStretch } = useSettingsContext();
   const { user } = useAuthContext()
-  const socket = useSocketContext()
-  const activeConversationId="1"
-  const [selectedConversation, setSelectedConversation] = useState<IChatConversation>({
-    id: '1',
-    messages: [],
-    participants: [],
-    unreadCount: 0,
-    type: 'ONE_TO_ONE',
-  })
-
+  const CURRENT_USER_ID = user?.id
   const dispatch = useDispatch();
 
   const {
@@ -57,108 +45,66 @@ export default function Chat() {
     query: { conversationKey },
   } = useRouter();
 
-  // const { contacts, recipients, participants, activeConversationId, conversations } = useSelector(
-  //   (state) => state.chat
-  // );
-
-  // const selectedConversation = useSelector(() => {
-  //   if (activeConversationId) {
-  //     return conversations.byId[activeConversationId];
-  //   }
-
-  //   return {
-  //     id: '',
-  //     messages: [],
-  //     participants: [],
-  //     unreadCount: 0,
-  //     type: '',
-  //   };
-  // });
-  function userInList(list: any, id: string) {
-    return list.some(function (user: {id: string}) {
-        return user.id === id;
-    });
-}
-
-
-  useEffect(()=>{
-    if(user){
-      socket.emit("join_room", "1", user?.id);
-      console.log('user has joined room')
+  const { contacts, recipients, participants, activeConversationId, conversations } = useSelector(
+    (state) => state.chat
+  );
+  console.log('activeConversationId', activeConversationId)
+  const selectedConversation = useSelector(() => {
+    if (activeConversationId) {
+      return conversations.byId[activeConversationId];
     }
-  }, [user])
+
+    return {
+      _id: '',
+      messages: [],
+      participants: [],
+      unreadCount: 0,
+      type: '',
+    };
+  });
+
+  const detailView = !!conversationKey;
+
+  const displayParticipants = participants.filter((item) => item._id !== CURRENT_USER_ID);
 
   useEffect(() => {
-    socket.on('receive_msg', (msg:IChatMessage, user: IChatParticipant) => {
-      const conver ={...selectedConversation}
-      if (!userInList(conver.participants, user?.id)){
-        conver.participants.push(user as IChatParticipant)
+    dispatch(getConversations());
+    dispatch(getContacts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const getDetails = async () => {
+      dispatch(getParticipants(`${conversationKey}`));
+      try {
+        await dispatch(getConversation(`${conversationKey}`));
+      } catch (error) {
+        console.error(error);
+        push(PATH_DASHBOARD.chat.new);
       }
-      conver.messages.push(msg)
-      setSelectedConversation(conver)
-    });
-  }, [socket]);
-  // const detailView = !!conversationKey;
+    };
 
-  // const displayParticipants = participants.filter((item) => item.id !== CURRENT_USER_ID);
+    if (conversationKey) {
+      getDetails();
+    } else if (activeConversationId) {
+      dispatch(resetActiveConversation());
+    }
 
-  // useEffect(() => {
-  //   dispatch(getConversations());
-  //   dispatch(getContacts());
-  // }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationKey]);
 
-  // useEffect(() => {
-  //   const getDetails = async () => {
-  //     dispatch(getParticipants(`${conversationKey}`));
-  //     try {
-  //       await dispatch(getConversation(`${conversationKey}`));
-  //     } catch (error) {
-  //       console.error(error);
-  //       push(PATH_DASHBOARD.chat.new);
-  //     }
-  //   };
+  useEffect(() => {
+    if (activeConversationId) {
+      dispatch(markConversationAsRead(activeConversationId));
+    }
+  }, [dispatch, activeConversationId]);
 
-  //   if (conversationKey) {
-  //     getDetails();
-  //   } else if (activeConversationId) {
-  //     dispatch(resetActiveConversation());
-  //   }
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [conversationKey]);
-
-  // useEffect(() => {
-  //   if (activeConversationId) {
-  //     dispatch(markConversationAsRead(activeConversationId));
-  //   }
-  // }, [dispatch, activeConversationId]);
-
-  // const handleAddRecipients = (selectedRecipients: IChatParticipant[]) => {
-  //   dispatch(addRecipients(selectedRecipients));
-  // };
-
-
+  const handleAddRecipients = (selectedRecipients: IChatParticipant[]) => {
+    dispatch(addRecipients(selectedRecipients));
+  };
 
   const handleSendMessage = async (value: IChatSendMessage) => {
     try {
-      const { conversationId, messageId, message, contentType, attachments, createdAt, senderId } = value;
-
-    const newMessage = {
-      id: messageId,
-      body: message,
-      contentType,
-      attachments,
-      createdAt,
-      senderId,
-    };
-
-    const conver = {...selectedConversation}
-    if (!userInList(conver.participants, user?.id)){
-      conver.participants.push(user as IChatParticipant)
-    }
-    conver.messages.push(newMessage)
-    setSelectedConversation(conver)
-    await socket.emit("send_msg", newMessage, "1", user);
+      dispatch(sendMessage(value));
     } catch (error) {
       console.error(error);
     }
@@ -178,10 +124,10 @@ export default function Chat() {
       />
 
       <Card sx={{ height: '72vh', display: 'flex' }}>
-        {/* <ChatNav conversations={conversations} activeConversationId={activeConversationId} /> */}
+        <ChatNav conversations={conversations} activeConversationId={activeConversationId} />
 
         <Stack flexGrow={1} sx={{ overflow: 'hidden' }}>
-          {/* {detailView ? (
+          {detailView ? (
             <ChatHeaderDetail participants={displayParticipants} />
           ) : (
             <ChatHeaderCompose
@@ -189,7 +135,7 @@ export default function Chat() {
               contacts={Object.values(contacts.byId)}
               onAddRecipients={handleAddRecipients}
             />
-          )} */}
+          )}
 
           <Stack
             direction="row"
@@ -205,15 +151,15 @@ export default function Chat() {
               <ChatMessageInput
                 conversationId={activeConversationId}
                 onSend={handleSendMessage}
-                // disabled={
-                //   pathname === PATH_DASHBOARD.chat.root || pathname === PATH_DASHBOARD.chat.new
-                // }
+                disabled={
+                  pathname === PATH_DASHBOARD.chat.root || pathname === PATH_DASHBOARD.chat.new
+                }
               />
             </Stack>
 
-            {/* {detailView && (
+            {detailView && (
               <ChatRoom conversation={selectedConversation} participants={displayParticipants} />
-            )} */}
+            )}
           </Stack>
         </Stack>
       </Card>

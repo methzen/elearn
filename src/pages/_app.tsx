@@ -60,6 +60,7 @@ export default function MyApp(props: MyAppProps) {
 
   var socket: any;
   socket = io(HOST_API_KEY, {
+    autoConnect: false,
     transports: ['websocket']
  });
 

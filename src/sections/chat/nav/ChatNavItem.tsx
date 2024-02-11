@@ -13,10 +13,9 @@ import { IChatConversation } from '../../../@types/chat';
 // components
 import { CustomAvatar, CustomAvatarGroup } from '../../../components/custom-avatar';
 import BadgeStatus from '../../../components/badge-status';
+import { useAuthContext } from 'src/auth/useAuthContext';
 
 // ----------------------------------------------------------------------
-
-const CURRENT_USER_ID = '8864c717-587d-472a-929a-8e5f298024da-0';
 
 type Props = {
   conversation: IChatConversation;
@@ -26,9 +25,10 @@ type Props = {
 };
 
 export default function ChatNavItem({ conversation, openNav, isSelected, onSelect }: Props) {
-  const details = getDetails(conversation, CURRENT_USER_ID);
+  const { user} = useAuthContext()
+  const details = getDetails(conversation, user?.id);
 
-  const lastActivity = conversation.messages[conversation.messages.length - 1].createdAt;
+  const lastActivity = conversation.messages.length!=0 && conversation.messages[conversation.messages.length - 1].createdAt;
 
   const isGroup = details.otherParticipants.length > 1;
 
@@ -59,18 +59,18 @@ export default function ChatNavItem({ conversation, openNav, isSelected, onSelec
             <CustomAvatarGroup compact sx={{ width: 48, height: 48 }}>
               {details.otherParticipants.slice(0, 2).map((participant) => (
                 <CustomAvatar
-                  key={participant.id}
-                  alt={participant.name}
-                  src={participant.avatar}
+                  key={participant._id}
+                  alt={participant.firstname}
+                  src={participant.photoURL}
                 />
               ))}
             </CustomAvatarGroup>
           </Badge>
         ) : (
           <CustomAvatar
-            key={details.otherParticipants[0].id}
-            alt={details.otherParticipants[0].name}
-            src={details.otherParticipants[0].avatar}
+            key={details.otherParticipants[0]._id}
+            alt={details.otherParticipants[0].firstname}
+            src={details.otherParticipants[0].photoURL}
             BadgeProps={{
               badgeContent: <BadgeStatus status={details.otherParticipants[0].status} />,
             }}
@@ -93,7 +93,7 @@ export default function ChatNavItem({ conversation, openNav, isSelected, onSelec
           />
 
           <Stack alignItems="flex-end" sx={{ ml: 2, height: 44 }}>
-            <Typography
+            {lastActivity && <Typography
               noWrap
               variant="body2"
               component="span"
@@ -106,7 +106,7 @@ export default function ChatNavItem({ conversation, openNav, isSelected, onSelec
               {formatDistanceToNowStrict(new Date(lastActivity), {
                 addSuffix: false,
               })}
-            </Typography>
+            </Typography>}
 
             {isUnread && <BadgeStatus status="unread" size="small" />}
           </Stack>
@@ -120,10 +120,10 @@ export default function ChatNavItem({ conversation, openNav, isSelected, onSelec
 
 const getDetails = (conversation: IChatConversation, currentUserId: string) => {
   const otherParticipants = conversation.participants.filter(
-    (participant) => participant.id !== currentUserId
+    (participant) => participant._id !== currentUserId
   );
 
-  const displayNames = otherParticipants.map((participant) => participant.name).join(', ');
+  const displayNames = otherParticipants.map((participant) => participant.firstname).join(', ');
 
   let displayText = '';
 
@@ -131,7 +131,7 @@ const getDetails = (conversation: IChatConversation, currentUserId: string) => {
   if (lastMessage) {
     const sender = lastMessage.senderId === currentUserId ? 'You: ' : '';
 
-    const message = lastMessage.contentType === 'image' ? 'Sent a photo' : lastMessage.body;
+    const message = lastMessage.contentType === 'image' ? 'Sent a photo' : lastMessage.content;
 
     displayText = `${sender}${message}`;
   }

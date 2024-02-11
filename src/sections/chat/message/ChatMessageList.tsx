@@ -15,7 +15,7 @@ type Props = {
 
 export default function ChatMessageList({ conversation }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
-
+  console.log('conversation.messages.', conversation.messages)
   const [selectedImage, setSelectedImage] = useState<number>(-1);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function ChatMessageList({ conversation }: Props) {
 
   const imagesLightbox = conversation.messages
     .filter((messages) => messages.contentType === 'image')
-    .map((messages) => ({ src: messages.body }));
+    .map((messages) => ({ src: messages.content }));
 
   const handleOpenLightbox = (imageUrl: string) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);
@@ -50,10 +50,10 @@ export default function ChatMessageList({ conversation }: Props) {
       >
         {conversation.messages.map((message) => (
           <ChatMessageItem
-            key={message.id}
+            key={message._id}
             message={message}
             conversation={conversation}
-            onOpenLightbox={() => handleOpenLightbox(message.body)}
+            onOpenLightbox={() => handleOpenLightbox(message.content)}
           />
         ))}
       </Scrollbar>
