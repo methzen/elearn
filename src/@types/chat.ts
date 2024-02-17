@@ -70,7 +70,7 @@ export type IChatConversation = {
 export type IChatSendMessage = {
   conversationId: string;
   messageId: string;
-  message: string;
+  content: string;
   contentType: 'text';
   attachments: IChatAttachment[];
   createdAt: Date;

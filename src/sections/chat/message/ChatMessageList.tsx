@@ -15,7 +15,7 @@ type Props = {
 
 export default function ChatMessageList({ conversation }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  console.log('conversation.messages.', conversation.messages)
+
   const [selectedImage, setSelectedImage] = useState<number>(-1);
 
   useEffect(() => {

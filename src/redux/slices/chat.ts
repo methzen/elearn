@@ -163,9 +163,7 @@ export function markConversationAsRead(conversationId: string) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      await axios.post('/chat/markasseen', {
-        params: { conversationId },
-      });
+      await axios.post('/chat/markasseen',{ conversationId: conversationId});
       dispatch(slice.actions.markConversationAsReadSuccess({ conversationId }));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -185,6 +183,26 @@ export function getParticipants(conversationKey: string) {
       });
       const participants = response.data.participants
       dispatch(slice.actions.getParticipantsSuccess(participants));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+
+export function addMessage(conversationKey: string, content: string) {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post('/chat/add/message',
+      {
+        content
+      },
+      {
+        params: { conversationId : conversationKey },
+      });
+      // const participants = response.data.participants
+      // dispatch(slice.actions.getParticipantsSuccess(participants));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

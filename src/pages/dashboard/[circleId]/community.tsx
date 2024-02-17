@@ -1,9 +1,7 @@
 import { useState, useRef } from 'react';
 
-import { styled, alpha } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 // @mui
-// hooks
-import useResponsive from '../../../hooks/useResponsive';
 // components
 import Editor from '../../../components/editor';
 import {
@@ -23,7 +21,9 @@ import {
   Divider,
   Button,
   Container,
-  Dialog
+  Collapse,
+  CardContent,
+  CardActions
 } from '@mui/material';
 
 // next
@@ -56,20 +56,6 @@ import CourseCardAside from '../../../components/CourseCardAside';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 // ----------------------------------------------------------------------
 
-
-interface Props {
-  post: IUserProfilePost;
-  onClick: () => void;
-}
-
-interface commentDataType {
-  parentItemId: string;
-  isParent?: boolean;
-  parentCommentId?: string;
-  text: string;
-}
-// ----------------------------------------------------------------------
-
 Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
@@ -79,7 +65,6 @@ export default function Community() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { themeStretch } = useSettingsContext();
-  const [writeSomething, SetWriteSomething] = useState<boolean>(false);
   const [writeAComment, SetWriteAComment] = useState({status: false, postId: ""});
 
   const [page, setPage] = useState<number>(1)
@@ -89,19 +74,12 @@ export default function Community() {
   if (!data) return <div>Loading...</div>
   const posts : IUserProfilePost[] = data.posts;
 
-  const HandleCreatePost = (e:any)=> {
-    e.preventDefault()
-    SetWriteSomething(true)
-  }
-
-  const cancelPost = () =>{
-    SetWriteSomething(false)
-  }
-
-  const sendPost = async (content: any) => {
+  const sendPost = async (content: PostContent) => {
+    if(!content.title || !content.message){
+      return
+    }
     try {
       const response = await submitNewPost(content, circleId as string);
-      SetWriteSomething(false)
       enqueueSnackbar(response.data);
       mutate()
     } catch (ResponseError) {
@@ -132,65 +110,127 @@ export default function Community() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
-       
       <Grid container justifyContent="center" spacing={3}>
         <Grid item xs={12} md={8}>
-        <Box sx={{ boxShadow:5, borderRadius:1, margin: "5px 0px 50px", cursor:"pointer", paddingTop:"20px"}} onClick={HandleCreatePost}>
-        <WriteSomething />
-        </Box>
+        <WritePost sendPost={sendPost}/>
         <Box>
         <Stack spacing={3}>
           {posts.map((post) => (
             <PostCard key={post.id} post={post}
-            sendComment={(comment)=>sendComment(comment, post.id)}
-            mutate={mutate}
+              sendComment={(comment)=>sendComment(comment, post.id)}
+              mutate={mutate}
             />
           ))}
         </Stack>
       </Box>
         </Grid>
-
           <Grid item xs={12} md={3}>
             <CourseCardAside {...data.group}/>
           </Grid>
         </Grid>
-      {
-        writeSomething &&
-        <CreateAPostDialog open={writeSomething} cancelPost={cancelPost} sendPost={sendPost}/>
-      }
       </Container>
     </>
   );
 }
 
-function WriteSomething(){
+interface PostContent {
+  title : string;
+  message : string;
+  attachment : string;
+}
+
+interface WriteAPostProps {
+  sendPost: (message :any)=> void;
+}
+
+export function WritePost({sendPost}:WriteAPostProps) {
   const { user } = useAuthContext();
-  return (<Stack
-        spacing={2}
-        direction="row"
-        alignItems="center"
-        sx={{
-          p: (theme) => theme.spacing(0, 3, 3, 3),
-          cursor:"pointer",
-        }}
-      >
-        <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
-        <Box
+  const [content, setContent] = useState<PostContent>({title:'', message: '', attachment:''})
+
+  const [expanded, setExpanded] = useState(false);
+  const [showHead, setShowHead] = useState(true)
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+    setShowHead(false)
+  };
+
+  const collapse = () => {
+    setExpanded(!expanded);
+    setShowHead(true)
+    setContent({title:'', message: '', attachment:''})
+  };
+
+  const handleChangeMessage = (message: string) => {
+    setContent( v=> ({...v, message}));
+  };
+
+  const handleChangeTitle = (event: React.ChangeEvent) => {
+    const target = event.target as HTMLInputElement;
+    setContent( value => ({...value, title: target.value}));
+  };
+
+  return (
+    <Card sx={{ mb: 3, boxShadow:4}}>
+      {showHead &&
+      <CardHeader sx={{mb:3}}
+        onClick={handleExpandClick}
+        avatar={<CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />}
+        title={<Box
           sx={{
             pl: 1.5,
-            height: 40,
+            height: 50,
             width: "100%",
             borderRadius: 1,
             border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
-            cursor:"pointer",
             color: "gray",
             display:"flex",
             alignItems: "center"
           }}
         >
           <b>Write something...</b>
-        </Box>
-      </Stack>)
+        </Box>}
+      />}
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+        <Paper
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`
+          }}
+        >
+          <InputBase placeholder="Title" 
+            sx={{ px: 2, height: 40, fontWeight: "bold"}} 
+            value={content.title}
+            onChange={handleChangeTitle}
+            />
+          <Divider />
+          <Editor
+            simple
+            id="compose-mail"
+            value={content.message}
+            onChange={handleChangeMessage}
+            placeholder="Type a message"
+            sx={{ flexGrow: 1, borderColor: 'transparent' }}
+          />
+          <Divider />
+        </Paper>
+        </CardContent>
+        <CardActions >
+        <Stack direction="row" alignItems="flex-end" justifyContent="flex-end">
+          <Button variant="contained" sx={{ mr: 2 }} onClick={() =>{
+            sendPost(content)
+            collapse()
+            }}>
+                Post
+          </Button>
+          <Button size="small" onClick={collapse}>Cancel</Button>
+        </Stack>
+      </CardActions>
+      </Collapse>
+    </Card>
+  );
 }
 interface Post {
   post: IUserProfilePost;
@@ -358,8 +398,15 @@ function PostCard( { post, sendComment, mutate }: Post) {
                   sx={{
                     color: 'text.secondary'
                   }} />
-
               </Paper>
+              <Stack
+                  justifyContent="flex-end"
+                  direction={{ xs: 'column', sm: 'row' }}
+                  alignItems={{ sm: 'center' }}
+                  sx={{ mb: 0.5 }}
+                >
+                  <Typography variant="subtitle2">Reply</Typography>
+                </Stack>
             </Stack>
           ))}
         </Stack>
@@ -412,122 +459,3 @@ function PostCard( { post, sendComment, mutate }: Post) {
   );
 }
 
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-      padding: theme.spacing(2),
-    },
-    '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-    },
-  }));
-
-
-  interface PostSomeThingDialogProps {
-    open: boolean;
-    cancelPost: ()=> void;
-    sendPost: (message :any)=> void;
-  }
-
-  interface PostContent {
-    title : string;
-    message : string;
-    attachment : string;
-  }
-
-function CreateAPostDialog({open, cancelPost, sendPost}: PostSomeThingDialogProps) {
-    const { user } = useAuthContext();
-
-    const isDesktop = useResponsive('up', 'sm');
-
-    const [content, setContent] = useState<PostContent>({title:'', message: '', attachment:''})
-    const [fullScreen, setFullScreen] = useState(false);
-  
-    const handleChangeMessage = (message: string) => {
-      setContent( v=> ({...v, message}));
-    };
-
-    const handleChangeTitle = (event: React.ChangeEvent) => {
-      const target = event.target as HTMLInputElement;
-      setContent( value => ({...value, title: target.value}));
-    };
-  
-    const fullWidth = isDesktop ?
-                        (fullScreen ? 90 : 40) : 90
-
-    return (
-        <BootstrapDialog
-          onClose={cancelPost}
-          aria-labelledby="customized-dialog-title"
-          open={open}
-        >
-        <Paper
-          sx={{
-            width:`calc(${fullWidth}%)`,
-            top: 90,
-            right: `calc((100% - ${fullWidth}%)/2)`,
-            margin: "0px auto",
-            position: 'fixed',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Stack
-            direction="row"
-            alignItems="center"
-            sx={{
-              py: 2,
-              pl: 2.5,
-              pr: 1,
-            }}
-          >
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              {`What's on your mind ${user?.displayName} ?`}
-            </Typography>
-
-            <IconButton onClick={() => setFullScreen(!fullScreen)}>
-              <Iconify icon={fullScreen ? 'eva:collapse-fill' : 'eva:expand-fill'} />
-            </IconButton>
-  
-            <IconButton onClick={cancelPost}>
-              <Iconify icon="eva:close-fill" />
-            </IconButton>
-          </Stack>
-  
-          <Divider />
-  
-          <InputBase placeholder="Title" 
-            sx={{ px: 2, height: 40 }} 
-            value={content.title}
-            onChange={handleChangeTitle}
-            />
-  
-          <Divider />
-  
-          <Editor
-            simple
-            id="compose-mail"
-            value={content.message}
-            onChange={handleChangeMessage}
-            placeholder="Type a message"
-            sx={{ flexGrow: 1, borderColor: 'transparent' }}
-          />
-  
-          <Divider />
-  
-          <Stack direction="row" alignItems="center" sx={{ py: 2, px: 3 }}>
-            <Button variant="contained" sx={{ mr: 2 }} onClick={() => sendPost(content)}>
-              Post
-            </Button>
-            <IconButton>
-              <Iconify icon="ic:round-add-photo-alternate" />
-            </IconButton>
-  
-            <IconButton>
-              <Iconify icon="eva:attach-2-fill" />
-            </IconButton>
-          </Stack>
-        </Paper>
-        </BootstrapDialog>
-    );
-  }

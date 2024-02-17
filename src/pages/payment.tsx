@@ -164,7 +164,7 @@ export default function PaymentPage() {
   return (
     <>
       <Head>
-        <title> Payment | Minimal UI</title>
+        <title> Payment | InnerCircle</title>
       </Head>
       <Container
         sx={{

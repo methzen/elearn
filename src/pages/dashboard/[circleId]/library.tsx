@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { useContext, useEffect, useState} from 'react'
+import { useContext } from 'react'
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
@@ -9,18 +9,8 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 // components
 import { useSettingsContext } from '../../../components/settings';
 import Iconify from '../../../components/iconify';
-import Video from '../../../components/ChapterDisplayer';
 import {CourseSection} from "../../../sections/AddCoursSection"
-import SectionPanel from "../../../sections/SectionPanel"
-import { useDispatch, useSelector } from '../../../redux/store';
-import {
-  apiCreateASection,
-  CreateACourse,
-  getCourse,
-  CreateCourseData,
-  apiEditOrSaveCourse,
-} from '../../../redux/slices/course';
-import { Chapter, Course, Section } from '../../../@types/course';
+import { Course } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 import { useQuery } from '@tanstack/react-query';
@@ -31,94 +21,10 @@ import LoadingScreen from 'src/components/loading-screen';
 Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 // ----------------------------------------------------------------------
 
-const enum LibraryPageType {
-  EDITING_COURSE = 'EDITING_COURSE',
-  SAVED_COURSE = 'SAVED_COURSE',
-  NO_COURSE = 'NO_COURSE',
-  ONLY_VIEW = 'ONLY_VIEW'
-}
-
-const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
-  {
-    userName: string
-    pageType: string
-    isAdmin: boolean
-    actionHandler: () => void;
-  }
-  )=>{
-  
-  const getInputs = (pt:string) => {
-    const defaut = {
-      icon : null,
-      linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
-      action: false,
-      btnText: ''
-    }
-    switch(pt){
-      case LibraryPageType.EDITING_COURSE:
-        return {
-          icon : null,
-          linkName: 'Finish editing your course and save it.',
-          action: true,
-          btnText: 'Save Course'
-        }
-      case LibraryPageType.SAVED_COURSE:
-        return {
-          icon : null,
-          linkName: ``,
-          action: true,
-          btnText: 'Edit Course'
-        }
-      case LibraryPageType.NO_COURSE:
-        return {
-          icon : <Iconify icon="eva:plus-fill" />,
-          linkName: `You have not created a course yet.`,
-          action: true,
-          btnText: 'Add Course'
-        }
-      case LibraryPageType.ONLY_VIEW:
-        return defaut
-      default: 
-        return defaut
-    }
-    }
-  const welcomeHeading = `Welcome ${userName} !`
-  const inputs = getInputs(pageType)
-
-  return(
-    <CustomBreadcrumbs
-    heading={welcomeHeading}
-    links={[
-      {
-        name: inputs?.linkName,
-        // href: PATH_DASHBOARD.root,
-      },
-    ]}
-    action={inputs?.action?
-      <Button
-        variant="contained"
-        startIcon={inputs.icon}
-        onClick={actionHandler}
-        style={{ marginTop:"20px"}}
-      >
-        {inputs.btnText}
-      </Button>: null
-    }
-  />
-  )
-}
-
 export default function Library() {
-  const dispatch = useDispatch()
   const { user } = useAuthContext();
   const { themeStretch } = useSettingsContext();
   const { query: { circleId} } = useRouter();
-  const courseStore = useSelector((state) => state.course)
-  const [pageType, setPageType] = useState(LibraryPageType.EDITING_COURSE)
-  const [hasCourse, setHasCourse] = useState<boolean|undefined>()
-  const [sectionList, setSectionList] = useState<Section[]>([])
-  const [currentChapter, setCurrentChapter] = useState<Chapter>()
-  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
 
@@ -127,95 +33,15 @@ export default function Library() {
     queryFn: () => getCourseByGroupId(circleId as string)
   })
 
-  console.log('query data', data, error)
-
-  useEffect(() => {
-    if (data){
-      dispatch(getCourse(circleId as string))
-    }
-  },[circleId, dispatch, data])
-
-  useEffect(() => {
-    setHasCourse(!!data)
-      if(isAdmin){
-        if(!data){
-          setPageType(LibraryPageType.NO_COURSE)
-        }else{
-          setPageType(data.isSaved ? LibraryPageType.SAVED_COURSE : LibraryPageType.EDITING_COURSE)
-        }
-      }else{
-        setPageType(LibraryPageType.ONLY_VIEW)
-      }
-      if(data){
-        setSectionList(data?.sections)
-        const indexOfLastSection = data.sections.length - 1
-        const lastSection = data.sections[indexOfLastSection]
-        setIsLastSectionValidated(!!lastSection?.isValidated)
-        const currentSec = courseStore.sections[0]
-        const currentChap = currentSec?.chapters[0]
-        setCurrentChapter(currentChap)
-      }
-  },[data, isAdmin])
-
-  useEffect(() => {
-    if(courseStore.currentChapter && courseStore.currentSection){
-      setCurrentChapter(undefined)
-      const currentSec = courseStore.sections.find(sec=>sec.id===courseStore.currentSection)
-      const currentChap = currentSec?.chapters.find(chap=>chap.id===courseStore.currentChapter)
-      setCurrentChapter(currentChap)
-  }
-  },[courseStore])
-
   const createCourse = () => {
-    dispatch(CreateACourse({groupId: circleId} as CreateCourseData))
+    console.log('create a course...')
   }
 
-  const saveCourse = () => {
-    const notSavedSection = sectionList.filter(sec => !sec.isValidated)
-    if( notSavedSection.length > 0 ) return
-    dispatch(
-      apiEditOrSaveCourse(
-        {
-          groupId: courseStore.groupId as string,
-          courseId: courseStore.id as string,
-          forSave: true
-        }
-      )
-    )
-  }
+  if (!circleId || isLoading) return <LoadingScreen />
 
-  const editCourse = () => {
-    dispatch(
-      apiEditOrSaveCourse(
-        {
-          groupId: courseStore.groupId as string,
-          courseId: courseStore.id as string,
-          forSave: false
-        }
-      )
-    )
-  }
-
-  const addAsection = () =>{
-    dispatch(apiCreateASection(courseStore.id as string))
-  }
-
-  const actionHandler = () => {
-    switch(pageType){
-      case LibraryPageType.EDITING_COURSE:
-        return saveCourse()
-      case LibraryPageType.NO_COURSE:
-        return createCourse()
-      case LibraryPageType.SAVED_COURSE:
-        return editCourse()
-      case LibraryPageType.ONLY_VIEW:
-        return null
-      default:
-        return null
-    }
-  }
-
-  if (!circleId || !courseStore || isLoading) return <LoadingScreen />
+  const linkName = !!data? 'What will you learn today ?' 
+  : isAdmin? 'You have not created a course yet'
+  :`The owner of this circle has not created a course yet.`
 
   return (
     <>
@@ -223,39 +49,37 @@ export default function Library() {
         <title> Library | Inner Circle </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
-      <GetCustomBreadcrumbsAction
-          isAdmin={!!hasCourse}
-          userName={user!.displayName} 
-          pageType={pageType} 
-          actionHandler={actionHandler}
+      <CustomBreadcrumbs
+        heading={`Welcome ${user?.firstname} !`}
+        links={[
+          {
+            name: linkName,
+            // href: PATH_DASHBOARD.root,
+          },
+        ]}
+        action={isAdmin?
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={createCourse}
+            style={{ marginTop:"20px"}}
+          >
+            {`${!!data? `update` : `create`}`}
+          </Button>: null
+        }
       />
         <Grid container justifyContent="center" spacing={3}>
-        <Grid item xs={12} md={5}>
-          {sectionList.map((section)=>( 
-          <CourseSection 
-              key={section.name}
-              section={section}
-              isCurrentSection={section.id===courseStore.currentSection}
-              currentChapter={courseStore.currentChapter}
-              readOnly={[
-                LibraryPageType.ONLY_VIEW,
-                LibraryPageType.SAVED_COURSE
-              ].includes(pageType)}
-              />
-            ))
-          }
-          {[
-            LibraryPageType.ONLY_VIEW,
-            LibraryPageType.SAVED_COURSE
-          ].includes(pageType)? null : isLastSectionValidated 
-            && <SectionPanel
-            title="Add a section"
-            onOpen={addAsection}
-            sx={{ mt: 5 }}
-          />}
-          </Grid>
-          <Grid item xs={12} md={6}>
-           {currentChapter && <Video chapter={currentChapter as Chapter}/>}
+          <Grid item xs={12} md={5}>
+            {data && data.sections.map((section)=>( 
+            <CourseSection 
+                key={section.name}
+                section={section}
+                isCurrentSection={section.id===data.sections[0].id}
+                currentChapter={data.sections[0].chapters[0].id}
+                readOnly={true}
+                />
+              ))
+            }
           </Grid>
         </Grid>
       </Container>

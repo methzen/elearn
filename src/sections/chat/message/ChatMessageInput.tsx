@@ -8,6 +8,7 @@ import { IChatSendMessage } from '../../../@types/chat';
 // components
 import Iconify from '../../../components/iconify';
 import { useAuthContext } from 'src/auth/useAuthContext';
+import { useSocketContext } from 'src/hooks/useSocket';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ export default function ChatMessageInput({
         onSend({
           conversationId,
           messageId: uuidv4(),
-          message,
+          content : message,
           contentType: 'text',
           attachments: [],
           createdAt: new Date(),

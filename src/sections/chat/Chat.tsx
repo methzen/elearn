@@ -14,6 +14,7 @@ import {
   sendMessage,
   markConversationAsRead,
   resetActiveConversation,
+  addMessage,
 } from '../../redux/slices/chat';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
@@ -30,13 +31,15 @@ import ChatMessageList from './message/ChatMessageList';
 import ChatHeaderDetail from './header/ChatHeaderDetail';
 import ChatHeaderCompose from './header/ChatHeaderCompose';
 import { useAuthContext } from 'src/auth/useAuthContext';
+import { useSocketContext } from 'src/hooks/useSocket';
 
 // ----------------------------------------------------------------------
 
 export default function Chat() {
   const { themeStretch } = useSettingsContext();
-  const { user } = useAuthContext()
-  const CURRENT_USER_ID = user?.id
+  const { user } = useAuthContext();
+  const socket = useSocketContext();
+  const CURRENT_USER_ID = user?.id;
   const dispatch = useDispatch();
 
   const {
@@ -48,7 +51,7 @@ export default function Chat() {
   const { contacts, recipients, participants, activeConversationId, conversations } = useSelector(
     (state) => state.chat
   );
-  console.log('activeConversationId', activeConversationId)
+
   const selectedConversation = useSelector(() => {
     if (activeConversationId) {
       return conversations.byId[activeConversationId];
@@ -85,12 +88,51 @@ export default function Chat() {
 
     if (conversationKey) {
       getDetails();
+      socket.emit('setup', user);
+      socket.connect();
+      socket.on('connected', () => {
+        console.log('you are connected...');
+      });
+      socket.emit('join room', user?.id);
     } else if (activeConversationId) {
       dispatch(resetActiveConversation());
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationKey]);
+
+  useEffect(() => {
+    socket.on('message recieved', (value: IChatSendMessage) => {
+
+      if (conversationKey === value.conversationId) {
+        dispatch(sendMessage(value));
+
+        // const messageExist = selectedConversation.messages.find(
+        //   (mess) => mess._id === value.messageId
+        // );
+        // if (!messageExist) {
+        //   // await dispatch(getConversation(`${conversationKey}`));
+        //   dispatch(sendMessage(value));
+        // }
+      } else {
+        console.log('Push a notification');
+        // if (!notifications.includes(value)) {
+        //   dispatch(setNotifications([value, ...notifications]))
+        // }
+      }
+      // dispatch(fetchChats())
+    });
+    socket.on('disconnect', () => {
+      console.log('user is disconnected...')
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('message recieved');
+      socket.off('new message');
+    };
+  }, []);
 
   useEffect(() => {
     if (activeConversationId) {
@@ -103,8 +145,11 @@ export default function Chat() {
   };
 
   const handleSendMessage = async (value: IChatSendMessage) => {
+    socket.emit('stop typing', activeConversationId);
     try {
       dispatch(sendMessage(value));
+      dispatch(addMessage(conversationKey as string, value.content))
+      socket.emit('new message', { message: value, participants });
     } catch (error) {
       console.error(error);
     }
