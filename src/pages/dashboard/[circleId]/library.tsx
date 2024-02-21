@@ -10,12 +10,14 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../../components/settings';
 import Iconify from '../../../components/iconify';
 import {CourseSection} from "../../../sections/AddCoursSection"
-import { Course } from '../../../@types/course';
+import { Chapter, Course } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 import { useQuery } from '@tanstack/react-query';
 import getCourseByGroupId from 'src/api/getCourseByGroupId';
 import LoadingScreen from 'src/components/loading-screen';
+import { PATH_DASHBOARD } from 'src/routes/paths';
+import Video from '../../../components/ChapterDisplayer';
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
@@ -24,7 +26,7 @@ Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardL
 export default function Library() {
   const { user } = useAuthContext();
   const { themeStretch } = useSettingsContext();
-  const { query: { circleId} } = useRouter();
+  const { push, query: { circleId} } = useRouter();
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
 
@@ -32,10 +34,6 @@ export default function Library() {
     queryKey: ['course'],
     queryFn: () => getCourseByGroupId(circleId as string)
   })
-
-  const createCourse = () => {
-    console.log('create a course...')
-  }
 
   if (!circleId || isLoading) return <LoadingScreen />
 
@@ -54,14 +52,13 @@ export default function Library() {
         links={[
           {
             name: linkName,
-            // href: PATH_DASHBOARD.root,
           },
         ]}
         action={isAdmin?
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:plus-fill" />}
-            onClick={createCourse}
+            onClick={()=> push(PATH_DASHBOARD.group.createCourse(circleId as string))}
             style={{ marginTop:"20px"}}
           >
             {`${!!data? `update` : `create`}`}
@@ -80,6 +77,9 @@ export default function Library() {
                 />
               ))
             }
+          </Grid>
+          <Grid item xs={12} md={6}>
+           {data?.sections[0].chapters[0] && <Video chapter={data?.sections[0].chapters[0] as Chapter}/>}
           </Grid>
         </Grid>
       </Container>

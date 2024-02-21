@@ -18,6 +18,7 @@ import {
   updateSectionApi,
   deleteChapterApi,
   editOrSaveCourseApi,
+  deleteSectionApi,
 } from "../../api/courseApi"
 // import { HYDRATE } from "next-redux-wrapper";
 // ----------------------------------------------------------------------
@@ -33,7 +34,7 @@ interface CourseStore extends Course {
 const initialState: CourseStore = {
   name: null,
   description: null,
-  created: null,
+  createdAt: null,
   isLoading: false,
   error: false,
   sections: [],
@@ -54,7 +55,7 @@ const slice = createSlice({
       if(!action.payload) return state
       state.name = action.payload.name;
       state.description = action.payload.description;
-      state.created = action.payload.created
+      state.createdAt = action.payload.createdAt
       state.groupId = action.payload.groupId
       state.creatorId = action.payload.creatorId
       state.sections = action.payload.sections
@@ -237,6 +238,19 @@ export function apiUpdateSection(inputData:sectionData){
   };
 }
 
+export function apiDeleteSection(courseId: string, sectionId: string){
+  return async (dispatch: Dispatch) => {
+    dispatch(startLoading());
+    try {
+      const data = await deleteSectionApi(courseId, sectionId);
+      dispatch(updateState(data))
+      dispatch(endLoading());
+    } catch (error) {
+      console.log(error)
+      dispatch(endLoading());
+    }
+  };
+}
 
 export function apiEditOrSaveCourse(inputData : {
   groupId: string; courseId: string; forSave: boolean;

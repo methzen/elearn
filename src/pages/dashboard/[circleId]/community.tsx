@@ -54,6 +54,8 @@ import unlikeAPost from '../../../api/unlikeAPost';
 import commentAPost from '../../../api/commentAPost';
 import CourseCardAside from '../../../components/CourseCardAside';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
+import EditButton from 'src/sections/EditButton';
+import ReplyButton from 'src/sections/ReplayButton';
 // ----------------------------------------------------------------------
 
 Community.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
@@ -370,44 +372,76 @@ function PostCard( { post, sendComment, mutate }: Post) {
       {hasComments && (
         <Stack spacing={1.5} sx={{ px: 3, pb: 2 }}>
           {post.comments.map((comment) => (
-            <Stack key={comment.id} direction="row" spacing={2}>
-              <CustomAvatar alt={comment.author.name} src={comment.author.avatarUrl} name={comment.author.name} />
-
-              <Paper
-                sx={{
-                  p: 1.5,
-                  flexGrow: 1,
-                  bgcolor: 'background.neutral',
-                }}
-              >
-                <Stack
-                  justifyContent="space-between"
-                  direction={{ xs: 'column', sm: 'row' }}
-                  alignItems={{ sm: 'center' }}
-                  sx={{ mb: 0.5 }}
-                >
-                  <Typography variant="subtitle2">{comment.author.name}</Typography>
-
-                  <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-                    {fDate(comment.createdAt)}
-                  </Typography>
-                </Stack>
-                <Markdown
-                  key={post.id}
-                  children={comment.message}
+            
+              <Stack key={comment.id} direction="row" spacing={2}>
+                <Paper
                   sx={{
-                    color: 'text.secondary'
-                  }} />
-              </Paper>
-              <Stack
-                  justifyContent="flex-end"
-                  direction={{ xs: 'column', sm: 'row' }}
-                  alignItems={{ sm: 'center' }}
-                  sx={{ mb: 0.5 }}
+                    p: 1.5,
+                    flexGrow: 1,
+                    bgcolor: 'background.neutral',
+                  }}
                 >
-                  <Typography variant="subtitle2">Reply</Typography>
+                  {/* <Stack key={comment.id} direction="row" spacing={2}>
+                  <Stack
+                    justifyContent="space-between"
+                    direction={{ xs: 'column', sm: 'row' }}
+                    alignItems={{ sm: 'center' }}
+                    sx={{ mb: 0.5 }}
+                  >
+                    <CustomAvatar alt={comment.author.name} src={comment.author.avatarUrl} name={comment.author.name} />
+                    <Typography variant="subtitle2">{comment.author.name}</Typography>
+                    <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                      {fDate(comment.createdAt)}
+                    </Typography>
                 </Stack>
-            </Stack>
+                {user?.id === comment.author.id ? (
+                  <Stack direction="row" spacing={1}>
+                    <EditButton
+                      functionality={() => console.log('edit')}
+                      editingComm={false}
+                    />
+                  </Stack>
+                ) : (
+                  <ReplyButton functionality={() => console.log('reply')} />
+                )}
+                  </Stack> */}
+
+                  <Stack
+                spacing={2}
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Stack spacing={2} direction="row" alignItems="center">
+                
+                <CustomAvatar sx={{width: "30px", height: "30px"}} alt={comment.author.name} src={comment.author.avatarUrl} name={comment.author.name} />
+                               
+                <Typography variant="subtitle2">{comment.author.name}</Typography>
+                    <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                      {fDate(comment.createdAt)}
+                    </Typography>
+                </Stack>
+                {user?.id === comment.author.id ? (
+                  <Stack direction="row" spacing={1}>
+                    <EditButton
+                      functionality={() => console.log('edit')}
+                      editingComm={false}
+                    />
+                  </Stack>
+                ) : (
+                  <ReplyButton functionality={() => console.log('reply')} />
+                )}
+              </Stack>
+
+                  <Markdown
+                    key={post.id}
+                    children={comment.message}
+                    sx={{
+                      p: 1.5,
+                      color: 'text.secondary'
+                    }} />
+                </Paper>
+              </Stack>
           ))}
         </Stack>
       )}

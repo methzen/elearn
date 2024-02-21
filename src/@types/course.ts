@@ -1,7 +1,7 @@
 export type Base = {
     id?: string ;
     name: string | null,
-    created?: Date | null,
+    createdAt?: Date | null,
     description?: string | null,
 }
 

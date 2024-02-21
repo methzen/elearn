@@ -32,6 +32,7 @@ import {
   chapterData,
   apiUpdateSection,
   setCurrentChapter,
+  apiDeleteSection,
 } from '../redux/slices/course';
 import Label from 'src/components/label/Label';
 // ----------------------------------------------------------------------
@@ -200,12 +201,11 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readO
                 >
                 Save
               </Button>
-
               <Button
                 color="error"
                 variant="contained"
                 startIcon={<Iconify icon="eva:close-circle-fill" />}
-                onClick={() => console.log('REJECT')}
+                onClick={() => dispatch(apiDeleteSection(section.course as string, section.id as string))}
               >
                 Delete
               </Button>

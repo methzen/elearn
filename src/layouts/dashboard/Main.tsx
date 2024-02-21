@@ -25,9 +25,11 @@ export default function Main({ children, sx, ...other }: BoxProps) {
       <Box
         component="main"
         sx={{
+          background: (theme)=>theme.palette.grey[900],
           pt: `${HEADER.H_MOBILE + SPACING}px`,
           pb: `${HEADER.H_MOBILE + SPACING}px`,
           ...(isDesktop && {
+            background: (theme)=>theme.palette.grey[900],
             px: 2,
             pt: `${HEADER.H_DASHBOARD_DESKTOP + 80}px`,
             pb: `${HEADER.H_DASHBOARD_DESKTOP + SPACING}px`,
@@ -46,6 +48,7 @@ export default function Main({ children, sx, ...other }: BoxProps) {
         flexGrow: 1,
         py: `${HEADER.H_MOBILE + SPACING}px`,
         ...(isDesktop && {
+          background: (theme)=>theme.palette.grey[100],
           px: 2,
           py: `${HEADER.H_DASHBOARD_DESKTOP + SPACING}px`,
           width: `calc(100% - ${NAV.W_DASHBOARD}px)`,

@@ -84,6 +84,17 @@ export async function updateSectionApi(data: sectionData){
   return response.data
 }
 
+export async function deleteSectionApi(courseId: string, sectionId: string){
+  const token = localStorage.getItem('x-auth-token')
+  const response = await axios.delete(`/groups/course/section?courseId=${courseId}&sectionId=${sectionId}`, {
+      headers: {
+        "x-auth-token" : token,
+        'Content-Type': 'application/json'
+      }
+    })
+  return response.data
+}
+
 export async function editOrSaveCourseApi({ groupId, courseId, forSave } : {
   groupId: string; courseId: string; forSave: boolean;
 }){
