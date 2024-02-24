@@ -85,13 +85,26 @@ export type IUserProfileFriend = {
 //     message: string;
 //   }[];
 // };
+export type IUserComment = {
+  _id: string;
+  by: {
+    _id: string;
+    photoURL: string;
+    firstname: string;
+    lastname: string;
+  };
+  createdAt: Date | string | number;
+  text: string;
+  comments?: IUserComment[]
+}
 
 export type IUserProfilePost = {
   id: string;
   by: {
-    id: string;
-    avatarUrl: string;
-    name: string;
+    _id: string;
+    photoURL: string;
+    firstname: string;
+    lastname: string;
   };
   likes: number;
   isLiked: boolean;
@@ -104,20 +117,12 @@ export type IUserProfilePost = {
   title: string;
   content: string;
   personLikes: {
-    name: string;
-    avatarUrl: string;
     id: string;
+    photoURL: string;
+    firstname: string;
+    lastname: string;
   }[];
-  comments: {
-    id: string;
-    author: {
-      id: string;
-      avatarUrl: string;
-      name: string;
-    };
-    createdAt: Date | string | number;
-    message: string;
-  }[];
+  comments: IUserComment[];
 };
 // ----------------------------------------------------------------------
 
