@@ -250,6 +250,8 @@ function PostCard( { post, mutate }: Post) {
   const userHasLikedTheirPost = post?.personLikes?.filter(like => like.id === user?.id)
   const [isLiked, setLiked] = useState(userHasLikedTheirPost?.length >=1);
   const [likes, setLikes] = useState(post?.personLikes?.length);
+  const [onComment, setOnComment] = useState(true)
+  const [onReply, setOnReply] = useState(!onComment)
   const [expanded, setExpanded] = useState(false);
 
   let commentCount = post.commentCount
@@ -278,6 +280,13 @@ function PostCard( { post, mutate }: Post) {
     mutate()
   };
 
+  const handleOnReply = () => {
+      setOnReply(!onReply)
+  }
+
+  const handleOnComment = () => {
+      setOnComment(!onComment)
+  }
   return (
     <Card>
       <CardHeader
@@ -345,6 +354,7 @@ function PostCard( { post, mutate }: Post) {
               checked={true}
               icon={<Iconify icon="eva:message-square-fill" />}
               checkedIcon={<Iconify icon="eva:message-square-fill" />}
+              onClick={handleOnComment}
             />
           }
           label={fShortenNumber(commentCount)}
@@ -365,21 +375,28 @@ function PostCard( { post, mutate }: Post) {
         {hasComments && (
         <Stack spacing={1.5} sx={{ px: 3, pb: 2 }}>
           {post.comments.map((comment) => (
-              <CommentComponent user={user} comment={comment} isTopLevel={true} onToggle={()=>console.log("toggle")}/>
+              <CommentComponent 
+                user={user} 
+                comment={comment} 
+                isTopLevel={true} 
+                onToggle={()=>console.log("toggle")} 
+                handleOnReply={handleOnReply}
+                onReply={onReply}
+                />
           ))}
         </Stack>
         )}
       </Collapse>
 
-      <WriteCommentComponent user={user} parentId={post.id} type='comment' functionality={()=> null}/>
+      { onComment && <WriteCommentComponent user={user} parentId={post.id} type='comment' functionality={()=> null}/>}
       
     </Card>
   );
 }
 
 
-function CommentComponent({comment, user, isTopLevel, onToggle, defaultParentId}
-  :{comment: IUserComment, user: any, isTopLevel: boolean, onToggle: (id:string) => void; defaultParentId?: string}){
+function CommentComponent({comment, user, isTopLevel, onToggle, defaultParentId, onReply, handleOnReply}
+  :{comment: IUserComment, user: any, isTopLevel: boolean, onToggle: (id:string) => void; defaultParentId?: string, onReply?: boolean, handleOnReply?: ()=>void;}){
   const [showReplies, setShowReplies] = useState(false);
   const [commentReply, setCommentReply] = useState(false)
 
@@ -427,7 +444,7 @@ function CommentComponent({comment, user, isTopLevel, onToggle, defaultParentId}
             //   />
             // </Stack>
           ) : (
-            <ReplyButton functionality={() => setCommentReply(true)} />
+            <ReplyButton functionality={() => {setCommentReply(true); handleOnReply && handleOnReply()}} />
           )}
         </Stack>
         <Markdown
