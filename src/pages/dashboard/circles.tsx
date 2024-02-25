@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { Container, Box, Button} from '@mui/material';
+import { Container, Box, Button } from '@mui/material';
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
 // components
@@ -20,22 +20,23 @@ import LoadingScreen from 'src/components/loading-screen';
 PageTwo.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default function PageTwo() {
-  const { push } = useRouter()
+  const { push } = useRouter();
   const { themeStretch } = useSettingsContext();
   const { user } = useAuthContext();
-  const { data , isLoading } = useSWR(`/groups/get/all?page=${1}`, (url: string) => getAllGroupsByPage(url))
-  const userHasSubscription = !!user?.subscription.is_active
+  const { data, isLoading } = useSWR(`/groups/get/all?page=${1}`, (url: string) =>
+    getAllGroupsByPage(url)
+  );
+  const userHasSubscription = !!user?.subscription.is_active;
 
   const handleCreateCircle = () => {
-    if(userHasSubscription){
-      push(PATH_DASHBOARD.create)
+    if (userHasSubscription) {
+      push(PATH_DASHBOARD.create);
+    } else {
+      push(`${PATH_PAGE.payment}?p=Basic`);
     }
-    else{
-      push(`${PATH_PAGE.payment}?p=Basic`)
-    }
-  }
+  };
 
-  if(isLoading) return <LoadingScreen/>
+  if (isLoading) return <LoadingScreen />;
 
   return (
     <>
@@ -43,24 +44,29 @@ export default function PageTwo() {
         <title> My Circles </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
+        <CustomBreadcrumbs
           heading={`Welcome ${user?.displayName} !`}
           links={[
             {
-              name: data?.items.length > 0 ? "Below are the circles you are part of.": "You don't have any circle yet.",
+              name:
+                data?.items.length > 0
+                  ? 'Below are the circles you are part of.'
+                  : "You don't have any circle yet.",
             },
           ]}
-          action={userHasSubscription?
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={handleCreateCircle}
-              style={{ marginTop:"20px"}}
-            >
-              Create a circle
-            </Button>: null
+          action={
+            userHasSubscription ? (
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="eva:plus-fill" />}
+                onClick={handleCreateCircle}
+                style={{ marginTop: '20px' }}
+              >
+                Create a circle
+              </Button>
+            ) : null
           }
-        />    
+        />
         <Box
           gap={3}
           display="grid"
@@ -71,10 +77,10 @@ export default function PageTwo() {
             lg: 'repeat(3, 1fr)',
           }}
         >
-          {data?.items?.map((course:any) =>
-              <CourseCard key={course.id} {...course}/>
-          )}
-      </Box>
+          {data?.items?.map((course: any) => (
+            <CourseCard key={course.id} {...course} />
+          ))}
+        </Box>
       </Container>
     </>
   );

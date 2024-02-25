@@ -6,16 +6,10 @@ import DashboardLayout from '../../../layouts/dashboard';
 
 import { useEffect, useState } from 'react';
 // @mui
-import {
-  Divider,
-  Container,
-  Card,
-  Tabs,
-  Tab,
-} from '@mui/material';
+import { Divider, Container, Card, Tabs, Tab } from '@mui/material';
 
 // sections
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import { Box } from '@mui/system';
 import EditCircle from 'src/sections/group/EditCircle';
 import getGroupDataForAdmin from 'src/api/getGroupDataForAdmin';
@@ -28,13 +22,17 @@ import { useSnackbar } from '../../../components/snackbar';
 
 // ----------------------------------------------------------------------
 
-Admin.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+Admin.getLayout = (page: React.ReactElement) => (
+  <CircleAccessGuard>
+    <DashboardLayout>{page}</DashboardLayout>
+  </CircleAccessGuard>
+);
 
 export default function Admin() {
   const { enqueueSnackbar } = useSnackbar();
   const [filterStatus, setFilterStatus] = useState('circle');
-  const [currentGroup, setCurrentGroup] = useState<CircleFormProps>()
-  const [isLoading, setIsLoading] = useState(false)
+  const [currentGroup, setCurrentGroup] = useState<CircleFormProps>();
+  const [isLoading, setIsLoading] = useState(false);
   const handleFilterStatus = (event: React.SyntheticEvent<Element, Event>, newValue: string) => {
     setFilterStatus(newValue);
   };
@@ -45,41 +43,47 @@ export default function Admin() {
 
   useEffect(() => {
     const getGroup = async () => {
-        const response =  await getGroupDataForAdmin(circleId as string)
-        if(!response){ return push(PATH_DASHBOARD.root)};
-        return setCurrentGroup({...response})
+      const response = await getGroupDataForAdmin(circleId as string);
+      if (!response) {
+        return push(PATH_DASHBOARD.root);
+      }
+      return setCurrentGroup({ ...response });
+    };
+    if (circleId && !isLoading) {
+      getGroup();
     }
-    if(circleId && !isLoading){
-      getGroup()
-    }
-  }, [circleId, push, isLoading ])
+  }, [circleId, push, isLoading]);
 
-  const handleUpdate = async (data:CircleFormProps) =>{
-    setIsLoading(true)
-    try{
-      await updateGroup(data)
-      setIsLoading(false)
-      enqueueSnackbar("The circle has been updated successfully.")
-    }catch(error){
-      console.log(error)
-      setIsLoading(false)
-      enqueueSnackbar("Could not update circle", {variant: 'error'})
+  const handleUpdate = async (data: CircleFormProps) => {
+    setIsLoading(true);
+    try {
+      await updateGroup(data);
+      setIsLoading(false);
+      enqueueSnackbar('The circle has been updated successfully.');
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      enqueueSnackbar('Could not update circle', { variant: 'error' });
     }
-  }
+  };
   const TABS = [
     {
       value: 'circle',
       label: 'circle',
-      component: currentGroup? <EditCircle 
-          currentCircle={currentGroup as CircleFormProps} 
+      component: currentGroup ? (
+        <EditCircle
+          currentCircle={currentGroup as CircleFormProps}
           update={handleUpdate}
           isLoading={isLoading}
-          /> : <span>loading...</span>,
+        />
+      ) : (
+        <span>loading...</span>
+      ),
     },
     {
       value: 'users',
       label: 'users',
-      component: <UserListPage/>,
+      component: <UserListPage />,
     },
   ];
 
@@ -90,7 +94,7 @@ export default function Admin() {
       </Head>
 
       <Container sx={{ my: 10 }}>
-      <Card sx={{ mt: 2 }}>
+        <Card sx={{ mt: 2 }}>
           <Tabs
             value={filterStatus}
             onChange={handleFilterStatus}
@@ -104,8 +108,8 @@ export default function Admin() {
             ))}
           </Tabs>
           <Divider />
-          </Card>
-          {TABS.map(
+        </Card>
+        {TABS.map(
           (tab) => tab.value === filterStatus && <Box key={tab.value}> {tab.component} </Box>
         )}
       </Container>

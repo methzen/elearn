@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { useEffect, useState} from 'react'
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
@@ -10,8 +10,8 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../../components/settings';
 import Iconify from '../../../components/iconify';
 import Video from '../../../components/ChapterDisplayer';
-import {CourseSection} from "../../../sections/AddCoursSection"
-import SectionPanel from "../../../sections/SectionPanel"
+import { CourseSection } from '../../../sections/AddCoursSection';
+import SectionPanel from '../../../sections/SectionPanel';
 import { useDispatch, useSelector } from '../../../redux/store';
 import {
   apiCreateASection,
@@ -26,7 +26,11 @@ import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
-CreatePage.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+CreatePage.getLayout = (page: React.ReactElement) => (
+  <CircleAccessGuard>
+    <DashboardLayout>{page}</DashboardLayout>
+  </CircleAccessGuard>
+);
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {
@@ -35,163 +39,172 @@ const enum LibraryPageType {
   NO_COURSE = 'NO_COURSE',
 }
 
-const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
-  {
-    userName: string
-    pageType: string
-    isAdmin: boolean
-    actionHandler: () => void;
-  })=>{
-  const getInputs = (pt:string) => {
+const GetCustomBreadcrumbsAction = ({
+  userName,
+  pageType,
+  isAdmin,
+  actionHandler,
+}: {
+  userName: string;
+  pageType: string;
+  isAdmin: boolean;
+  actionHandler: () => void;
+}) => {
+  const getInputs = (pt: string) => {
     const defaut = {
-      icon : null,
-      linkName: isAdmin? 'What will you learn today ?':`The owner of this circle has not created a course yet.`,
+      icon: null,
+      linkName: isAdmin
+        ? 'What will you learn today ?'
+        : `The owner of this circle has not created a course yet.`,
       action: false,
-      btnText: ''
-    }
-    switch(pt){
+      btnText: '',
+    };
+    switch (pt) {
       case LibraryPageType.EDITING_COURSE:
         return {
-          icon : null,
+          icon: null,
           linkName: 'Finish editing your course and save it.',
           action: true,
-          btnText: 'Save Course'
-        }
+          btnText: 'Save Course',
+        };
       case LibraryPageType.SAVED_COURSE:
         return {
-          icon : null,
+          icon: null,
           linkName: ``,
           action: true,
-          btnText: 'Edit Course'
-        }
+          btnText: 'Edit Course',
+        };
       case LibraryPageType.NO_COURSE:
         return {
-          icon : <Iconify icon="eva:plus-fill" />,
+          icon: <Iconify icon="eva:plus-fill" />,
           linkName: `You have not created a course yet.`,
           action: true,
-          btnText: 'Add Course'
-        }
-      default: 
-        return defaut
+          btnText: 'Add Course',
+        };
+      default:
+        return defaut;
     }
-    }
-  const welcomeHeading = `Welcome ${userName} !`
-  const inputs = getInputs(pageType)
+  };
+  const welcomeHeading = `Welcome ${userName} !`;
+  const inputs = getInputs(pageType);
 
-  return(
+  return (
     <CustomBreadcrumbs
-    heading={welcomeHeading}
-    links={[
-      {
-        name: inputs?.linkName,
-        // href: PATH_DASHBOARD.root,
-      },
-    ]}
-    action={inputs?.action?
-      <Button
-        variant="contained"
-        startIcon={inputs.icon}
-        onClick={actionHandler}
-        style={{ marginTop:"20px"}}
-      >
-        {inputs.btnText}
-      </Button>: null
-    }
-  />
-  )
-}
+      heading={welcomeHeading}
+      links={[
+        {
+          name: inputs?.linkName,
+          // href: PATH_DASHBOARD.root,
+        },
+      ]}
+      action={
+        inputs?.action ? (
+          <Button
+            variant="contained"
+            startIcon={inputs.icon}
+            onClick={actionHandler}
+            style={{ marginTop: '20px' }}
+          >
+            {inputs.btnText}
+          </Button>
+        ) : null
+      }
+    />
+  );
+};
 
 export default function CreatePage() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { user } = useAuthContext();
   const { themeStretch } = useSettingsContext();
-  const { query: { circleId} } = useRouter();
-  const courseStore = useSelector((state) => state.course)
-  const [pageType, setPageType] = useState(LibraryPageType.EDITING_COURSE)
-  const [hasCourse, setHasCourse] = useState<boolean|undefined>()
-  const [sectionList, setSectionList] = useState<Section[]>([])
-  const [currentChapter, setCurrentChapter] = useState<Chapter>()
-  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
+  const {
+    query: { circleId },
+  } = useRouter();
+  const courseStore = useSelector((state) => state.course);
+  const [pageType, setPageType] = useState(LibraryPageType.EDITING_COURSE);
+  const [hasCourse, setHasCourse] = useState<boolean | undefined>();
+  const [sectionList, setSectionList] = useState<Section[]>([]);
+  const [currentChapter, setCurrentChapter] = useState<Chapter>();
+  const [isLastSectionValidated, setIsLastSectionValidated] = useState(false);
 
   useEffect(() => {
-    if(circleId)
-      dispatch(getCourse(circleId as string))
-  },[circleId, dispatch])
+    if (circleId) dispatch(getCourse(circleId as string));
+  }, [circleId, dispatch]);
 
   useEffect(() => {
-    setHasCourse(!!courseStore.sections)
+    setHasCourse(!!courseStore.sections);
 
-    if(!courseStore){
-      setPageType(LibraryPageType.NO_COURSE)
-    }else{
-      setPageType(courseStore.isSaved ? LibraryPageType.SAVED_COURSE : LibraryPageType.EDITING_COURSE)
+    if (!courseStore) {
+      setPageType(LibraryPageType.NO_COURSE);
+    } else {
+      setPageType(
+        courseStore.isSaved ? LibraryPageType.SAVED_COURSE : LibraryPageType.EDITING_COURSE
+      );
     }
-      
-    if(courseStore){
-      setSectionList(courseStore?.sections)
-      const indexOfLastSection = courseStore.sections.length - 1
-      const lastSection = courseStore.sections[indexOfLastSection]
-      setIsLastSectionValidated(!!lastSection?.isValidated)
-      const currentSec = courseStore.sections[0]
-      const currentChap = currentSec?.chapters[0]
-      setCurrentChapter(currentChap)
+
+    if (courseStore) {
+      setSectionList(courseStore?.sections);
+      const indexOfLastSection = courseStore.sections.length - 1;
+      const lastSection = courseStore.sections[indexOfLastSection];
+      setIsLastSectionValidated(!!lastSection?.isValidated);
+      const currentSec = courseStore.sections[0];
+      const currentChap = currentSec?.chapters[0];
+      setCurrentChapter(currentChap);
     }
-    if(courseStore.currentChapter && courseStore.currentChapter){
-      setCurrentChapter(undefined)
-      const currentSec = courseStore.sections.find(sec=>sec.id===courseStore.currentSection)
-      const currentChap = currentSec?.chapters.find(chap=>chap.id===courseStore.currentChapter)
-      setCurrentChapter(currentChap)
+    if (courseStore.currentChapter && courseStore.currentChapter) {
+      setCurrentChapter(undefined);
+      const currentSec = courseStore.sections.find((sec) => sec.id === courseStore.currentSection);
+      const currentChap = currentSec?.chapters.find(
+        (chap) => chap.id === courseStore.currentChapter
+      );
+      setCurrentChapter(currentChap);
     }
-  },[courseStore])
+  }, [courseStore]);
 
   const createCourse = () => {
-    dispatch(CreateACourse({groupId: circleId} as CreateCourseData))
-  }
+    dispatch(CreateACourse({ groupId: circleId } as CreateCourseData));
+  };
 
   const saveCourse = () => {
-    const notSavedSection = sectionList.filter(sec => !sec.isValidated)
-    if( notSavedSection.length > 0 ) return
+    const notSavedSection = sectionList.filter((sec) => !sec.isValidated);
+    if (notSavedSection.length > 0) return;
     dispatch(
-      apiEditOrSaveCourse(
-        {
-          groupId: courseStore.groupId as string,
-          courseId: courseStore.id as string,
-          forSave: true
-        }
-      )
-    )
-  }
+      apiEditOrSaveCourse({
+        groupId: courseStore.groupId as string,
+        courseId: courseStore.id as string,
+        forSave: true,
+      })
+    );
+  };
 
   const editCourse = () => {
     dispatch(
-      apiEditOrSaveCourse(
-        {
-          groupId: courseStore.groupId as string,
-          courseId: courseStore.id as string,
-          forSave: false
-        }
-      )
-    )
-  }
+      apiEditOrSaveCourse({
+        groupId: courseStore.groupId as string,
+        courseId: courseStore.id as string,
+        forSave: false,
+      })
+    );
+  };
 
-  const addAsection = () =>{
-    dispatch(apiCreateASection(courseStore.id as string))
-  }
+  const addAsection = () => {
+    dispatch(apiCreateASection(courseStore.id as string));
+  };
 
   const actionHandler = () => {
-    switch(pageType){
+    switch (pageType) {
       case LibraryPageType.EDITING_COURSE:
-        return saveCourse()
+        return saveCourse();
       case LibraryPageType.NO_COURSE:
-        return createCourse()
+        return createCourse();
       case LibraryPageType.SAVED_COURSE:
-        return editCourse()
+        return editCourse();
       default:
-        return null
+        return null;
     }
-  }
+  };
 
-  if (!circleId || !courseStore) return <LoadingScreen />
+  if (!circleId || !courseStore) return <LoadingScreen />;
 
   return (
     <>
@@ -199,35 +212,31 @@ export default function CreatePage() {
         <title> Library | Inner Circle </title>
       </Head>
       <Container maxWidth={themeStretch ? false : 'xl'}>
-      <GetCustomBreadcrumbsAction
+        <GetCustomBreadcrumbsAction
           isAdmin={!!hasCourse}
-          userName={user!.displayName} 
-          pageType={pageType} 
+          userName={user!.displayName}
+          pageType={pageType}
           actionHandler={actionHandler}
-      />
+        />
         <Grid container justifyContent="center" spacing={3}>
-        <Grid item xs={12} md={5}>
-          {sectionList.map((section)=>( 
-          <CourseSection 
-              key={section.name}
-              section={section}
-              setCurrent={()=>null}
-              current={{sectionId: "", chapterId: currentChapter?.id as string}}
-              readOnly={false}
+          <Grid item xs={12} md={5}>
+            {sectionList.map((section) => (
+              <CourseSection
+                key={section.name}
+                section={section}
+                setCurrent={() => null}
+                current={{ sectionId: '', chapterId: currentChapter?.id as string }}
+                readOnly={false}
               />
-            ))
-          }
-          {[
-            LibraryPageType.SAVED_COURSE
-          ].includes(pageType)? null : isLastSectionValidated 
-            && <SectionPanel
-            title="Add a section"
-            onOpen={addAsection}
-            sx={{ mt: 5 }}
-          />}
+            ))}
+            {[LibraryPageType.SAVED_COURSE].includes(pageType)
+              ? null
+              : isLastSectionValidated && (
+                  <SectionPanel title="Add a section" onOpen={addAsection} sx={{ mt: 5 }} />
+                )}
           </Grid>
           <Grid item xs={12} md={6}>
-           {currentChapter && <Video chapter={currentChapter as Chapter}/>}
+            {currentChapter && <Video chapter={currentChapter as Chapter} />}
           </Grid>
         </Grid>
       </Container>

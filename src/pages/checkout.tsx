@@ -7,11 +7,6 @@ import checkout from 'src/api/checkout';
 import Head from 'next/head';
 import { useTheme } from '@mui/material/styles';
 
-
-// @mui
-import { Box, Grid, Container, Typography } from '@mui/material';
-// hooks
-import useResponsive from '../hooks/useResponsive';
 import LoginLayout from 'src/layouts/login/LoginLayout';
 // layouts
 
@@ -30,7 +25,6 @@ const stripePromise = loadStripe(STRP_PK as string);
 
 export default function PaymentPage() {
   const theme = useTheme();
-  const isDesktop = useResponsive('up', 'md');
   const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
