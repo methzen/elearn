@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
@@ -10,11 +10,11 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../../components/settings';
 import Iconify from '../../../components/iconify';
 import {CourseSection} from "../../../sections/AddCoursSection"
-import { Chapter, Course } from '../../../@types/course';
+import { Chapter, Course, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 import { useQuery } from '@tanstack/react-query';
-import getCourseByGroupId from 'src/api/getCourseByGroupId';
+import {apiSetCurrentChapter, getCourseByGroupId, getCourseByGroupIdForLecture} from 'src/api/getCourseByGroupId';
 import LoadingScreen from 'src/components/loading-screen';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import Video from '../../../components/ChapterDisplayer';
@@ -29,12 +29,32 @@ export default function Library() {
   const { push, query: { circleId} } = useRouter();
   const context = useContext(CircleAccessRoleContext)
   const isAdmin = context?.role === RoleType.admin
+  const [currentChapter, setCurrentChapter ] = useState<{sectionId: string, chapterId: string}>({sectionId: "", chapterId: ""})
 
   const {data, error, isLoading} = useQuery<Course, string>({
     queryKey: ['course'],
-    queryFn: () => getCourseByGroupId(circleId as string)
+    queryFn: () => getCourseByGroupIdForLecture(circleId as string)
   })
 
+  useEffect(()=>{
+    if(data){
+      setCurrentChapter(data.currentChapter)
+    }
+  }, [data])
+
+  const handleSetCurrentChapter = async (sectionId: string, chapterId: string) => {
+    setCurrentChapter({sectionId, chapterId})
+    apiSetCurrentChapter({chapterId, sectionId, groupId: data?.groupId as string, courseId: data?.id as string})
+  }
+
+  const getChapter =()=> {
+    let cuChapter
+    if(data?.sections.length && currentChapter.chapterId){
+      const currentSection = data.sections.find((section)=>section.id===currentChapter.sectionId) as Section
+      cuChapter = currentSection?.chapters.find((chapter)=>chapter.id===currentChapter.chapterId) as Chapter
+    }
+    return cuChapter
+  }
   if (!circleId || isLoading) return <LoadingScreen />
 
   const linkName = !!data? 'What will you learn today ?' 
@@ -65,21 +85,21 @@ export default function Library() {
           </Button>: null
         }
       />
-        <Grid container justifyContent="center" spacing={3}>
+        <Grid container justifyContent="center" spacing={1}>
           <Grid item xs={12} md={5}>
-            {data && data.sections.map((section)=>( 
+            {data && currentChapter && data.sections.map((section)=>( 
             <CourseSection 
                 key={section.name}
                 section={section}
-                isCurrentSection={section.id===data.sections[0].id}
-                currentChapter={data.sections[0].chapters[0].id}
+                current={currentChapter}
+                setCurrent={handleSetCurrentChapter}
                 readOnly={true}
                 />
               ))
             }
           </Grid>
-          <Grid item xs={12} md={6}>
-           {data?.sections[0].chapters[0] && <Video chapter={data?.sections[0].chapters[0] as Chapter}/>}
+          <Grid item xs={12} md={7}>
+           {currentChapter.chapterId && <Video chapter={getChapter()}/>}
           </Grid>
         </Grid>
       </Container>

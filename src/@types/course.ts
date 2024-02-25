@@ -63,6 +63,7 @@ export interface Course extends Base {
     sections: Section[];
     isSaved: boolean | undefined;
     ownershipLevel?: ownershipLevel;
+    currentChapter: {sectionId: string, chapterId: string}
 }
 
 export interface Plan{

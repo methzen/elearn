@@ -31,7 +31,6 @@ import {
   apiAddChapter,
   chapterData,
   apiUpdateSection,
-  setCurrentChapter,
   apiDeleteSection,
 } from '../redux/slices/course';
 import Label from 'src/components/label/Label';
@@ -79,7 +78,6 @@ const SectionUpdate=({section, edit}:ChangeNameProps) => {
         onChangeInputValue={onChangeInputValue}
         onCreate={saveChangeName}
         />
-      
         <Chip size="small" label={label} 
               sx={{ mr: 1, mb: 1, color: 'text.secondary', cursor:"pointer", mt: edit? 3: -2}}
           onClick={edit? AllowSectionUpdate: ()=>setOpenModal(true)} />
@@ -89,12 +87,13 @@ const SectionUpdate=({section, edit}:ChangeNameProps) => {
 
 interface CourseSectionProps extends CardProps {
   section: Section;
-  isCurrentSection?: boolean
-  currentChapter?: string
+  setCurrent: (sectionId: string, chapterId: string)=>void;
+  current: {sectionId: string, chapterId: string}
   readOnly?: boolean;
 }
 
-export function CourseSection({ section, isCurrentSection, currentChapter, readOnly=true,...other }: CourseSectionProps) {
+export function CourseSection({ section, setCurrent, current, readOnly=true,...other} : CourseSectionProps) {
+
   const dispatch = useDispatch()
   const [expanded, setExpanded] = useState(false);
   const [readMode] = useState(readOnly)
@@ -121,14 +120,14 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readO
 
   const handleAddChapter = () => {
     setAddChapterModal(false)
-    dispatch(apiAddChapter({name : addedChapterName, sectionId: section.id} as chapterData))
+    dispatch(apiAddChapter({name: addedChapterName, sectionId: section.id} as chapterData))
   }
 
   if(readMode){
-    return <SectionReader 
+    return <SectionReader
+    setCurrent={setCurrent}
+    current={current}
     section={section}
-    currentChapter={currentChapter}
-    isCurrentSection={isCurrentSection}
   />
   }
 
@@ -139,20 +138,20 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readO
         subheader={subheader}
         action={section.isValidated? 
         <Label variant='soft' color='success'> validated </Label>: <SectionUpdate section={section}/>}
-        sx={{
-          '& .MuiCardHeader-action': { alignSelf: 'center', mt:-2},
-          py:1,
-          marginBottom: 0
-        }}
+          sx={{
+            '& .MuiCardHeader-action': { alignSelf: 'center', mt: -2},
+            py:1,
+            marginBottom: 0
+          }}
       />
       {!section.isValidated && 
         <ChangeSectionNameDialog
-        open={addChapterModal}
-        onClose={()=>setAddChapterModal(false)}
-        title="Give a name to this chapter"
-        inputValue={addedChapterName}
-        onChangeInputValue={onChangeInputValue}
-        onCreate={handleAddChapter}
+            open={addChapterModal}
+            onClose={()=>setAddChapterModal(false)}
+            title="Give a name to this chapter"
+            inputValue={addedChapterName}
+            onChangeInputValue={onChangeInputValue}
+            onCreate={handleAddChapter}
       />
       }
       <CardActions disableSpacing>
@@ -173,7 +172,7 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readO
                     key={index} 
                     chapter={chapter} 
                     courseId={section.course as string} 
-                    isSelected={currentChapter===chapter.id}
+                    isSelected={current.chapterId===chapter.id}
                     readMode={readMode}
                 />
               ))
@@ -220,12 +219,18 @@ export function CourseSection({ section, isCurrentSection, currentChapter, readO
 
 export function SectionReader({ 
   section,
-  isCurrentSection,
-  currentChapter,
+  current,
+  setCurrent,
 }: CourseSectionProps
 ) {
-  const dispatch = useDispatch()
-  const [open, setOpen] = useState(!!isCurrentSection);
+  const [open, setOpen] = useState(false);
+
+  useEffect(()=> {
+    if(section && current){
+      setOpen(section.id===current.sectionId)
+    }
+  }, [section, current])
+
   return (
     <List
       sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}
@@ -239,7 +244,7 @@ export function SectionReader({
             color: 'primary.main',
             fontWeight: 'bold',
           }}
-          primary={section.name} sx={{ }}/>
+          primary={section.name}/>
         {open ? <ExpandLess /> : <MUIExpandMore />}
       </ListItemButton>
   
@@ -250,8 +255,8 @@ export function SectionReader({
               chapter =>
               <ListItemButton sx={{ pl: 4 }} 
                   key={chapter.id} 
-                  selected={currentChapter === chapter.id}
-                  onClick={(event) => dispatch(setCurrentChapter({chapterId: chapter.id, sectionId: section.id}))}
+                  selected={current.chapterId === chapter.id}
+                  onClick={(event) => setCurrent(section.id as string, chapter.id as string)}
                   >
               <ListItemText 
                   primary={chapter.name} sx={{ fontWeight: "bold" }}

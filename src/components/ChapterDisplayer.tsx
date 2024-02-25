@@ -29,7 +29,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 interface ChapterDisplayProps {
-  chapter: Chapter
+  chapter: Chapter | undefined
 }
 
 export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
@@ -39,6 +39,8 @@ export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  if(!chapter) return <></>;
 
   return (
     <Card >
