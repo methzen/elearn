@@ -10,10 +10,10 @@ import { PATH_PAGE } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
-  selected: 'month'| 'year';
+  selected: 'month' | 'year';
   card: {
     subscription: string;
-    prices: {month: {amount: number, id: string}, year: {amount: number, id: string}};
+    prices: { month: { amount: number; id: string }; year: { amount: number; id: string } };
     caption: string;
     labelAction: string;
     lists: {
@@ -24,7 +24,7 @@ interface Props extends CardProps {
   index: number;
 }
 
-export default function PricingPlanCard({ card, index, selected='month', sx, ...other }: Props) {
+export default function PricingPlanCard({ card, index, selected = 'month', sx, ...other }: Props) {
   const { subscription, prices, caption, lists, labelAction } = card;
 
   return (
@@ -51,11 +51,13 @@ export default function PricingPlanCard({ card, index, selected='month', sx, ...
         {subscription}
       </Typography>
       <Stack spacing={1} direction="row" sx={{ my: 2 }}>
-         <Typography variant="h5">$</Typography>
-        <Typography variant="h2">{prices[selected].amount === 0 ? 'Free' : prices[selected].amount}</Typography>
-          <Typography component="span" sx={{ alignSelf: 'center', color: 'text.secondary' }}>
-            /{selected}
-          </Typography>
+        <Typography variant="h5">$</Typography>
+        <Typography variant="h2">
+          {prices[selected].amount === 0 ? 'Free' : prices[selected].amount}
+        </Typography>
+        <Typography component="span" sx={{ alignSelf: 'center', color: 'text.secondary' }}>
+          /{selected}
+        </Typography>
       </Stack>
       <Typography
         variant="caption"
@@ -68,7 +70,7 @@ export default function PricingPlanCard({ card, index, selected='month', sx, ...
       </Typography>
 
       <Box sx={{ width: 80, height: 80, mt: 5 }}>
-        {subscription === 'Basic'? <PlanStarterIcon />: <PlanPremiumIcon />}
+        {subscription === 'Basic' ? <PlanStarterIcon /> : <PlanPremiumIcon />}
       </Box>
 
       <Stack component="ul" spacing={2} sx={{ p: 0, my: 5 }}>
@@ -96,7 +98,12 @@ export default function PricingPlanCard({ card, index, selected='month', sx, ...
         ))}
       </Stack>
 
-      <Button fullWidth size="large" variant="contained" href={`${PATH_PAGE.payment}?p=${subscription}`}>
+      <Button
+        fullWidth
+        size="large"
+        variant="contained"
+        href={`${PATH_PAGE.payment}?p=${subscription}`}
+      >
         {labelAction}
       </Button>
     </Card>

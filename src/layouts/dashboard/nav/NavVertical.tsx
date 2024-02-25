@@ -12,7 +12,7 @@ import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import { NavSectionVertical } from '../../../components/nav-section';
 //
-import {GroupNav} from './config-navigation';
+import { GroupNav } from './config-navigation';
 import NavAccount from './NavAccount';
 import NavToggleButton from './NavToggleButton';
 import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
@@ -25,11 +25,19 @@ type Props = {
 };
 
 export default function NavVertical({ openNav, onCloseNav }: Props) {
-  const { pathname, query: { circleId }, } = useRouter();
-  const context = useContext(CircleAccessRoleContext)
-  const isAdmin = context?.role === RoleType.admin
+  const {
+    pathname,
+    query: { circleId },
+  } = useRouter();
+  const context = useContext(CircleAccessRoleContext);
+  const isAdmin = context?.role === RoleType.admin;
 
-  const NavConfig = GroupNav(circleId as string, isAdmin as boolean, context?.name as string, pathname===PATH_DASHBOARD.create)
+  const NavConfig = GroupNav(
+    circleId as string,
+    isAdmin as boolean,
+    context?.name as string,
+    pathname === PATH_DASHBOARD.create
+  );
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {

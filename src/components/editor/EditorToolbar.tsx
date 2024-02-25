@@ -33,7 +33,7 @@ export const formats = [
 type EditorToolbarProps = {
   id: string;
   isSimple?: boolean;
-  showMedia? : boolean;
+  showMedia?: boolean;
 };
 
 export default function EditorToolbar({ id, isSimple, showMedia, ...other }: EditorToolbarProps) {
@@ -92,10 +92,10 @@ export default function EditorToolbar({ id, isSimple, showMedia, ...other }: Edi
         </div>
 
         <div className="ql-formats">
-            <button type="button" className="ql-link" />
-            <button type="button" className="ql-image" />
-            {showMedia && <button type="button" className="ql-video" />}
-        </div>    
+          <button type="button" className="ql-link" />
+          <button type="button" className="ql-image" />
+          {showMedia && <button type="button" className="ql-video" />}
+        </div>
 
         <div className="ql-formats">
           {!isSimple && <button type="button" className="ql-formula" />}

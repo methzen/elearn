@@ -11,7 +11,6 @@ export const StyledRoot = styled('div')(() => ({
   position: 'relative',
 }));
 
-
 export const StyledSection = styled('div')(({ theme }) => ({
   display: 'none',
   position: 'relative',

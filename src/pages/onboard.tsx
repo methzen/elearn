@@ -14,7 +14,7 @@ export default function Onboard() {
       <Head>
         <title> Onboarding... </title>
       </Head>
-    <h1>Onboarding...</h1>
+      <h1>Onboarding...</h1>
     </>
   );
 }

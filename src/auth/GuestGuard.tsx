@@ -19,10 +19,10 @@ export default function GuestGuard({ children }: GuestGuardProps) {
   const { isAuthenticated, isInitialized, isVerified } = useAuthContext();
   useEffect(() => {
     if (isAuthenticated) {
-      if(isVerified){
+      if (isVerified) {
         push(PATH_DASHBOARD.root);
       }
-      push(PATH_AUTH.verify)
+      push(PATH_AUTH.verify);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isVerified]);

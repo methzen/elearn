@@ -81,7 +81,7 @@ export default function UserTableRow({
             color={(isBanned && 'error') || 'success'}
             sx={{ textTransform: 'capitalize' }}
           >
-            {isBanned? "banned" : "active"}
+            {isBanned ? 'banned' : 'active'}
           </Label>
         </TableCell>
 

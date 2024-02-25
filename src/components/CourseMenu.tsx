@@ -16,64 +16,64 @@ const StyledTreeView = styled(TreeView)({
 // ----------------------------------------------------------------------
 
 const Courses = [
-    {
-      SectionName:"Docker Course",
-      Chapters:[
-        {
-            name:"React Course",
-            id: '2',
-          },
-          {
-            name:"React Course",
-            id: '3',
-          },
-          {
-            name:"React Course",
-            id: '4',
-          },
-          {
-            name:"React Course",
-            id: '1',
-          },
-      ]
-    },
-    {
-        SectionName:"React Course",
-        Chapters:[
-          {
-              name:"React Course",
-              id: '2',
-            },
-            {
-              name:"React Course",
-              id: '3',
-            },
-            {
-              name:"React Course",
-              id: '4',
-            },
-            {
-              name:"React Course",
-              id: '1',
-            },
-        ]
+  {
+    SectionName: 'Docker Course',
+    Chapters: [
+      {
+        name: 'React Course',
+        id: '2',
       },
-  ]
+      {
+        name: 'React Course',
+        id: '3',
+      },
+      {
+        name: 'React Course',
+        id: '4',
+      },
+      {
+        name: 'React Course',
+        id: '1',
+      },
+    ],
+  },
+  {
+    SectionName: 'React Course',
+    Chapters: [
+      {
+        name: 'React Course',
+        id: '2',
+      },
+      {
+        name: 'React Course',
+        id: '3',
+      },
+      {
+        name: 'React Course',
+        id: '4',
+      },
+      {
+        name: 'React Course',
+        id: '1',
+      },
+    ],
+  },
+];
 
 export default function CourseMenu() {
   return (
     <StyledTreeView
-        defaultCollapseIcon={<Iconify icon="eva:chevron-down-fill" />}
-        defaultExpandIcon={<Iconify icon="eva:chevron-right-fill" />}
-        defaultEndIcon={null}
+      defaultCollapseIcon={<Iconify icon="eva:chevron-down-fill" />}
+      defaultExpandIcon={<Iconify icon="eva:chevron-right-fill" />}
+      defaultEndIcon={null}
     >
-        {Courses.map((section, index) =>
+      {Courses.map((section, index) => (
         <TreeItem nodeId={section.SectionName} label={section.SectionName}>
-            {section.Chapters.map(chapter =>
-                <TreeItem nodeId={`${chapter.id}`} label={chapter.name} />
-            )}
-      </TreeItem>
-      )}
+          {section.Chapters.map((chapter) => (
+            <TreeItem nodeId={`${chapter.id}`} label={chapter.name} />
+          ))}
+        </TreeItem>
+      ))}
     </StyledTreeView>
   );
 }

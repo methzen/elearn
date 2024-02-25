@@ -3,27 +3,24 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import Image from 'next/image'
+import Image from 'next/image';
 
-type Props={
-    name: string
-    imageUrl: string
-    description: string
-}
+type Props = {
+  name: string;
+  imageUrl: string;
+  description: string;
+};
 
-export default function CourseCardAside({name, description, imageUrl}: Props) {
-  console.log('imageUrl', imageUrl)
+export default function CourseCardAside({ name, description, imageUrl }: Props) {
+  console.log('imageUrl', imageUrl);
   return (
-    <Card sx={{ marginTop: 2}}>
-      <CardMedia
-        sx={{ height: 180 }}
-        title="green iguana"
-      >
-      <div style={{ position: 'relative', width: '100%', height: '187px' }}>
-        <Image src={imageUrl} alt={name} fill />
-      </div>
+    <Card sx={{ marginTop: 2 }}>
+      <CardMedia sx={{ height: 180 }} title="green iguana">
+        <div style={{ position: 'relative', width: '100%', height: '187px' }}>
+          <Image src={imageUrl} alt={name} fill />
+        </div>
       </CardMedia>
-      <CardContent >
+      <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {name}
         </Typography>

@@ -12,7 +12,8 @@ const CARDS = [
   {
     icon: ' /assets/icons/home/ic_make_brand.svg',
     title: 'Create Impactful Courses',
-    description: 'Transform your knowledge into captivating courses that engage and inspire your community. Craft, customize, and effortlessly share your expertise, turning your passion into a lucrative venture.',
+    description:
+      'Transform your knowledge into captivating courses that engage and inspire your community. Craft, customize, and effortlessly share your expertise, turning your passion into a lucrative venture.',
   },
   {
     icon: ' /assets/icons/home/ic_design.svg',
@@ -23,7 +24,8 @@ const CARDS = [
   {
     icon: ' /assets/icons/home/ic_development.svg',
     title: 'Go Live, Share Live',
-    description: 'Elevate your engagement with live calls! Host interactive sessions, answer burning questions, and connect with your audience in real-time. Become the go-to expert with dynamic, live interactions.',
+    description:
+      'Elevate your engagement with live calls! Host interactive sessions, answer burning questions, and connect with your audience in real-time. Become the go-to expert with dynamic, live interactions.',
   },
 ];
 
@@ -41,7 +43,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   padding: theme.spacing(10, 5),
   [theme.breakpoints.up('md')]: {
     boxShadow: 'none',
-    padding: theme.spacing(2, 1)
+    padding: theme.spacing(2, 1),
   },
 }));
 
@@ -65,9 +67,7 @@ export default function HomeMinimal() {
           </m.div>
 
           <m.div variants={varFade().inDown}>
-            <Typography variant="h2">
-              It's fun and simple
-            </Typography>
+            <Typography variant="h2">It's fun and simple</Typography>
           </m.div>
         </Stack>
         <Box
@@ -103,7 +103,9 @@ export default function HomeMinimal() {
                 <Typography variant="h5" sx={{ mt: 8, mb: 2 }}>
                   {card.title}
                 </Typography>
-                <Typography sx={{ color: 'text.secondary', fontSize: '20px'}}>{card.description}</Typography>
+                <Typography sx={{ color: 'text.secondary', fontSize: '20px' }}>
+                  {card.description}
+                </Typography>
               </StyledCard>
             </m.div>
           ))}

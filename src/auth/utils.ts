@@ -35,10 +35,10 @@ export const setSession = (accessToken: string | null) => {
   if (accessToken) {
     localStorage.setItem('x-auth-token', accessToken);
 
-    axios.defaults.headers.common["x-auth-token"] = `${accessToken}`;
+    axios.defaults.headers.common['x-auth-token'] = `${accessToken}`;
     // tokenExpired(authTokenExpiration);
   } else {
     localStorage.removeItem('x-auth-token');
-    delete axios.defaults.headers.common["x-auth-token"];
+    delete axios.defaults.headers.common['x-auth-token'];
   }
 };

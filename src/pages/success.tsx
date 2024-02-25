@@ -14,7 +14,7 @@ export default function Success() {
       <Head>
         <title> success </title>
       </Head>
-    <h1> connect account success!</h1>
+      <h1> connect account success!</h1>
     </>
   );
 }

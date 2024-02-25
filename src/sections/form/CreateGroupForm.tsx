@@ -40,49 +40,55 @@ const PAYMENT_OPTION = [
 ];
 
 export type CircleFormProps = {
-  id: string
+  id: string;
   name: string;
   description: string;
   imageUrl: File | string | null;
   isPaying: boolean;
-  community:boolean;
-  payment_plan?:string;
-  month?: number
-  year?: number
-  oneTime?: number
+  community: boolean;
+  payment_plan?: string;
+  month?: number;
+  year?: number;
+  oneTime?: number;
 };
 
 interface CreateForm {
-  isEdit?: boolean,
-  FormSchema?: CircleFormProps
-  submitData: (data : CircleFormProps) => void;
-  isLoading?: boolean
+  isEdit?: boolean;
+  FormSchema?: CircleFormProps;
+  submitData: (data: CircleFormProps) => void;
+  isLoading?: boolean;
 }
 
-export default function CreateAgroup(
-  { isEdit=false, FormSchema, submitData, isLoading} : CreateForm) {
-  const [openModal, setOpenModal] = useState(false)
-  const {push} = useRouter()
-  const [stripeLink, setStripeLink] = useState('')
-  const { user } = useAuthContext()
+export default function CreateAgroup({
+  isEdit = false,
+  FormSchema,
+  submitData,
+  isLoading,
+}: CreateForm) {
+  const [openModal, setOpenModal] = useState(false);
+  const { push } = useRouter();
+  const [stripeLink, setStripeLink] = useState('');
+  const { user } = useAuthContext();
 
-  const defaultValues = useMemo(()=>({
-    name: FormSchema?.name || '',
-    description: FormSchema?.description || '',
-    imageUrl: FormSchema?.imageUrl || null,
-    isPaying: FormSchema?.isPaying || false,
-    community: FormSchema?.community || true,
-    payment_plan: FormSchema?.payment_plan || 'subscription',
-    month: FormSchema?.month || 0.0,
-    year: FormSchema?.year || 0.0,
-    oneTime: FormSchema?.oneTime || 0.0
-  }), [FormSchema])
+  const defaultValues = useMemo(
+    () => ({
+      name: FormSchema?.name || '',
+      description: FormSchema?.description || '',
+      imageUrl: FormSchema?.imageUrl || null,
+      isPaying: FormSchema?.isPaying || false,
+      community: FormSchema?.community || true,
+      payment_plan: FormSchema?.payment_plan || 'subscription',
+      month: FormSchema?.month || 0.0,
+      year: FormSchema?.year || 0.0,
+      oneTime: FormSchema?.oneTime || 0.0,
+    }),
+    [FormSchema]
+  );
 
   const methods = useForm<CircleFormProps>({
     resolver: yupResolver(courseDataSchema),
     defaultValues,
   });
-
 
   const {
     watch,
@@ -93,18 +99,16 @@ export default function CreateAgroup(
 
   useEffect(() => {
     const getLink = async () => {
-      const accountLink = await getStripeAccountLink()
-      if(accountLink){
-        setStripeLink(accountLink.url)
-        setOpenModal(true)
+      const accountLink = await getStripeAccountLink();
+      if (accountLink) {
+        setStripeLink(accountLink.url);
+        setOpenModal(true);
       }
-
+    };
+    if (watch().isPaying && user?.subscription.is_active && !user?.subscription.chargesEnabled) {
+      getLink();
     }
-    if(watch().isPaying && user?.subscription.is_active && !user?.subscription.chargesEnabled){
-      getLink()
-    }
-  },
-  [watch().isPaying && user?.subscription])
+  }, [watch().isPaying && user?.subscription]);
 
   const handleDropSingleFile = useCallback(
     (acceptedFiles: File[]) => {
@@ -123,156 +127,175 @@ export default function CreateAgroup(
 
   return (
     <>
-    {isSubmitting && (
+      {isSubmitting && (
         <Backdrop open sx={{ zIndex: (theme) => theme.zIndex.modal + 1 }}>
           <CircularProgress color="primary" />
         </Backdrop>
       )}
-      {openModal && <OnboardConnectDialog open={openModal} cancelPost={()=>setOpenModal(false)} setUpStripe={()=>push(stripeLink)}/>}
+      {openModal && (
+        <OnboardConnectDialog
+          open={openModal}
+          cancelPost={() => setOpenModal(false)}
+          setUpStripe={() => push(stripeLink)}
+        />
+      )}
       <FormProvider methods={methods} onSubmit={handleSubmit(submitData)}>
-        <Box 
+        <Box
           sx={{
-            marginLeft:"auto",
-            marginRight:"auto",
-            marginBottom: "40px",
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginBottom: '40px',
             borderRadius: 1,
-            display:"flex",
-            flexDirection:"column",
-            gap: "15px",
-            padding:"0 20px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '15px',
+            padding: '0 20px',
           }}
         >
-            <Stack spacing={2}>
-                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                  Banner
-                </Typography>
-                <RHFUpload
-                  name="imageUrl"
-                  maxSize={3145728}
-                  onDrop={handleDropSingleFile}
-                  onDelete={() => setValue('imageUrl', null, { shouldValidate: true })}
-                />
-            </Stack>
+          <Stack spacing={2}>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Banner
+            </Typography>
+            <RHFUpload
+              name="imageUrl"
+              maxSize={3145728}
+              onDrop={handleDropSingleFile}
+              onDelete={() => setValue('imageUrl', null, { shouldValidate: true })}
+            />
+          </Stack>
 
-            <Stack spacing={2}>
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                Name
-              </Typography>
-              <RHFTextField name="name" label='Name' />
-            </Stack>
+          <Stack spacing={2}>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Name
+            </Typography>
+            <RHFTextField name="name" label="Name" />
+          </Stack>
 
-            <Stack spacing={2}>
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                Give a description
-              </Typography>
-                <RHFTextField name="description" label='What is this circle about?' 
-                multiline
-                minRows={4}
-                maxRows={8}
-                />
-            </Stack>
+          <Stack spacing={2}>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Give a description
+            </Typography>
+            <RHFTextField
+              name="description"
+              label="What is this circle about?"
+              multiline
+              minRows={4}
+              maxRows={8}
+            />
+          </Stack>
 
-            <Stack spacing={1} >
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                Payment
-              </Typography>
-                <RHFSwitch name="isPaying" label={watch().isPaying? 'Paying Circle': 'Free circle'}/>
-            </Stack>
+          <Stack spacing={1}>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Payment
+            </Typography>
+            <RHFSwitch name="isPaying" label={watch().isPaying ? 'Paying Circle' : 'Free circle'} />
+          </Stack>
 
-            {watch().isPaying && <Stack spacing={1}>
+          {watch().isPaying && (
+            <Stack spacing={1}>
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 Payment Plan
               </Typography>
-              <RHFRadioGroup row spacing={4} name="payment_plan" options={PAYMENT_OPTION} value={watch().payment_plan}/>
-              <Stack
-                  spacing={2}
-                  alignItems="center"
-                  direction={{
-                    xs: 'column',
-                    sm: 'row',
-                  }}
-              >
-                { watch().payment_plan === 'subscription' &&
-                  <><RHFTextField
-                  name="month"
-                  label="Monthly Price"
-                  placeholder="0.00"
-                  onChange={(event) =>
-                    setValue('month', Number(event.target.value), { shouldValidate: true })
-                  }
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Box component="span" sx={{ color: 'text.disabled' }}>
-                          $
-                        </Box>
-                      </InputAdornment>
-                    ),
-                    type: 'number',
-                  }}
-                />
-                <RHFTextField
-                  name="year"
-                  label="Yearly Price"
-                  placeholder="0.00"
-                  onChange={(event) =>
-                    setValue('year', Number(event.target.value), { shouldValidate: true })
-                  }
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Box component="span" sx={{ color: 'text.disabled' }}>
-                          $
-                        </Box>
-                      </InputAdornment>
-                    ),
-                    type: 'number',
-                  }}
-                /></>}{
-                  watch().payment_plan === 'onetime' &&
-                <RHFTextField
-                  name="oneTime"
-                  label="OneTime Price"
-                  placeholder="0.00"
-                  onChange={(event) =>
-                    setValue('oneTime', Number(event.target.value), { shouldValidate: true })
-                  }
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Box component="span" sx={{ color: 'text.disabled' }}>
-                          $
-                        </Box>
-                      </InputAdornment>
-                    ),
-                    type: 'number',
-                }}
+              <RHFRadioGroup
+                row
+                spacing={4}
+                name="payment_plan"
+                options={PAYMENT_OPTION}
+                value={watch().payment_plan}
               />
-                }
-                </Stack>
-            </Stack>}
-
-            <Stack spacing={1} >
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-              Community
-              </Typography>
-                <RHFSwitch name="community" label="Activate" />
-            </Stack>
-            <Stack spacing={3}>
-              <LoadingButton
-                color="primary"
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isLoading || isSubmitting}
+              <Stack
+                spacing={2}
+                alignItems="center"
+                direction={{
+                  xs: 'column',
+                  sm: 'row',
+                }}
               >
-                {!isEdit? 'Create': 'Update'}
-              </LoadingButton>
+                {watch().payment_plan === 'subscription' && (
+                  <>
+                    <RHFTextField
+                      name="month"
+                      label="Monthly Price"
+                      placeholder="0.00"
+                      onChange={(event) =>
+                        setValue('month', Number(event.target.value), { shouldValidate: true })
+                      }
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Box component="span" sx={{ color: 'text.disabled' }}>
+                              $
+                            </Box>
+                          </InputAdornment>
+                        ),
+                        type: 'number',
+                      }}
+                    />
+                    <RHFTextField
+                      name="year"
+                      label="Yearly Price"
+                      placeholder="0.00"
+                      onChange={(event) =>
+                        setValue('year', Number(event.target.value), { shouldValidate: true })
+                      }
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Box component="span" sx={{ color: 'text.disabled' }}>
+                              $
+                            </Box>
+                          </InputAdornment>
+                        ),
+                        type: 'number',
+                      }}
+                    />
+                  </>
+                )}
+                {watch().payment_plan === 'onetime' && (
+                  <RHFTextField
+                    name="oneTime"
+                    label="OneTime Price"
+                    placeholder="0.00"
+                    onChange={(event) =>
+                      setValue('oneTime', Number(event.target.value), { shouldValidate: true })
+                    }
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Box component="span" sx={{ color: 'text.disabled' }}>
+                            $
+                          </Box>
+                        </InputAdornment>
+                      ),
+                      type: 'number',
+                    }}
+                  />
+                )}
+              </Stack>
             </Stack>
-          </Box>
+          )}
+
+          <Stack spacing={1}>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Community
+            </Typography>
+            <RHFSwitch name="community" label="Activate" />
+          </Stack>
+          <Stack spacing={3}>
+            <LoadingButton
+              color="primary"
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isLoading || isSubmitting}
+            >
+              {!isEdit ? 'Create' : 'Update'}
+            </LoadingButton>
+          </Stack>
+        </Box>
       </FormProvider>
     </>
   );
@@ -287,29 +310,24 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-
 interface PostSomeThingDialogProps {
   open: boolean;
-  cancelPost: ()=> void;
-  setUpStripe?: ()=> void;
+  cancelPost: () => void;
+  setUpStripe?: () => void;
 }
 
-function OnboardConnectDialog({open, cancelPost, setUpStripe}: PostSomeThingDialogProps) {
+function OnboardConnectDialog({ open, cancelPost, setUpStripe }: PostSomeThingDialogProps) {
   const isDesktop = useResponsive('up', 'sm');
-  const width = isDesktop? 570 : 370
+  const width = isDesktop ? 570 : 370;
 
   return (
-      <BootstrapDialog
-        onClose={cancelPost}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
+    <BootstrapDialog onClose={cancelPost} aria-labelledby="customized-dialog-title" open={open}>
       <Paper
         sx={{
-          width:`${width}px`,
+          width: `${width}px`,
           top: `25VH`,
           right: `calc((100% - ${width}px)/2)`,
-          margin: "0px auto",
+          margin: '0px auto',
           position: 'fixed',
           display: 'flex',
           flexDirection: 'column',
@@ -320,7 +338,7 @@ function OnboardConnectDialog({open, cancelPost, setUpStripe}: PostSomeThingDial
           alignItems="center"
           sx={{
             py: 2,
-            px: 3
+            px: 3,
           }}
         >
           <Typography variant="h4" sx={{ flexGrow: 1 }}>
@@ -335,7 +353,7 @@ function OnboardConnectDialog({open, cancelPost, setUpStripe}: PostSomeThingDial
           alignItems="center"
           sx={{
             py: 2,
-            px: 3
+            px: 3,
           }}
         >
           <Typography sx={{ color: 'text.secondary', mb: 5 }}>
@@ -349,6 +367,6 @@ function OnboardConnectDialog({open, cancelPost, setUpStripe}: PostSomeThingDial
           </Button>
         </Stack>
       </Paper>
-      </BootstrapDialog>
+    </BootstrapDialog>
   );
 }

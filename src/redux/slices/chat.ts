@@ -148,7 +148,7 @@ export function getConversation(conversationKey: string) {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/chat/get/conversation', {
-        params: { conversationId : conversationKey },
+        params: { conversationId: conversationKey },
       });
       dispatch(slice.actions.getConversationSuccess(response.data));
     } catch (error) {
@@ -163,7 +163,7 @@ export function markConversationAsRead(conversationId: string) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      await axios.post('/chat/markasseen',{ conversationId: conversationId});
+      await axios.post('/chat/markasseen', { conversationId: conversationId });
       dispatch(slice.actions.markConversationAsReadSuccess({ conversationId }));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -174,14 +174,13 @@ export function markConversationAsRead(conversationId: string) {
 // ----------------------------------------------------------------------
 
 export function getParticipants(conversationKey: string) {
-
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/chat/get/conversation', {
-        params: { conversationId : conversationKey },
+        params: { conversationId: conversationKey },
       });
-      const participants = response.data.participants
+      const participants = response.data.participants;
       dispatch(slice.actions.getParticipantsSuccess(participants));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -189,18 +188,19 @@ export function getParticipants(conversationKey: string) {
   };
 }
 
-
 export function addMessage(conversationKey: string, content: string) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/chat/add/message',
-      {
-        content
-      },
-      {
-        params: { conversationId : conversationKey },
-      });
+      const response = await axios.post(
+        '/chat/add/message',
+        {
+          content,
+        },
+        {
+          params: { conversationId: conversationKey },
+        }
+      );
       // const participants = response.data.participants
       // dispatch(slice.actions.getParticipantsSuccess(participants));
     } catch (error) {

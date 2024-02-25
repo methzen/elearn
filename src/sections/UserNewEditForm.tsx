@@ -14,10 +14,7 @@ import { IUserAccountGeneral } from '../@types/user';
 // components
 import { CustomFile } from '../components/upload';
 import { useSnackbar } from '../components/snackbar';
-import FormProvider, {
-  RHFTextField,
-  RHFUploadAvatar,
-} from '../components/hook-form';
+import FormProvider, { RHFTextField, RHFUploadAvatar } from '../components/hook-form';
 import updateUserData from 'src/api/updateUserData';
 
 // ----------------------------------------------------------------------
@@ -34,7 +31,7 @@ type Props = {
 export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
-  const [fileData, setFileData] = useState<any>(null)
+  const [fileData, setFileData] = useState<any>(null);
 
   const NewUserSchema = Yup.object().shape({
     firstname: Yup.string().required('firstname is required'),
@@ -95,7 +92,7 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-        await updateUserData(data, fileData);
+      await updateUserData(data, fileData);
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
     } catch (error) {
       console.error(error);
@@ -103,7 +100,6 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
   };
 
   const handleDrop = useCallback(
-
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       const newFile = Object.assign(file, {
@@ -111,7 +107,7 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
       });
 
       if (file) {
-        setFileData(file as any)
+        setFileData(file as any);
         setValue('photoURL', newFile.preview, { shouldValidate: true });
       }
     },
@@ -146,11 +142,7 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
               />
             </Box>
 
-            <RHFTextField 
-                multiline
-                rows={3}
-                name="about" 
-                label="About" />
+            <RHFTextField multiline rows={3} name="about" label="About" />
           </Card>
         </Grid>
 

@@ -1,11 +1,7 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import {
-  PaymentElement,
-  useStripe,
-  useElements
-} from "@stripe/react-stripe-js";
-import { StripeError, StripePaymentElementOptions } from "@stripe/stripe-js";
-import { LoadingButton } from "@mui/lab";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { StripeError, StripePaymentElementOptions } from '@stripe/stripe-js';
+import { LoadingButton } from '@mui/lab';
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -21,7 +17,7 @@ export default function CheckoutForm() {
     }
 
     const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
+      'payment_intent_client_secret'
     );
 
     if (!clientSecret) {
@@ -30,17 +26,17 @@ export default function CheckoutForm() {
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       switch (paymentIntent?.status) {
-        case "succeeded":
-          setMessage("Payment succeeded!");
+        case 'succeeded':
+          setMessage('Payment succeeded!');
           break;
-        case "processing":
-          setMessage("Your payment is processing.");
+        case 'processing':
+          setMessage('Your payment is processing.');
           break;
-        case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
+        case 'requires_payment_method':
+          setMessage('Your payment was not successful, please try again.');
           break;
         default:
-          setMessage("Something went wrong.");
+          setMessage('Something went wrong.');
           break;
       }
     });
@@ -57,11 +53,11 @@ export default function CheckoutForm() {
 
     setIsLoading(true);
 
-    const { error } : {error : StripeError} = await stripe.confirmPayment({
+    const { error }: { error: StripeError } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
+        return_url: 'http://localhost:3000',
       },
     });
 
@@ -70,22 +66,20 @@ export default function CheckoutForm() {
     // your `return_url`. For some payment methods like iDEAL, your customer will
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
-    if (error.type === "card_error" || error.type === "validation_error") {
+    if (error.type === 'card_error' || error.type === 'validation_error') {
       setMessage(error.message as string);
     } else {
-      setMessage("An unexpected error occurred.");
+      setMessage('An unexpected error occurred.');
     }
 
     setIsLoading(false);
   };
 
-  const paymentElementOptions :StripePaymentElementOptions = {
+  const paymentElementOptions: StripePaymentElementOptions = {};
 
-  }
-
-  const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-  }
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       {/* <LinkAuthenticationElement
@@ -118,5 +112,3 @@ export default function CheckoutForm() {
     </form>
   );
 }
-
-

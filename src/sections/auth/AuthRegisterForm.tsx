@@ -33,7 +33,7 @@ export default function AuthRegisterForm() {
     lastName: Yup.string().required('Last name required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
-    company: Yup.string()
+    company: Yup.string(),
   });
 
   const defaultValues = {
@@ -41,7 +41,7 @@ export default function AuthRegisterForm() {
     lastName: '',
     email: '',
     password: '',
-    company:''
+    company: '',
   };
 
   const methods = useForm<FormValuesProps>({

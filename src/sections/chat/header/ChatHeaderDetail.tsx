@@ -32,7 +32,11 @@ export default function ChatHeaderDetail({ participants }: Props) {
         <Stack flexGrow={1}>
           <CustomAvatarGroup max={3}>
             {participants.map((participant) => (
-              <CustomAvatar key={participant.id} alt={participant.firstname} src={participant.avatar} />
+              <CustomAvatar
+                key={participant.id}
+                alt={participant.firstname}
+                src={participant.avatar}
+              />
             ))}
           </CustomAvatarGroup>
 

@@ -19,7 +19,7 @@ export default function ChatMessageItem({ message, conversation, onOpenLightbox 
   const sender = conversation.participants.find(
     (participant) => participant._id === message.senderId
   );
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
   const senderDetails =
     message.senderId === user?.id
       ? {

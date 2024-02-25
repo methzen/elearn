@@ -1,15 +1,21 @@
-import { Edit } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Edit } from '@mui/icons-material';
+import { Button } from '@mui/material';
 
-const EditButton = ({ functionality, editingComm } : { functionality: () => void; editingComm: boolean}) => {
+const EditButton = ({
+  functionality,
+  editingComm,
+}: {
+  functionality: () => void;
+  editingComm: boolean;
+}) => {
   return (
     <Button
       startIcon={<Edit />}
       disabled={editingComm}
       sx={{
-        color: "custom.moderateBlue",
+        color: 'custom.moderateBlue',
         fontWeight: 500,
-        textTransform: "capitalize",
+        textTransform: 'capitalize',
       }}
       onClick={() => {
         functionality();

@@ -110,7 +110,7 @@ export default function ChatNav({ conversations, activeConversationId }: Props) 
   };
 
   const handleSelectContact = (result: IChatContact) => {
-    console.log('result', result)
+    console.log('result', result);
     setSearchContacts('');
     push(PATH_DASHBOARD.chat.view(result.firstname));
   };

@@ -16,7 +16,7 @@ export default function VerifyGard({ children }: VerifyGardProps) {
   const { isAuthenticated, isVerified } = useAuthContext();
   useEffect(() => {
     if (isAuthenticated && isVerified) {
-        push(PATH_DASHBOARD.root);
+      push(PATH_DASHBOARD.root);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isVerified]);

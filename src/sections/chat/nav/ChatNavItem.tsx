@@ -25,10 +25,12 @@ type Props = {
 };
 
 export default function ChatNavItem({ conversation, openNav, isSelected, onSelect }: Props) {
-  const { user} = useAuthContext()
+  const { user } = useAuthContext();
   const details = getDetails(conversation, user?.id);
 
-  const lastActivity = conversation.messages.length!=0 && conversation.messages[conversation.messages.length - 1].createdAt;
+  const lastActivity =
+    conversation.messages.length != 0 &&
+    conversation.messages[conversation.messages.length - 1].createdAt;
 
   const isGroup = details.otherParticipants.length > 1;
 
@@ -93,20 +95,22 @@ export default function ChatNavItem({ conversation, openNav, isSelected, onSelec
           />
 
           <Stack alignItems="flex-end" sx={{ ml: 2, height: 44 }}>
-            {lastActivity && <Typography
-              noWrap
-              variant="body2"
-              component="span"
-              sx={{
-                mb: 1.5,
-                fontSize: 12,
-                color: 'text.disabled',
-              }}
-            >
-              {formatDistanceToNowStrict(new Date(lastActivity), {
-                addSuffix: false,
-              })}
-            </Typography>}
+            {lastActivity && (
+              <Typography
+                noWrap
+                variant="body2"
+                component="span"
+                sx={{
+                  mb: 1.5,
+                  fontSize: 12,
+                  color: 'text.disabled',
+                }}
+              >
+                {formatDistanceToNowStrict(new Date(lastActivity), {
+                  addSuffix: false,
+                })}
+              </Typography>
+            )}
 
             {isUnread && <BadgeStatus status="unread" size="small" />}
           </Stack>

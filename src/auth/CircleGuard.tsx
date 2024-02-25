@@ -16,10 +16,10 @@ type GuestGuardProps = {
 
 type contextProps = {
   group: GroupAboutProps | null;
-}
+};
 
 export type GroupAboutProps = {
-  id:string;
+  id: string;
   name: string;
   by: string;
   description: string;
@@ -38,34 +38,37 @@ export type GroupAboutProps = {
       youtube: string;
       twitter: string;
       website: string;
-    }
+    };
   };
   members: {
     online: number;
     total: number;
   };
-  userCanCheckout: boolean
+  userCanCheckout: boolean;
 };
 
 export const GroupCheckoutContext = createContext<contextProps | null>(null);
 
 export default function CircleGuard({ children }: GuestGuardProps) {
   const {
-        query: { circle }, push
+    query: { circle },
+    push,
   } = useRouter();
 
-  const [group, setGroup] = useState(null)
+  const [group, setGroup] = useState(null);
 
-  useEffect(() => { 
+  useEffect(() => {
     const getGroup = async () => {
-      const response =  await getGroupCheckoutInfo(circle as string)
-      if(!response){ return push(PATH_DASHBOARD.root)};
-      return setGroup(response)
-  }
-    if(circle){
-        getGroup()
+      const response = await getGroupCheckoutInfo(circle as string);
+      if (!response) {
+        return push(PATH_DASHBOARD.root);
+      }
+      return setGroup(response);
+    };
+    if (circle) {
+      getGroup();
     }
-  }, [circle, push])
+  }, [circle, push]);
 
   const memoizedValue = useMemo(
     () => ({
@@ -78,5 +81,7 @@ export default function CircleGuard({ children }: GuestGuardProps) {
     return <LoadingScreen />;
   }
 
-  return <GroupCheckoutContext.Provider value={memoizedValue}>{children}</GroupCheckoutContext.Provider>;
+  return (
+    <GroupCheckoutContext.Provider value={memoizedValue}>{children}</GroupCheckoutContext.Provider>
+  );
 }

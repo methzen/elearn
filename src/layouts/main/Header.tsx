@@ -17,11 +17,11 @@ import navConfig from './nav/config-navigation';
 import NavDesktop from './nav/desktop';
 
 // ----------------------------------------------------------------------
-interface Props{
-pageName?: string
-} 
+interface Props {
+  pageName?: string;
+}
 
-export default function Header({pageName}: Props) {
+export default function Header({ pageName }: Props) {
   const theme = useTheme();
 
   const isDesktop = useResponsive('up', 'md');
@@ -52,24 +52,22 @@ export default function Header({pageName}: Props) {
         <Container sx={{ height: 1, display: 'flex', alignItems: 'center' }}>
           <Logo />
 
-          <Link
-            href={"/"}
-            target="_blank"
-            rel="noopener"
-            underline="none"
-            sx={{ ml: 1 }}
-          >
-          </Link>
+          <Link href={'/'} target="_blank" rel="noopener" underline="none" sx={{ ml: 1 }}></Link>
 
           <Box sx={{ flexGrow: 1 }} />
 
           {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}
 
-          {(pageName && ["login", "register"].includes(pageName))? null: 
-          <Button variant="contained" rel="noopener" href={`/payment?p=Basic&trial`} sx={{ bgcolor: 'text.primary'}}>
-            Try For Free
-          </Button>
-          }
+          {pageName && ['login', 'register'].includes(pageName) ? null : (
+            <Button
+              variant="contained"
+              rel="noopener"
+              href={`/payment?p=Basic&trial`}
+              sx={{ bgcolor: 'text.primary' }}
+            >
+              Try For Free
+            </Button>
+          )}
           {!isDesktop && <NavMobile isOffset={isOffset} data={navConfig} />}
         </Container>
       </Toolbar>

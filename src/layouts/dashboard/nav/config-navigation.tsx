@@ -35,13 +35,12 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
 };
 
-const GroupNav = (id:string, isAdmin:boolean, groupName: string, pathnameCreate=false) => {
-
-  const defaultItems:NavListProps[] = [
-    { 
-      title: 'My Circles', 
+const GroupNav = (id: string, isAdmin: boolean, groupName: string, pathnameCreate = false) => {
+  const defaultItems: NavListProps[] = [
+    {
+      title: 'My Circles',
       path: PATH_DASHBOARD.circles,
-      icon: <GroupsIcon/>,
+      icon: <GroupsIcon />,
     },
     {
       title: 'chat',
@@ -52,38 +51,37 @@ const GroupNav = (id:string, isAdmin:boolean, groupName: string, pathnameCreate=
       title: 'My Account',
       path: PATH_DASHBOARD.user.myprofile,
       icon: ICONS.user,
-    }
-  ]
-  if(pathnameCreate){
-    defaultItems.unshift({ 
-      title: 'Create Circle', 
+    },
+  ];
+  if (pathnameCreate) {
+    defaultItems.unshift({
+      title: 'Create Circle',
       path: PATH_DASHBOARD.create,
       icon: ICONS.dashboard,
-    })
+    });
   }
-  if(id){
+  if (id) {
     const circleChildren = [
-      { title: 'Community', path: PATH_DASHBOARD.group.community(id)},
-      { title: 'Library', path: PATH_DASHBOARD.group.library(id)},
-    ]
-    if(isAdmin){
-      circleChildren.push({ title: 'Admin', path: PATH_DASHBOARD.group.admin(id)})
+      { title: 'Community', path: PATH_DASHBOARD.group.community(id) },
+      { title: 'Library', path: PATH_DASHBOARD.group.library(id) },
+    ];
+    if (isAdmin) {
+      circleChildren.push({ title: 'Admin', path: PATH_DASHBOARD.group.admin(id) });
     }
-    if(groupName){
+    if (groupName) {
       defaultItems.unshift({
-        title: groupName.charAt(0)+groupName.slice(1),
+        title: groupName.charAt(0) + groupName.slice(1),
         path: PATH_DASHBOARD.group.community(id),
-        icon: <GroupsIcon/>,
+        icon: <GroupsIcon />,
         children: circleChildren,
-      })
+      });
     }
   }
   return [
-  {
-    items: defaultItems
-  },
-]};
+    {
+      items: defaultItems,
+    },
+  ];
+};
 
-export {
-  GroupNav,
-}
+export { GroupNav };

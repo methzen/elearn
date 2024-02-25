@@ -19,14 +19,14 @@ enum Types {
   LOGIN = 'LOGIN',
   REGISTER = 'REGISTER',
   LOGOUT = 'LOGOUT',
-  VERIFY= 'VERIFY'
+  VERIFY = 'VERIFY',
 }
 
 type Payload = {
   [Types.INITIAL]: {
     isAuthenticated: boolean;
     user: AuthUserType;
-    isVerified: boolean
+    isVerified: boolean;
   };
   [Types.LOGIN]: {
     user: AuthUserType;
@@ -54,7 +54,7 @@ const initialState: AuthStateType = {
   isInitialized: false,
   isAuthenticated: false,
   user: null,
-  isVerified:false
+  isVerified: false,
 };
 
 const reducer = (state: AuthStateType, action: ActionsType) => {
@@ -63,7 +63,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       isInitialized: true,
       isAuthenticated: action.payload.isAuthenticated,
       user: action.payload.user,
-      isVerified: action.payload.isVerified
+      isVerified: action.payload.isVerified,
     };
   }
   if (action.type === Types.LOGIN) {
@@ -71,7 +71,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: true,
       user: action.payload.user,
-      isVerified: action.payload.isVerified
+      isVerified: action.payload.isVerified,
     };
   }
   if (action.type === Types.REGISTER) {
@@ -87,7 +87,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: false,
       user: null,
-      isVerified: false
+      isVerified: false,
     };
   }
   return state;
@@ -116,14 +116,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setSession(accessToken);
         const response = await axios.get('/users/authenticate/v2');
         const user = response.data;
-        user.displayName = `${user.firstname} ${user.lastname}` 
+        user.displayName = `${user.firstname} ${user.lastname}`;
 
         dispatch({
           type: Types.INITIAL,
           payload: {
             isAuthenticated: true,
             user,
-            isVerified: !!user.isVerified
+            isVerified: !!user.isVerified,
           },
         });
       } else {
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           payload: {
             isAuthenticated: false,
             user: null,
-            isVerified: false
+            isVerified: false,
           },
         });
       }
@@ -143,7 +143,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         payload: {
           isAuthenticated: false,
           user: null,
-          isVerified: false
+          isVerified: false,
         },
       });
     }
@@ -159,76 +159,85 @@ export function AuthProvider({ children }: AuthProviderProps) {
       email,
       password,
     });
-    const user = response.data
-    user.displayName = `${user.firstname} ${user.lastname}` 
-    setSession(response.headers["x-auth-token"] as string);
+    const user = response.data;
+    user.displayName = `${user.firstname} ${user.lastname}`;
+    setSession(response.headers['x-auth-token'] as string);
 
     dispatch({
       type: Types.LOGIN,
       payload: {
         user,
         isAuthenticated: true,
-        isVerified: !!user.isVerified
+        isVerified: !!user.isVerified,
       },
     });
   }, []);
 
   // REGISTER
   const register = useCallback(
-    async (email: string, password: string, firstname: string, lastname: string, company:string, role: string) => {
-
-        const response = await axios.post('/users/create/user', {
+    async (
+      email: string,
+      password: string,
+      firstname: string,
+      lastname: string,
+      company: string,
+      role: string
+    ) => {
+      const response = await axios.post(
+        '/users/create/user',
+        {
           email,
           password,
           firstname,
           lastname,
           company,
-          role
+          role,
         },
         {
-          withCredentials: true
+          withCredentials: true,
+        }
+      );
+      const user = response.data;
+      user.displayName = `${user.firstname} ${user.lastname}`;
+      localStorage.setItem('x-auth-token', response.headers['x-auth-token'] as string);
+      dispatch({
+        type: Types.REGISTER,
+        payload: {
+          user,
+          isAuthenticated: true,
+          isVerified: !!user.isVerified,
+        },
       });
-        const user = response.data
-        user.displayName = `${user.firstname} ${user.lastname}` 
-        localStorage.setItem('x-auth-token', response.headers["x-auth-token"] as string);
-        dispatch({
-          type: Types.REGISTER,
-          payload: {
-            user,
-            isAuthenticated : true,
-            isVerified: !!user.isVerified
-          },
-        });
-      },
+    },
     []
   );
 
-  const verify = useCallback(
-    async (code: string) => {
-      const accessToken = storageAvailable ? localStorage.getItem('x-auth-token') : '';
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
-        const response = await axios.post('/users/verify/user', {
+  const verify = useCallback(async (code: string) => {
+    const accessToken = storageAvailable ? localStorage.getItem('x-auth-token') : '';
+    if (accessToken && isValidToken(accessToken)) {
+      setSession(accessToken);
+      const response = await axios.post(
+        '/users/verify/user',
+        {
           code,
         },
         {
-          withCredentials: true
+          withCredentials: true,
+        }
+      );
+      const user = response.data;
+      user.displayName = `${user.firstname} ${user.lastname}`;
+      localStorage.setItem('x-auth-token', response.headers['x-auth-token'] as string);
+      dispatch({
+        type: Types.VERIFY,
+        payload: {
+          user,
+          isAuthenticated: true,
+          isVerified: !!user.isVerified,
+        },
       });
-        const user = response.data
-        user.displayName = `${user.firstname} ${user.lastname}` 
-        localStorage.setItem('x-auth-token', response.headers["x-auth-token"] as string);
-        dispatch({
-          type: Types.VERIFY,
-          payload: {
-            user,
-            isAuthenticated : true,
-            isVerified: !!user.isVerified
-          },
-        });
-      }
-      },
-    []
-  );
+    }
+  }, []);
 
   // LOGOUT
   const logout = useCallback(() => {

@@ -11,15 +11,15 @@ import { IUserAccountChangePassword, IUserAccountGeneral } from '../../@types/us
 import Iconify from '../../components/iconify';
 import { SnackbarMessage, useSnackbar } from '../../components/snackbar';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
-import changePassword from "../../api/changePassword"
+import changePassword from '../../api/changePassword';
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = IUserAccountChangePassword;
 
-export default function AccountChangePassword(props : any) {
+export default function AccountChangePassword(props: any) {
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = props
+  const { user } = props;
 
   const ChangePassWordSchema = Yup.object().shape({
     oldPassword: Yup.string().required('Old Password is required.'),
@@ -49,13 +49,9 @@ export default function AccountChangePassword(props : any) {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
-       await changePassword(
-        user.id,
-        data.oldPassword,
-        data.newPassword
-      )
+      await changePassword(user.id, data.oldPassword, data.newPassword);
       reset();
-      enqueueSnackbar("Password changed successfully!");
+      enqueueSnackbar('Password changed successfully!');
     } catch (error) {
       enqueueSnackbar(error);
     }
@@ -65,7 +61,12 @@ export default function AccountChangePassword(props : any) {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Card>
         <Stack spacing={3} alignItems="flex-end" sx={{ p: 3 }}>
-          <RHFTextField name="oldPassword" type="password" label="Old Password" autoComplete="nothingPlease"/>
+          <RHFTextField
+            name="oldPassword"
+            type="password"
+            label="Old Password"
+            autoComplete="nothingPlease"
+          />
 
           <RHFTextField
             name="newPassword"

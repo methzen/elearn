@@ -25,7 +25,7 @@ export default function ChatMessageInput({
   ...other
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useAuthContext()
+  const { user } = useAuthContext();
   const [message, setMessage] = useState('');
 
   const handleClickAttach = () => {
@@ -38,7 +38,7 @@ export default function ChatMessageInput({
         onSend({
           conversationId,
           messageId: uuidv4(),
-          content : message,
+          content: message,
           contentType: 'text',
           attachments: [],
           createdAt: new Date(),

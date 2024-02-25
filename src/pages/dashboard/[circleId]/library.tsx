@@ -14,10 +14,7 @@ import { Chapter, Course, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 import { useQuery } from '@tanstack/react-query';
-import {
-  apiSetCurrentChapter,
-  getCourseByGroupIdForLecture,
-} from 'src/api/getCourseByGroupId';
+import { apiSetCurrentChapter, getCourseByGroupIdForLecture } from 'src/api/getCourseByGroupId';
 import LoadingScreen from 'src/components/loading-screen';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import Video from '../../../components/ChapterDisplayer';

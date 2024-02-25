@@ -109,7 +109,7 @@ export default function HomeHero() {
 
   return (
     <>
-      <StyledRoot >
+      <StyledRoot>
         <Container component={MotionContainer} sx={{ height: 1 }}>
           <Grid container spacing={20} sx={{ height: 1 }}>
             <Grid item xs={12} md={7} sx={{ height: 1 }}>
@@ -117,7 +117,7 @@ export default function HomeHero() {
             </Grid>
 
             {isDesktop && (
-              <Grid item xs={12} md={5} >
+              <Grid item xs={12} md={5}>
                 <Content />
               </Grid>
             )}
@@ -137,7 +137,7 @@ function Description() {
     <StyledDescription>
       <m.div variants={varFade().in}>
         <Typography variant="h2" sx={{ textAlign: 'center' }}>
-        Empower, Connect, and Monetize with
+          Empower, Connect, and Monetize with
         </Typography>
       </m.div>
 
@@ -157,7 +157,7 @@ function Description() {
 
       <m.div variants={varFade().in}>
         <Typography variant="h4" sx={{ textAlign: 'center' }}>
-        where content creators like coaches, consultants, and teachers thrive!
+          where content creators like coaches, consultants, and teachers thrive!
         </Typography>
       </m.div>
 
@@ -168,8 +168,7 @@ function Description() {
           alignItems="center"
           justifyContent="center"
           sx={{ my: 3 }}
-        >
-        </Stack>
+        ></Stack>
       </m.div>
 
       <m.div variants={varFade().in}>
@@ -182,8 +181,8 @@ function Description() {
               size="large"
               variant="contained"
               sx={{
-                cursor: "pointer",
-                width: "250px",
+                cursor: 'pointer',
+                width: '250px',
                 py: 3,
                 bgcolor: 'text.primary',
                 fontSize: '22px',
@@ -227,7 +226,6 @@ function Content() {
         mt: `${HEADER.H_MAIN_DESKTOP}px`,
       }}
     >
-
       <Stack
         component={m.div}
         variants={varFade().in}

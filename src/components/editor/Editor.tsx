@@ -12,30 +12,30 @@ import { useCallback, useMemo, useRef } from 'react';
 import uploadPostImage from '../../api/UploadPostImage';
 
 interface MyProps extends ReactQuillProps {
-  fowardRef : any
+  fowardRef: any;
 }
 
 const ReactQuill = dynamic(
   async () => {
-    const { default: RQ } = await import("react-quill");
+    const { default: RQ } = await import('react-quill');
 
-    return ({ fowardRef, ...props } : MyProps) => <RQ ref={fowardRef} {...props} />;
+    return ({ fowardRef, ...props }: MyProps) => <RQ ref={fowardRef} {...props} />;
   },
   {
     ssr: false,
     loading: () => (
-    <Skeleton
-      variant="rounded"
-      sx={{
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 1,
-        position: 'absolute',
-      }}
-    />
-  ),
+      <Skeleton
+        variant="rounded"
+        sx={{
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 1,
+          position: 'absolute',
+        }}
+      />
+    ),
   }
 );
 // ----------------------------------------------------------------------
@@ -53,8 +53,8 @@ export default function Editor({
 }: EditorProps) {
   const quillRef = useRef<any>(null);
 
-  const selectLocalImage = useCallback(() =>{
-    const editor = quillRef.current.getEditor()
+  const selectLocalImage = useCallback(() => {
+    const editor = quillRef.current.getEditor();
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.click();
@@ -62,38 +62,42 @@ export default function Editor({
     input.onchange = async () => {
       const file = input.files ? input.files[0] : null;
       // file type is only image.
-      if (/^image\//.test(file ? file.type: "")) {
-        try{
-          const response = await uploadPostImage(file)
-          const imgSrc = (response.status === 201) ? response.data : ""
-          const range = editor.getSelection()
+      if (/^image\//.test(file ? file.type : '')) {
+        try {
+          const response = await uploadPostImage(file);
+          const imgSrc = response.status === 201 ? response.data : '';
+          const range = editor.getSelection();
           editor.insertEmbed(range.index, 'image', imgSrc);
           editor.setSelection(range.index + 1);
-        }catch(e){console.error(e)}
+        } catch (e) {
+          console.error(e);
+        }
       } else {
         console.warn('You could only upload images.');
       }
     };
   }, []);
 
-  
-  const modules = useMemo(()=>({
-    toolbar: {
-      container: `#${id}`,
-      handlers: { 
-        image: selectLocalImage 
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: `#${id}`,
+        handlers: {
+          image: selectLocalImage,
+        },
       },
-    },
-    history: {
-      delay: 500,
-      maxStack: 100,
-      userOnly: true,
-    },
-    syntax: true,
-    clipboard: {
-      matchVisual: false,
-    },
-  }), [id, selectLocalImage])
+      history: {
+        delay: 500,
+        maxStack: 100,
+        userOnly: true,
+      },
+      syntax: true,
+      clipboard: {
+        matchVisual: false,
+      },
+    }),
+    [id, selectLocalImage]
+  );
 
   return (
     <>
@@ -105,7 +109,7 @@ export default function Editor({
           ...sx,
         }}
       >
-        <EditorToolbar id={id} isSimple={simple} showMedia={showMedia}/>
+        <EditorToolbar id={id} isSimple={simple} showMedia={showMedia} />
 
         <ReactQuill
           fowardRef={quillRef}

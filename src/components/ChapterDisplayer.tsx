@@ -8,10 +8,9 @@ import Collapse from '@mui/material/Collapse';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Chapter, Videodata } from '../@types/course';
+import { Chapter, Videodata } from '../@types/course';
 import Markdown from './markdown/Markdown';
 import { AttachmentDisplayer } from './AttachmentDisplayer';
-
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -29,34 +28,34 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 interface ChapterDisplayProps {
-  chapter: Chapter | undefined
+  chapter: Chapter | undefined;
 }
 
-export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
+export default function ChapterDisplayer({ chapter }: ChapterDisplayProps) {
   const [expanded, setExpanded] = React.useState(false);
-  const data : Videodata | undefined = chapter?.video?.data
+  const data: Videodata | undefined = chapter?.video?.data;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  if(!chapter) return <></>;
+  if (!chapter) return <></>;
 
   return (
-    <Card >
-      {!!data &&
-          <CardMedia
-            component="video"
-            width="100%"
-            src={data.url}
-            image={data.url}
-            autoPlay
-            controls
-          />
-      }
+    <Card>
+      {!!data && (
+        <CardMedia
+          component="video"
+          width="100%"
+          src={data.url}
+          image={data.url}
+          autoPlay
+          controls
+        />
+      )}
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-        {chapter?.description}
+          {chapter?.description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -69,19 +68,13 @@ export default function ChapterDisplayer({chapter}: ChapterDisplayProps) {
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            {chapter?.attachments.map(
-              (Attachment) => <AttachmentDisplayer key={Attachment.id} file={Attachment} />
-            )}
-          {chapter?.content 
-            &&
-            <Markdown
-              key={chapter.id}
-              children={chapter.content}
-          />
-          }
-          </CardContent>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          {chapter?.attachments.map((Attachment) => (
+            <AttachmentDisplayer key={Attachment.id} file={Attachment} />
+          ))}
+          {chapter?.content && <Markdown key={chapter.id} children={chapter.content} />}
+        </CardContent>
       </Collapse>
     </Card>
   );

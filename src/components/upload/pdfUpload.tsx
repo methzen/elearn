@@ -56,13 +56,10 @@ export default function PdfUpload({
 
   return (
     <Box sx={{ width: 1, position: 'relative', ...sx }}>
-      <StyledDropZone
-        {...getRootProps()}
-      >
-        {!hasFile && <Placeholder/>}
+      <StyledDropZone {...getRootProps()}>
+        {!hasFile && <Placeholder />}
 
         {hasFile && <FileGeneralRecentCard file={file} />}
-
       </StyledDropZone>
 
       {helperText && helperText}

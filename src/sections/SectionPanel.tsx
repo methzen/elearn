@@ -27,26 +27,26 @@ export default function SectionPanel({
 }: Props) {
   return (
     <Stack direction="row" sx={{ mb: 3, ...sx }} {...other}>
-        <Stack direction="row" alignItems="center" spacing={1} flexGrow={1}>
-          <Typography> {title} </Typography>
-          <IconButton
-            size="small"
-            color="success"
-            onClick={onOpen}
-            sx={{
-              p: 0,
-              width: 24,
-              height: 24,
-              color: 'common.white',
+      <Stack direction="row" alignItems="center" spacing={1} flexGrow={1}>
+        <Typography> {title} </Typography>
+        <IconButton
+          size="small"
+          color="success"
+          onClick={onOpen}
+          sx={{
+            p: 0,
+            width: 24,
+            height: 24,
+            color: 'common.white',
+            bgcolor: 'success.main',
+            '&:hover': {
               bgcolor: 'success.main',
-              '&:hover': {
-                bgcolor: 'success.main',
-              },
-            }}
-          >
-            <Iconify icon="eva:plus-fill" />
-          </IconButton>
-        </Stack>
+            },
+          }}
+        >
+          <Iconify icon="eva:plus-fill" />
+        </IconButton>
+      </Stack>
     </Stack>
   );
 }

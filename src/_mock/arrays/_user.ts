@@ -129,14 +129,14 @@ export const _userInvoices = [...Array(10)].map((_, index) => ({
 }));
 
 export interface UserGroupMember {
-  id: string
-  firstname: string,
-  lastname: string,
-  email: string,
-  photoURL: string,
-  ownerShipLevel: string,
-  status: string,
-  isBanned: boolean
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  photoURL: string;
+  ownerShipLevel: string;
+  status: string;
+  isBanned: boolean;
 }
 
 export const _userList = [...Array(24)].map((_, index) => ({
@@ -165,5 +165,5 @@ export const _userGroupMember = [...Array(24)].map((_, index) => ({
   email: _mock.email(index),
   ownerShipLevel: randomInArray(['admin', 'member', 'moderator']),
   status: randomInArray(['active', 'inactive']),
-  isBanned: randomInArray([false, true])
+  isBanned: randomInArray([false, true]),
 })) as UserGroupMember[];

@@ -13,49 +13,57 @@ type CircleAccessProps = {
   children: React.ReactNode;
 };
 export interface RoleContextProps {
-  role: Role
-  name:string
+  role: Role;
+  name: string;
 }
 
 export enum RoleType {
-  admin='admin',
-  member='member',
-  moderator = 'moderator'
+  admin = 'admin',
+  member = 'member',
+  moderator = 'moderator',
 }
 
-export const CircleAccessRoleContext = createContext<RoleContextProps| null>(null)
+export const CircleAccessRoleContext = createContext<RoleContextProps | null>(null);
 
 export default function CircleAccessGuard({ children }: CircleAccessProps) {
   const {
-        query: { circleId }, push
+    query: { circleId },
+    push,
   } = useRouter();
 
-  const [access, setAccess] = useState<boolean|null>(null)
-  const [myRole, setMyRole] = useState<RoleContextProps>()
+  const [access, setAccess] = useState<boolean | null>(null);
+  const [myRole, setMyRole] = useState<RoleContextProps>();
 
-  useEffect(() => { 
+  useEffect(() => {
     const getAccess = async () => {
-      const response =  await checkGroupAccess(circleId as string)
-      if(!response.access){ return push(PATH_DASHBOARD.root)};
-      setAccess(response.access)
-      return setMyRole({role: response.role, name:response.name})
-  }
-    if(circleId){
-        getAccess()
+      const response = await checkGroupAccess(circleId as string);
+      if (!response.access) {
+        return push(PATH_DASHBOARD.root);
+      }
+      setAccess(response.access);
+      return setMyRole({ role: response.role, name: response.name });
+    };
+    if (circleId) {
+      getAccess();
     }
-  }, [circleId, push])
+  }, [circleId, push]);
 
   const memoizedValue = useMemo(
-    () => ({
-      role: myRole?.role,
-      name: myRole?.name
-    } as RoleContextProps),
+    () =>
+      ({
+        role: myRole?.role,
+        name: myRole?.name,
+      } as RoleContextProps),
     [myRole]
   );
 
-  if (access===null) {
+  if (access === null) {
     return <LoadingScreen />;
   }
 
-  return <CircleAccessRoleContext.Provider value={memoizedValue}>{children}</CircleAccessRoleContext.Provider>;
+  return (
+    <CircleAccessRoleContext.Provider value={memoizedValue}>
+      {children}
+    </CircleAccessRoleContext.Provider>
+  );
 }

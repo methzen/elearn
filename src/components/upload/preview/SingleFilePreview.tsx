@@ -3,12 +3,7 @@ import Image from '../../image';
 //
 import { CustomFile } from '../types';
 // @mui
-import {
-  Box,
-  Stack,
-  Typography,
-  PaperProps,
-} from '@mui/material';
+import { Box, Stack, Typography, PaperProps } from '@mui/material';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 // utils
@@ -45,8 +40,6 @@ export default function SingleFilePreview({ file }: Props) {
   );
 }
 
-
-
 // ----------------------------------------------------------------------
 
 interface ViewPdfProps extends PaperProps {
@@ -79,7 +72,7 @@ export function FileGeneralRecentCard({ file, sx, ...other }: ViewPdfProps) {
         }}
         {...other}
       >
-        <FileThumbnail file='pdf' />
+        <FileThumbnail file="pdf" />
         <Stack
           sx={{
             width: 1,

@@ -1,25 +1,20 @@
 // @mui
-import {
-  Box,
-  Stack,
-  Paper,
-  Radio,
-  Typography,
-  RadioGroup,
-  FormControlLabel,
-} from '@mui/material';
+import { Box, Stack, Paper, Radio, Typography, RadioGroup, FormControlLabel } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
 import { InnerCirclePlan } from 'src/@types/innerCircle';
 
-
-interface SubscriptionProps{
+interface SubscriptionProps {
   plans: InnerCirclePlan[];
   susbcriptionName: string;
   selectPlan: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function SubscriptionPlans({plans, susbcriptionName, selectPlan}: SubscriptionProps) {
+export default function SubscriptionPlans({
+  plans,
+  susbcriptionName,
+  selectPlan,
+}: SubscriptionProps) {
   return (
     <>
       <Stack spacing={5}>
@@ -49,12 +44,7 @@ type PaymentOptionProps = {
   isSelected: boolean;
 };
 
-function PaymentOption({
-  plan,
-  hasChild,
-  isSelected,
-}: PaymentOptionProps) {
-
+function PaymentOption({ plan, hasChild, isSelected }: PaymentOptionProps) {
   return (
     <Paper
       variant="outlined"
@@ -65,7 +55,7 @@ function PaymentOption({
         transition: (theme) => theme.transitions.create('all'),
         ...(hasChild && {
           flexWrap: 'wrap',
-        })
+        }),
       }}
     >
       <FormControlLabel
@@ -85,14 +75,14 @@ function PaymentOption({
           <Box component="img" key={icon} src={icon} />
         ))}
       </Stack> */}
-      {isSelected && 
-              <Stack
-              alignItems="flex-start"
-              sx={{
-                px: 3,
-                width: 1,
-              }}
-            >
+      {isSelected && (
+        <Stack
+          alignItems="flex-start"
+          sx={{
+            px: 3,
+            width: 1,
+          }}
+        >
           <Stack component="ul" spacing={2} sx={{ p: 0, my: 5 }}>
             {plan.lists.map((item) => (
               <Stack
@@ -117,9 +107,8 @@ function PaymentOption({
               </Stack>
             ))}
           </Stack>
-            </Stack>
-           
-      }
+        </Stack>
+      )}
     </Paper>
   );
 }

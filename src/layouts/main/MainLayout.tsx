@@ -11,7 +11,7 @@ const Footer = dynamic(() => import('./Footer'), { ssr: false });
 
 type Props = {
   children?: React.ReactNode;
-  pageName?: string 
+  pageName?: string;
 };
 
 export default function MainLayout({ children, pageName }: Props) {
@@ -20,8 +20,8 @@ export default function MainLayout({ children, pageName }: Props) {
   const isHome = pathname === '/';
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column'}}>
-      <Header pageName={pageName}/>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Header pageName={pageName} />
       <Box
         component="main"
         sx={{

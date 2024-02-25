@@ -41,12 +41,7 @@ import { UserTableToolbar, UserTableRow } from '../user/list';
 
 const STATUS_OPTIONS = ['all', 'active', 'banned'];
 
-const ROLE_OPTIONS = [
-  'all',
-  'admin',
-  'moderator',
-  'member'
-];
+const ROLE_OPTIONS = ['all', 'admin', 'moderator', 'member'];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
@@ -76,7 +71,10 @@ export default function UserListPage() {
     onChangeRowsPerPage,
   } = useTable();
 
-  const { push, query: {circleId} } = useRouter();
+  const {
+    push,
+    query: { circleId },
+  } = useRouter();
 
   const [tableData, setTableData] = useState(_userGroupMember);
 
@@ -90,14 +88,16 @@ export default function UserListPage() {
 
   useEffect(() => {
     const getMembers = async () => {
-        const response =  await getGroupMembers(circleId as string, page+1)
-        if(!response){ return push(PATH_DASHBOARD.root)};
-        return setTableData(response.users)
+      const response = await getGroupMembers(circleId as string, page + 1);
+      if (!response) {
+        return push(PATH_DASHBOARD.root);
+      }
+      return setTableData(response.users);
+    };
+    if (circleId) {
+      getMembers();
     }
-    if(circleId){
-      getMembers()
-    }
-  }, [circleId, page, push])
+  }, [circleId, page, push]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -127,7 +127,7 @@ export default function UserListPage() {
   };
 
   const handleFilterStatus = (event: React.SyntheticEvent<Element, Event>, newValue: string) => {
-    const filter = (newValue==='active')? false : (newValue==='banned')? true: 'all'
+    const filter = newValue === 'active' ? false : newValue === 'banned' ? true : 'all';
     setPage(0);
     setFilterStatus(filter);
   };
@@ -172,7 +172,7 @@ export default function UserListPage() {
   };
 
   const handleEditRow = (id: string) => {
-    console.log('user edit')
+    console.log('user edit');
   };
 
   const handleResetFilter = () => {
@@ -183,7 +183,7 @@ export default function UserListPage() {
 
   return (
     <>
-        {/* <Button
+      {/* <Button
               component={NextLink}
               href={PATH_DASHBOARD.user.myprofile}
               variant="contained"
@@ -192,105 +192,107 @@ export default function UserListPage() {
               New User
         </Button> */}
 
-        <Card>
-          <Tabs
-            value={typeof filterStatus==='string'? 'all': (filterStatus===true)? 'banned' : 'active'}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2,
-              my:3
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
+      <Card>
+        <Tabs
+          value={
+            typeof filterStatus === 'string' ? 'all' : filterStatus === true ? 'banned' : 'active'
+          }
+          onChange={handleFilterStatus}
+          sx={{
+            px: 2,
+            my: 3,
+          }}
+        >
+          {STATUS_OPTIONS.map((tab) => (
+            <Tab key={tab} label={tab} value={tab} />
+          ))}
+        </Tabs>
 
-          <Divider />
+        <Divider />
 
-          <UserTableToolbar
-            isFiltered={isFiltered}
-            filterName={filterName}
-            filterRole={filterRole}
-            optionsRole={ROLE_OPTIONS}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            onResetFilter={handleResetFilter}
+        <UserTableToolbar
+          isFiltered={isFiltered}
+          filterName={filterName}
+          filterRole={filterRole}
+          optionsRole={ROLE_OPTIONS}
+          onFilterName={handleFilterName}
+          onFilterRole={handleFilterRole}
+          onResetFilter={handleResetFilter}
+        />
+
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <TableSelectedAction
+            dense={dense}
+            numSelected={selected.length}
+            rowCount={tableData.length}
+            onSelectAllRows={(checked) =>
+              onSelectAllRows(
+                checked,
+                tableData.map((row) => row.id)
+              )
+            }
+            action={
+              <Tooltip title="Delete">
+                <IconButton color="primary" onClick={handleOpenConfirm}>
+                  <Iconify icon="eva:trash-2-outline" />
+                </IconButton>
+              </Tooltip>
+            }
           />
 
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={dense}
-              numSelected={selected.length}
-              rowCount={tableData.length}
-              onSelectAllRows={(checked) =>
-                onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id)
-                )
-              }
-              action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={handleOpenConfirm}>
-                    <Iconify icon="eva:trash-2-outline" />
-                  </IconButton>
-                </Tooltip>
-              }
-            />
+          <Scrollbar>
+            <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+              <TableHeadCustom
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={tableData.length}
+                numSelected={selected.length}
+                onSort={onSort}
+                onSelectAllRows={(checked) =>
+                  onSelectAllRows(
+                    checked,
+                    tableData.map((row) => row.id)
+                  )
+                }
+              />
 
-            <Scrollbar>
-              <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
+              <TableBody>
+                {dataFiltered
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <UserTableRow
+                      key={row.id}
+                      row={row}
+                      selected={selected.includes(row.id)}
+                      onSelectRow={() => onSelectRow(row.id)}
+                      onDeleteRow={() => handleDeleteRow(row.id)}
+                      onEditRow={() => handleEditRow(row.firstname)}
+                    />
+                  ))}
+
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                 />
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.id}
-                        row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.firstname)}
-                      />
-                    ))}
+                <TableNoData isNotFound={isNotFound} />
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </TableContainer>
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                  />
-
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </Scrollbar>
-          </TableContainer>
-
-          <TablePaginationCustom
-            count={dataFiltered.length}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            onPageChange={onChangePage}
-            onRowsPerPageChange={onChangeRowsPerPage}
-            //
-            dense={dense}
-            onChangeDense={onChangeDense}
-          />
-        </Card>
+        <TablePaginationCustom
+          count={dataFiltered.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={onChangePage}
+          onRowsPerPageChange={onChangeRowsPerPage}
+          //
+          dense={dense}
+          onChangeDense={onChangeDense}
+        />
+      </Card>
 
       <ConfirmDialog
         open={openConfirm}
@@ -330,7 +332,7 @@ function applyFilter({
   inputData: UserGroupMember[];
   comparator: (a: any, b: any) => number;
   filterName: string;
-  filterStatus: boolean|string;
+  filterStatus: boolean | string;
   filterRole: string;
 }) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);

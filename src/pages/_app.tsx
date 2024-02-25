@@ -26,16 +26,16 @@ import ProgressBar from '../components/progress-bar';
 import SnackbarProvider from '../components/snackbar';
 import { MotionLazyContainer } from '../components/animate';
 import { ThemeSettings, SettingsProvider } from '../components/settings';
-import {Elements} from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client';
 
 // Check our docs
 // https://docs.minimals.cc/authentication/ts-version
 
 import { AuthProvider } from '../auth/JwtContext';
-import { store } from '../redux/store'; 
+import { store } from '../redux/store';
 import { createContext } from 'react';
 import { HOST_API_KEY } from 'src/config-global';
 // ----------------------------------------------------------------------
@@ -43,7 +43,7 @@ import { HOST_API_KEY } from 'src/config-global';
 const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY as string);
 
 const clientSideEmotionCache = createEmotionCache();
-const clientReactQuery = new QueryClient()
+const clientReactQuery = new QueryClient();
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
@@ -61,12 +61,12 @@ export default function MyApp(props: MyAppProps) {
   var socket: any;
   socket = io(HOST_API_KEY, {
     autoConnect: false,
-    transports: ['websocket']
- });
+    transports: ['websocket'],
+  });
 
- socket.onAny((event:any, ...args) => {
-  console.log(event, args);
-});
+  socket.onAny((event: any, ...args) => {
+    console.log(event, args);
+  });
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
@@ -77,28 +77,28 @@ export default function MyApp(props: MyAppProps) {
       </Head>
 
       <AuthProvider>
-      <SocketContext.Provider value={socket}>
-        <QueryClientProvider client={clientReactQuery}>
-        <ReduxProvider store={store}>
-          <SettingsProvider>
-            <MotionLazyContainer>
-              <ThemeProvider>
-                <ThemeSettings>
-                  <ThemeLocalization>
-                    <SnackbarProvider>
-                      <ProgressBar />
-                      <Elements stripe={stripePromise}>
-                      {getLayout(<Component {...pageProps} />)}
-                      </Elements>
-                    </SnackbarProvider>
-                  </ThemeLocalization>
-                </ThemeSettings>
-              </ThemeProvider>
-            </MotionLazyContainer>
-          </SettingsProvider>
-          </ReduxProvider>
-        </QueryClientProvider>
-      </SocketContext.Provider>
+        <SocketContext.Provider value={socket}>
+          <QueryClientProvider client={clientReactQuery}>
+            <ReduxProvider store={store}>
+              <SettingsProvider>
+                <MotionLazyContainer>
+                  <ThemeProvider>
+                    <ThemeSettings>
+                      <ThemeLocalization>
+                        <SnackbarProvider>
+                          <ProgressBar />
+                          <Elements stripe={stripePromise}>
+                            {getLayout(<Component {...pageProps} />)}
+                          </Elements>
+                        </SnackbarProvider>
+                      </ThemeLocalization>
+                    </ThemeSettings>
+                  </ThemeProvider>
+                </MotionLazyContainer>
+              </SettingsProvider>
+            </ReduxProvider>
+          </QueryClientProvider>
+        </SocketContext.Provider>
       </AuthProvider>
     </CacheProvider>
   );

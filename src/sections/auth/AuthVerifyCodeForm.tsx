@@ -27,7 +27,7 @@ type FormValuesProps = {
 
 export default function AuthVerifyCodeForm() {
   const { push } = useRouter();
-  const { verify } = useAuthContext()
+  const { verify } = useAuthContext();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -63,7 +63,7 @@ export default function AuthVerifyCodeForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await verify(Object.values(data).join(''))
+      await verify(Object.values(data).join(''));
       enqueueSnackbar('Verify success!');
       push(PATH_DASHBOARD.circles);
     } catch (error) {

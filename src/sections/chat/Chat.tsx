@@ -103,7 +103,6 @@ export default function Chat() {
 
   useEffect(() => {
     socket.on('message recieved', (value: IChatSendMessage) => {
-
       if (conversationKey === value.conversationId) {
         dispatch(sendMessage(value));
 
@@ -123,7 +122,7 @@ export default function Chat() {
       // dispatch(fetchChats())
     });
     socket.on('disconnect', () => {
-      console.log('user is disconnected...')
+      console.log('user is disconnected...');
     });
 
     return () => {
@@ -148,7 +147,7 @@ export default function Chat() {
     socket.emit('stop typing', activeConversationId);
     try {
       dispatch(sendMessage(value));
-      dispatch(addMessage(conversationKey as string, value.content))
+      dispatch(addMessage(conversationKey as string, value.content));
       socket.emit('new message', { message: value, participants });
     } catch (error) {
       console.error(error);

@@ -1,7 +1,4 @@
-import {
-  Container,
-  Paper,
-} from '@mui/material';
+import { Container, Paper } from '@mui/material';
 
 // next
 import Head from 'next/head';
@@ -19,32 +16,29 @@ import { useRouter } from 'next/router';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
-
-create.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>
-
+create.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default function create() {
   const { push } = useRouter();
   const { themeStretch } = useSettingsContext();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const isDesktop = useResponsive('up', 'sm');
-  const fullWidth = isDesktop ? 700 : 400
+  const fullWidth = isDesktop ? 700 : 400;
 
-  const handleCreateGroup = async (data: CircleFormProps) =>{
-    try{
-      setIsLoading(true)
-      const response = await createGroup(data)
-      enqueueSnackbar("Circle has been created successfully.");
-      setIsLoading(false)
-      push(PATH_DASHBOARD.group.community(response.data.id))
-    }
-    catch(error){
+  const handleCreateGroup = async (data: CircleFormProps) => {
+    try {
+      setIsLoading(true);
+      const response = await createGroup(data);
+      enqueueSnackbar('Circle has been created successfully.');
+      setIsLoading(false);
+      push(PATH_DASHBOARD.group.community(response.data.id));
+    } catch (error) {
       console.error(error);
-      enqueueSnackbar(error.message || 'failed to create circle', {variant: "error"});
-      setIsLoading(false)
+      enqueueSnackbar(error.message || 'failed to create circle', { variant: 'error' });
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -53,23 +47,23 @@ export default function create() {
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
-      <Paper
-        sx={{
-          width:`${fullWidth}px`,
-          right: `calc((100% - ${fullWidth}px)/2)`,
-          margin: "20px auto",
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <CreateGroupForm {...{
-          isLoading: isLoading,
-          submitData : handleCreateGroup
-        }}  />
-
-      </Paper>
+        <Paper
+          sx={{
+            width: `${fullWidth}px`,
+            right: `calc((100% - ${fullWidth}px)/2)`,
+            margin: '20px auto',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <CreateGroupForm
+            {...{
+              isLoading: isLoading,
+              submitData: handleCreateGroup,
+            }}
+          />
+        </Paper>
       </Container>
     </>
   );
 }
-

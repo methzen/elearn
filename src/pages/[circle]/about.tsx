@@ -15,7 +15,7 @@ export default function AboutPage() {
         <title> Circle | About </title>
       </Head>
       <CircleGuard>
-          <About/>
+        <About />
       </CircleGuard>
     </>
   );

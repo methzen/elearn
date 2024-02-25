@@ -3,7 +3,7 @@ import { persistReducer } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 // slices
 import chatReducer from './slices/chat';
-import courseReducer from './slices/course'
+import courseReducer from './slices/course';
 
 // ----------------------------------------------------------------------
 

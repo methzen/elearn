@@ -54,7 +54,11 @@ export default function ChatNavSearchResults({
                 typography: 'subtitle2',
               }}
             >
-              <Avatar alt={`${result.firstname} ${result.lastname}`} src={result.photoURL} sx={{ mr: 2 }} />
+              <Avatar
+                alt={`${result.firstname} ${result.lastname}`}
+                src={result.photoURL}
+                sx={{ mr: 2 }}
+              />
               {`${result.firstname} ${result.lastname}`}
             </ListItemButton>
           ))}

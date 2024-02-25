@@ -67,7 +67,7 @@ export default function AboutCard({ group }: Props) {
 
         <StyledOverlay />
 
-        <Image src={imageUrl as string} alt='cover' ratio="16/9" />
+        <Image src={imageUrl as string} alt="cover" ratio="16/9" />
       </Box>
 
       <Typography variant="subtitle1" sx={{ mt: 6, mb: 0.5 }}>
@@ -95,10 +95,10 @@ export default function AboutCard({ group }: Props) {
       </Stack>
 
       <Box sx={{ p: 3 }}>
-        <Typography gutterBottom variant="h5" component="div" align='left'>
+        <Typography gutterBottom variant="h5" component="div" align="left">
           {name}
         </Typography>
-        <Typography variant="body1" color="text.secondary" align='justify'>
+        <Typography variant="body1" color="text.secondary" align="justify">
           {description}
         </Typography>
       </Box>
@@ -113,7 +113,7 @@ export default function AboutCard({ group }: Props) {
 
         <div>
           <Typography variant="caption" component="div" sx={{ mb: 0.75, color: 'text.disabled' }}>
-          Members online
+            Members online
           </Typography>
           <Typography variant="subtitle1">{fShortenNumber(34430)}</Typography>
         </div>

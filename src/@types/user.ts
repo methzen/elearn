@@ -95,8 +95,8 @@ export type IUserComment = {
   };
   createdAt: Date | string | number;
   text: string;
-  comments?: IUserComment[]
-}
+  comments?: IUserComment[];
+};
 
 export type IUserProfilePost = {
   id: string;

@@ -2,38 +2,27 @@ import { useState, useCallback } from 'react';
 // form
 import { useForm, Controller } from 'react-hook-form';
 // @mui
-import {
-  Box,
-  Stack,
-  Backdrop,
-  Typography,
-  StackProps,
-  CircularProgress,
-} from '@mui/material';
+import { Box, Stack, Backdrop, Typography, StackProps, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 
-import FormProvider, {
-  RHFPdfUpload,
-  RHFTextField,
-} from '../../components/hook-form';
-import { AttachmentProps } from '../../@types/file'
+import FormProvider, { RHFPdfUpload, RHFTextField } from '../../components/hook-form';
+import { AttachmentProps } from '../../@types/file';
 
 // ----------------------------------------------------------------------
-
 
 export const defaultValues = {
   name: '',
   singleUpload: null,
 };
 
-export default function AttachmentUploader(
-  { nameLabel, 
-    submitData } : {
-      nameLabel: string
-      submitData : (data : AttachmentProps) => void;
-    }) {
-
+export default function AttachmentUploader({
+  nameLabel,
+  submitData,
+}: {
+  nameLabel: string;
+  submitData: (data: AttachmentProps) => void;
+}) {
   const methods = useForm<AttachmentProps>({
     defaultValues,
   });
@@ -61,52 +50,52 @@ export default function AttachmentUploader(
 
   return (
     <>
-    {isSubmitting && (
+      {isSubmitting && (
         <Backdrop open sx={{ zIndex: (theme) => theme.zIndex.modal + 1 }}>
           <CircularProgress color="primary" />
         </Backdrop>
       )}
 
       <FormProvider methods={methods} onSubmit={handleSubmit(submitData)}>
-        <Box 
+        <Box
           sx={{
-            marginLeft:"auto",
-            marginRight:"auto",
-            marginBottom: "40px",
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginBottom: '40px',
             borderRadius: 1,
-            display:"flex",
-            flexDirection:"column",
-            gap: "15px",
-            padding:"0 20px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '15px',
+            padding: '0 20px',
           }}
         >
-            <Stack spacing={2}>
+          <Stack spacing={2}>
             <Block label="Select a file">
-                <RHFPdfUpload
-                  name="singleUpload"
-                  maxSize={3145728}
-                  onDrop={handleDropSingleFile}
-                  onDelete={() => setValue('singleUpload', null, { shouldValidate: true })}
-                />
-              </Block>
-            </Stack>
-            <Stack spacing={2}>
-              <Block label="Give a name">
-                <RHFTextField name="name" label={nameLabel} />
-              </Block>
-            </Stack>
-            <Stack spacing={3}>
-              <LoadingButton
-                color="primary"
-                size="large"
-                type="submit"
-                variant="contained"
-                loading={isSubmitting}
-              >
-                Submit
-              </LoadingButton>
-            </Stack>
-          </Box>
+              <RHFPdfUpload
+                name="singleUpload"
+                maxSize={3145728}
+                onDrop={handleDropSingleFile}
+                onDelete={() => setValue('singleUpload', null, { shouldValidate: true })}
+              />
+            </Block>
+          </Stack>
+          <Stack spacing={2}>
+            <Block label="Give a name">
+              <RHFTextField name="name" label={nameLabel} />
+            </Block>
+          </Stack>
+          <Stack spacing={3}>
+            <LoadingButton
+              color="primary"
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+            >
+              Submit
+            </LoadingButton>
+          </Stack>
+        </Box>
       </FormProvider>
     </>
   );

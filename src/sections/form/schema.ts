@@ -11,5 +11,5 @@ export const courseDataSchema = Yup.object().shape({
   plans: Yup.string(),
   month: Yup.number(),
   year: Yup.number(),
-  oneTime: Yup.number()
+  oneTime: Yup.number(),
 });

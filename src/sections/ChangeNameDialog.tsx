@@ -23,7 +23,7 @@ interface Props extends DialogProps {
   onUpdate?: VoidFunction;
   //
   inputValue?: string;
-  label?:string;
+  label?: string;
   onChangeInputValue?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   //
   open: boolean;
@@ -135,10 +135,8 @@ export function ChangeSectionNameDialog({
   onChangeInputValue,
   ...other
 }: Props) {
-
-
   return (
-    <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other} sx={{mt : -70}}>
+    <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other} sx={{ mt: -70 }}>
       <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}> {title} </DialogTitle>
 
       <DialogContent dividers sx={{ pt: 1, pb: 0, border: 'none' }}>

@@ -42,8 +42,14 @@ const StyledInfo = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function ProfileCover({ firstname, lastname, job, cover, photoURL }: IUserAccountGeneral) {
-  const displayName = `${firstname} ${lastname}`
+export default function ProfileCover({
+  firstname,
+  lastname,
+  job,
+  cover,
+  photoURL,
+}: IUserAccountGeneral) {
+  const displayName = `${firstname} ${lastname}`;
   return (
     <StyledRoot>
       <StyledInfo>
