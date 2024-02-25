@@ -26,7 +26,7 @@ import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
-Library.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
+CreatePage.getLayout = (page: React.ReactElement) => <CircleAccessGuard><DashboardLayout>{page}</DashboardLayout></CircleAccessGuard>;
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {
@@ -41,9 +41,7 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
     pageType: string
     isAdmin: boolean
     actionHandler: () => void;
-  }
-  )=>{
-  
+  })=>{
   const getInputs = (pt:string) => {
     const defaut = {
       icon : null,
@@ -103,7 +101,7 @@ const GetCustomBreadcrumbsAction =({userName, pageType, isAdmin, actionHandler}:
   )
 }
 
-export default function Library() {
+export default function CreatePage() {
   const dispatch = useDispatch()
   const { user } = useAuthContext();
   const { themeStretch } = useSettingsContext();
@@ -116,11 +114,12 @@ export default function Library() {
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false)
 
   useEffect(() => {
+    if(circleId)
       dispatch(getCourse(circleId as string))
   },[circleId, dispatch])
 
   useEffect(() => {
-    setHasCourse(!!courseStore)
+    setHasCourse(!!courseStore.sections)
 
     if(!courseStore){
       setPageType(LibraryPageType.NO_COURSE)
@@ -137,12 +136,12 @@ export default function Library() {
       const currentChap = currentSec?.chapters[0]
       setCurrentChapter(currentChap)
     }
-    if(courseStore.currentChapter && courseStore.currentSection){
+    if(courseStore.currentChapter && courseStore.currentChapter){
       setCurrentChapter(undefined)
       const currentSec = courseStore.sections.find(sec=>sec.id===courseStore.currentSection)
       const currentChap = currentSec?.chapters.find(chap=>chap.id===courseStore.currentChapter)
       setCurrentChapter(currentChap)
-  }
+    }
   },[courseStore])
 
   const createCourse = () => {
@@ -212,8 +211,8 @@ export default function Library() {
           <CourseSection 
               key={section.name}
               section={section}
-              isCurrentSection={section.id===courseStore.currentSection}
-              currentChapter={courseStore.currentChapter}
+              setCurrent={()=>null}
+              current={{sectionId: "", chapterId: currentChapter?.id as string}}
               readOnly={false}
               />
             ))

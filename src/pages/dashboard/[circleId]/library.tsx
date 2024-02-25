@@ -38,7 +38,7 @@ export default function Library() {
 
   useEffect(()=>{
     if(data){
-      setCurrentChapter(data.currentChapter)
+      setCurrentChapter(data.viewCurrentChapter)
     }
   }, [data])
 

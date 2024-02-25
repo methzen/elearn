@@ -3,6 +3,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // components
 import SvgColor from '../../../components/svg-color';
 import { NavListProps } from 'src/components/nav-section';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 // ----------------------------------------------------------------------
 
@@ -40,18 +41,18 @@ const GroupNav = (id:string, isAdmin:boolean, groupName: string, pathnameCreate=
     { 
       title: 'My Circles', 
       path: PATH_DASHBOARD.circles,
-      icon: ICONS.dashboard,
-    },
-    {
-      title: 'My Account',
-      path: PATH_DASHBOARD.user.myprofile,
-      icon: ICONS.user,
+      icon: <GroupsIcon/>,
     },
     {
       title: 'chat',
       path: PATH_DASHBOARD.chat.root,
       icon: ICONS.chat,
     },
+    {
+      title: 'My Account',
+      path: PATH_DASHBOARD.user.myprofile,
+      icon: ICONS.user,
+    }
   ]
   if(pathnameCreate){
     defaultItems.unshift({ 
@@ -72,7 +73,7 @@ const GroupNav = (id:string, isAdmin:boolean, groupName: string, pathnameCreate=
       defaultItems.unshift({
         title: groupName.charAt(0)+groupName.slice(1),
         path: PATH_DASHBOARD.group.community(id),
-        icon: ICONS.dashboard,
+        icon: <GroupsIcon/>,
         children: circleChildren,
       })
     }

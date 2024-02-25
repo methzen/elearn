@@ -28,14 +28,14 @@ const StyledRoot = styled('div')(({ theme }) => ({
     top: 0,
     left: 0,
     width: '100%',
-    height: '50vh',
+    // height: '50vh',
     // position: 'fixed',
   },
 }));
 
 const StyledDescription = styled('div')(({ theme }) => ({
   maxWidth: 580,
-  margin: 'auto',
+  margin: '10rem auto 2rem',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -118,7 +118,7 @@ export default function HomeHero() {
 
             {isDesktop && (
               <Grid item xs={12} md={5} >
-                {/* <Content /> */}
+                <Content />
               </Grid>
             )}
           </Grid>
@@ -184,15 +184,16 @@ function Description() {
               sx={{
                 cursor: "pointer",
                 width: "250px",
+                py: 3,
                 bgcolor: 'text.primary',
-                fontSize: '19px',
+                fontSize: '22px',
                 color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
                 '&:hover': {
                   bgcolor: 'text.primary',
                 },
               }}
             >
-              Try if for free
+              Try it for free
             </Button>
           </Stack>
         </Stack>
@@ -232,14 +233,14 @@ function Content() {
         variants={varFade().in}
         sx={{ width: 600, position: 'relative', ml: -2 }}
       >
-        {/* <Box
+        <Box
           component={m.img}
           animate={{ y: ['100%', '0%'] }}
           transition={transition}
           alt={`hero_${isLight ? 'light' : 'dark'}_2`}
           src={`/assets/images/home/hero_${isLight ? 'light' : 'dark'}_2.png`}
           sx={{ position: 'absolute' }}
-        /> */}
+        />
         <Box
           component={m.img}
           animate={{ y: ['0%', '-100%'] }}

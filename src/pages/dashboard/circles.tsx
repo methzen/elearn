@@ -1,7 +1,6 @@
 // next
 import Head from 'next/head';
 import { Container, Box, Button} from '@mui/material';
-
 // layouts
 import DashboardLayout from '../../layouts/dashboard';
 // components
@@ -10,47 +9,33 @@ import CourseCard from '../../components/CourseCard';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import Iconify from '../../components/iconify';
 import { useAuthContext } from '../../auth/useAuthContext';
-import createGroup from 'src/api/createGroup';
 // hooks
 import getAllGroupsByPage from '../../api/getAllGroupsByPage';
-import { useSnackbar } from '../../components/snackbar';
 import useSWR from 'swr';
-import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 import { PATH_DASHBOARD, PATH_PAGE } from 'src/routes/paths';
 import { useRouter } from 'next/router';
+import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 PageTwo.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
-const fetcher = (url: string) => getAllGroupsByPage(url);
-
 
 export default function PageTwo() {
-  const { enqueueSnackbar } = useSnackbar();
   const { push } = useRouter()
   const { themeStretch } = useSettingsContext();
   const { user } = useAuthContext();
-  const { data , mutate } = useSWR(`/groups/get/all?page=${1}`, fetcher)
+  const { data , isLoading } = useSWR(`/groups/get/all?page=${1}`, (url: string) => getAllGroupsByPage(url))
+  const userHasSubscription = !!user?.subscription.is_active
 
-
-  const submitGroup = async (d: CircleFormProps) => {
-    try {
-      await createGroup(d)
-      mutate()
-      enqueueSnackbar("The group has been created successfully.")
-    }catch (err) {
-      console.error(err);
-    }
-
-  };
   const handleCreateCircle = () => {
-    const subscription = user?.subscription
-    if(subscription.is_active){
+    if(userHasSubscription){
       push(PATH_DASHBOARD.create)
     }
     else{
       push(`${PATH_PAGE.payment}?p=Basic`)
     }
   }
+
+  if(isLoading) return <LoadingScreen/>
 
   return (
     <>
@@ -62,10 +47,10 @@ export default function PageTwo() {
           heading={`Welcome ${user?.displayName} !`}
           links={[
             {
-              name: data?.items.length> 1 ? "Below are the circles you are part of.": "You don't have any circle yet.",
+              name: data?.items.length > 0 ? "Below are the circles you are part of.": "You don't have any circle yet.",
             },
           ]}
-          action={
+          action={userHasSubscription?
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
@@ -73,7 +58,7 @@ export default function PageTwo() {
               style={{ marginTop:"20px"}}
             >
               Create a circle
-            </Button>
+            </Button>: null
           }
         />    
         <Box

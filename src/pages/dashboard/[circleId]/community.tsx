@@ -54,10 +54,10 @@ import unlikeAPost from '../../../api/unlikeAPost';
 import commentAPost, { commentDataArg } from '../../../api/commentAPost';
 import CourseCardAside from '../../../components/CourseCardAside';
 import CircleAccessGuard from 'src/auth/CircleAccessGuard';
-import EditButton from 'src/sections/EditButton';
 import ReplyButton from 'src/sections/ReplayButton';
 import ExpandCommentButton from 'src/sections/seeComments';
 import DisplayReplies from 'src/sections/displayReplies';
+import LoadingScreen from 'src/components/loading-screen';
 
 
 // ----------------------------------------------------------------------
@@ -75,11 +75,7 @@ export default function Community() {
   const { themeStretch } = useSettingsContext();
 
   const [page, setPage] = useState<number>(1)
-  const { data , error, mutate } = useSWR(`/posts/get-all-posts?page=${page}&groupId=${circleId}`, getAllPosts)
-
-  if (error) return <div>Failed to load</div>
-  if (!data) return <div>Loading...</div>
-  const posts : IUserProfilePost[] = data.posts;
+  const { data , isLoading, mutate } = useSWR(`/posts/get-all-posts?page=${page}&groupId=${circleId}`, getAllPosts)
 
   const sendPost = async (content: PostContent) => {
     if(!content.title || !content.message){
@@ -101,7 +97,6 @@ export default function Community() {
     }
     try{
       const response = await commentAPost(data)
-      console.log('response', response)
       enqueueSnackbar(response.data);
       mutate()
     }catch(e){
@@ -109,6 +104,10 @@ export default function Community() {
       enqueueSnackbar(e.message);
     }
   }
+
+  if(isLoading) return <LoadingScreen/>
+  const posts : IUserProfilePost[] = data?.posts;
+
   return (
     <>
       <Head>
@@ -120,13 +119,13 @@ export default function Community() {
         <Grid container justifyContent="center" spacing={3}>
           <Grid item xs={12} md={8}>
           <WritePost sendPost={sendPost}/>
-          <Stack spacing={3}>
+          {posts && <Stack spacing={3}>
             {posts.map((post) => (
               <PostCard key={post.id} post={post}
                 mutate={mutate}
               />
             ))}
-          </Stack>
+          </Stack>}
           </Grid>
             <Grid item xs={12} md={3}>
               <CourseCardAside {...data.group}/>
@@ -375,7 +374,8 @@ function PostCard( { post, mutate }: Post) {
         {hasComments && (
         <Stack spacing={1.5} sx={{ px: 3, pb: 2 }}>
           {post.comments.map((comment) => (
-              <CommentComponent 
+              <CommentComponent
+                key={comment._id}
                 user={user} 
                 comment={comment} 
                 isTopLevel={true} 

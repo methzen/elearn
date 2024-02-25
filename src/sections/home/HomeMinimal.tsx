@@ -28,6 +28,7 @@ const CARDS = [
 ];
 
 const StyledRoot = styled('div')(({ theme }) => ({
+  margin: '10rem auto',
   padding: theme.spacing(10, 0),
   [theme.breakpoints.up('md')]: {
     padding: theme.spacing(15, 0),

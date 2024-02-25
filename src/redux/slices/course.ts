@@ -1,7 +1,7 @@
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
 // @types
 import { Video, Attachment, Chapter, Section ,Course } from '../../@types/course';
-import getCourseByGroupId from "../../api/getCourseByGroupId"
+import {getCourseByGroupId} from "../../api/getCourseByGroupId"
 import {
   createACourse,
   addAttachmentApi, 
@@ -26,8 +26,8 @@ import {
 interface CourseStore extends Course {
   isLoading: boolean;
   error: boolean;
-  editable?: boolean
-  currentSection?: string
+  editable?: boolean,
+  currentSection?: string,
   currentChapter?: string
 }
 
@@ -39,7 +39,10 @@ const initialState: CourseStore = {
   error: false,
   sections: [],
   editable: false,
-  isSaved: undefined
+  isSaved: undefined,
+  currentSection: "",
+  currentChapter: "",
+  viewCurrentChapter: {sectionId: "", chapterId: ""}
 };
 
 const slice = createSlice({
