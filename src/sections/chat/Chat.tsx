@@ -181,7 +181,7 @@ export default function Chat() {
             />
           )}
 
-          <Stack
+          {/* <Stack
             direction="row"
             flexGrow={1}
             sx={{
@@ -195,16 +195,16 @@ export default function Chat() {
               <ChatMessageInput
                 conversationId={activeConversationId}
                 onSend={handleSendMessage}
-                disabled={
-                  pathname === PATH_DASHBOARD.chat.root || pathname === PATH_DASHBOARD.chat.new
-                }
+                // disabled={
+                //   pathname === PATH_DASHBOARD.chat.root || pathname === PATH_DASHBOARD.chat.new
+                // }
               />
             </Stack>
 
             {detailView && (
               <ChatRoom conversation={selectedConversation} participants={displayParticipants} />
             )}
-          </Stack>
+          </Stack> */}
         </Stack>
       </Card>
     </Container>

@@ -12,12 +12,18 @@ import {
   Typography,
   StackProps,
   Autocomplete,
+  Button,
 } from '@mui/material';
 // @types
 import { IChatParticipant } from '../../../@types/chat';
 // components
 import Iconify from '../../../components/iconify';
 import SearchNotFound from '../../../components/search-not-found';
+import { searchParticipant } from 'src/api/search';
+import useResponsive from 'src/hooks/useResponsive';
+import createConversation from 'src/api/createConversation';
+import { useRouter } from 'next/router';
+import { PATH_DASHBOARD } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -34,17 +40,56 @@ export default function ChatHeaderCompose({
   sx,
   ...other
 }: Props) {
+  const { push } = useRouter()
   const [searchRecipients, setSearchRecipients] = useState('');
+  const [currentContacts, setCurrentContacts] = useState<IChatParticipant[]>([])
+  const isDesktop = useResponsive('up', 'sm');
 
   const handleAddRecipients = (selectedRecipients: IChatParticipant[]) => {
     setSearchRecipients('');
     onAddRecipients(selectedRecipients);
   };
 
+  const handleCreateConversation = async () => {
+    try{
+      const response = await createConversation({
+        with : recipients.map(r=> r._id)
+      });
+      if (!response) {
+        return console.error('Could not create conversation');
+      }
+      push(PATH_DASHBOARD.chat.view(response._id))
+    }catch(error){
+      console.error(error)
+    }
+  }
+
+  const handleSearchParticipant = (query: string) =>{
+    setSearchRecipients(query)
+
+    if (query && query.length >= 2) {
+      setCurrentContacts([])
+      let launchRequest = setTimeout(() => {
+        searchParticipant(query).then(
+          response => {
+            // const total = [...currentContacts, ...response.data]
+            // setCurrentContacts([...new Set(total)])
+            setCurrentContacts(response.data)}
+        ).catch(
+          error => {
+            console.log('Error', error.message)
+            // setSearchResults([]);
+          }
+        );
+      }, 500)
+      return () => clearTimeout(launchRequest);
+    }
+  }
+
   return (
     <Stack
-      spacing={1}
-      direction="row"
+      spacing={2}
+      direction={isDesktop ? "row" : "column"}
       alignItems="center"
       sx={{
         py: 2,
@@ -54,18 +99,18 @@ export default function ChatHeaderCompose({
       {...other}
     >
       <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-        To:
+        Create a conversation with:
       </Typography>
 
       <Autocomplete
-        sx={{ minWidth: 240 }}
+        sx={{ minWidth: isDesktop? 540 : "100%" }}
         multiple
         popupIcon={null}
-        noOptionsText={<SearchNotFound query={searchRecipients} />}
+        noOptionsText={<SearchNotFound query={searchRecipients} lengthCondition={2}/>}
         onChange={(event, value) => handleAddRecipients(value)}
-        onInputChange={(event, value) => setSearchRecipients(value)}
-        options={contacts}
-        getOptionLabel={(recipient) => recipient.firstname}
+        onInputChange={(event, value) => handleSearchParticipant(value)}
+        options={[...contacts, ...currentContacts]}
+        getOptionLabel={(recipient) => `${recipient.firstname} ${recipient.lastname}`}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -74,10 +119,16 @@ export default function ChatHeaderCompose({
           />
         )}
         renderOption={(props, recipient, { inputValue, selected }) => {
-          const { firstname, avatar } = recipient;
-          const matches = match(firstname, inputValue);
-          const parts = parse(firstname, matches);
+          const { firstname, lastname,  photoURL } = recipient;
+          console.log('inputValue', inputValue)
+          const name = `${firstname+" "+lastname}`
+          const matches = match(name, inputValue);
+          // const parts = parse(name, matches);
 
+          const firstnameParts = parse(`${firstname}`, match(firstname, inputValue));
+          const lastnameParts = parse(lastname, match(lastname, inputValue));
+          console.log('parts', firstnameParts, lastnameParts)
+          const parts = [...firstnameParts]
           return (
             <Box
               component="li"
@@ -96,7 +147,7 @@ export default function ChatHeaderCompose({
                   position: 'relative',
                 }}
               >
-                <Avatar alt={firstname} src={avatar} />
+                <Avatar alt={firstname} src={photoURL} />
                 <Box
                   sx={{
                     top: 0,
@@ -122,8 +173,8 @@ export default function ChatHeaderCompose({
                   <Iconify icon="eva:checkmark-fill" />
                 </Box>
               </Box>
-
-              {parts.map((part, index) => (
+              
+              {firstnameParts.map((part, index) => (
                 <Typography
                   key={index}
                   variant="subtitle2"
@@ -132,6 +183,16 @@ export default function ChatHeaderCompose({
                   {part.text}
                 </Typography>
               ))}
+
+              {/* {lastnameParts.map((part, index) => (
+                <Typography
+                  key={index}
+                  variant="subtitle2"
+                  color={part.highlight ? 'primary' : 'textPrimary'}
+                >
+                  {part.text}
+                </Typography>
+              ))} */}
             </Box>
           );
         }}
@@ -139,14 +200,32 @@ export default function ChatHeaderCompose({
           selectedRecipients.map((recipient, index) => (
             <Chip
               {...getTagProps({ index })}
-              key={recipient.id}
+              key={recipient._id}
               size="small"
-              label={recipient.firstname}
-              avatar={<Avatar alt={recipient.firstname} src={recipient.avatar} />}
+              label={recipient.firstname + " " + recipient.lastname}
+              avatar={<Avatar alt={recipient.firstname} src={recipient.photoURL} />}
             />
           ))
         }
       />
+      <Button
+          fullWidth
+          color="inherit"
+          variant="contained"
+          startIcon={<Iconify icon="eva:edit-fill" />}
+          onClick={handleCreateConversation}
+          sx={{
+            width: 120,
+            bgcolor: 'text.primary',
+            color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+            '&:hover': {
+              bgcolor: 'text.primary',
+              color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+            },
+          }}
+        >
+          create
+      </Button>
     </Stack>
   );
 }

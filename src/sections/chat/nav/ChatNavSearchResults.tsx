@@ -18,7 +18,7 @@ export default function ChatNavSearchResults({
   searchResults,
   onSelectContact,
 }: Props) {
-  const isNotFound = !searchResults.length && !!searchContacts;
+  const isNotFound = !searchResults?.length && !!searchContacts;
 
   return (
     <>

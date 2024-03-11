@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 // @mui
 import { Stack, InputBase, InputBaseProps, IconButton, InputAdornment } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 // utils
 import uuidv4 from '../../../utils/uuidv4';
 // @types
@@ -49,6 +50,7 @@ export default function ChatMessageInput({
     }
   };
 
+
   return (
     <>
       <InputBase
@@ -65,6 +67,10 @@ export default function ChatMessageInput({
         }
         endAdornment={
           <Stack direction="row" spacing={1} sx={{ flexShrink: 0, mr: 1.5 }}>
+            <IconButton size="small" onClick={()=>console.log('send by click')} color='primary'>
+              <SendIcon />
+            </IconButton>
+
             <IconButton disabled={disabled} size="small" onClick={handleClickAttach}>
               <Iconify icon="ic:round-add-photo-alternate" />
             </IconButton>

@@ -62,10 +62,9 @@ import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 Community.getLayout = (page: React.ReactElement) => (
-  <CircleAccessGuard>
-    <DashboardLayout>{page}</DashboardLayout>
-  </CircleAccessGuard>
+    <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
 );
+
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
 const CommentContext = createContext<(data: commentDataArg) => void>(() => null);

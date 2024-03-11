@@ -33,9 +33,9 @@ export default function ChatHeaderDetail({ participants }: Props) {
           <CustomAvatarGroup max={3}>
             {participants.map((participant) => (
               <CustomAvatar
-                key={participant.id}
+                key={participant._id}
                 alt={participant.firstname}
-                src={participant.avatar}
+                src={participant.photoURL}
               />
             ))}
           </CustomAvatarGroup>
@@ -56,7 +56,7 @@ export default function ChatHeaderDetail({ participants }: Props) {
       ) : (
         <Stack flexGrow={1} direction="row" alignItems="center" spacing={2}>
           <CustomAvatar
-            src={participantInfo?.avatar}
+            src={participantInfo?.photoURL}
             alt={participantInfo?.firstname}
             BadgeProps={{
               badgeContent: <BadgeStatus status={participantInfo?.status} />,

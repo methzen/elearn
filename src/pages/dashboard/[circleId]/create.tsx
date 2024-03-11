@@ -27,9 +27,7 @@ import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 CreatePage.getLayout = (page: React.ReactElement) => (
-  <CircleAccessGuard>
-    <DashboardLayout>{page}</DashboardLayout>
-  </CircleAccessGuard>
+<DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
 );
 // ----------------------------------------------------------------------
 

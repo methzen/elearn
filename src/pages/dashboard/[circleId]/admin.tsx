@@ -23,9 +23,7 @@ import { useSnackbar } from '../../../components/snackbar';
 // ----------------------------------------------------------------------
 
 Admin.getLayout = (page: React.ReactElement) => (
-  <CircleAccessGuard>
-    <DashboardLayout>{page}</DashboardLayout>
-  </CircleAccessGuard>
+<DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
 );
 
 export default function Admin() {

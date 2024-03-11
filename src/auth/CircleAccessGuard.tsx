@@ -50,13 +50,11 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
 
   const memoizedValue = useMemo(
     () =>
-      ({
-        role: myRole?.role,
-        name: myRole?.name,
-      } as RoleContextProps),
+      (myRole as RoleContextProps),
     [myRole]
   );
 
+  console.log('myRole', myRole, memoizedValue)
   if (access === null) {
     return <LoadingScreen />;
   }

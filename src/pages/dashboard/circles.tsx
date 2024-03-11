@@ -15,6 +15,7 @@ import useSWR from 'swr';
 import { PATH_DASHBOARD, PATH_PAGE } from 'src/routes/paths';
 import { useRouter } from 'next/router';
 import LoadingScreen from 'src/components/loading-screen';
+import { useEffect, useState } from 'react';
 // ----------------------------------------------------------------------
 
 PageTwo.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
@@ -26,7 +27,13 @@ export default function PageTwo() {
   const { data, isLoading } = useSWR(`/groups/get/all?page=${1}`, (url: string) =>
     getAllGroupsByPage(url)
   );
-  const userHasSubscription = !!user?.subscription.is_active;
+  const [userHasSubscription, setUserHasSub] = useState(false);
+
+  useEffect(()=>{
+    if(!!user?.subscription?.is_active){
+      setUserHasSub(true)
+    }
+  }, [user])
 
   const handleCreateCircle = () => {
     if (userHasSubscription) {

@@ -38,6 +38,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     context?.name as string,
     pathname === PATH_DASHBOARD.create
   );
+
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {

@@ -21,6 +21,7 @@ import ChatNavList from './ChatNavList';
 import ChatNavSearch from './ChatNavSearch';
 import ChatNavAccount from './ChatNavAccount';
 import ChatNavSearchResults from './ChatNavSearchResults';
+import { searchContact } from 'src/api/search';
 
 // ----------------------------------------------------------------------
 
@@ -90,27 +91,25 @@ export default function ChatNav({ conversations, activeConversationId }: Props) 
   };
 
   const handleChangeSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
       const { value } = event.target;
-
       setSearchContacts(value);
 
-      if (value) {
-        const response = await axios.get('/api/chat/search', {
-          params: { query: value },
-        });
-
-        setSearchResults(response.data.results);
-      } else {
-        setSearchResults([]);
+      if (value && value.length >=2) {
+        let launchRequest = setTimeout(()=>{
+          searchContact(value).then(
+            response => setSearchResults(response.data)
+          ).catch(
+            error =>{
+              console.log('Error', error.message)
+              setSearchResults([]);
+            }
+          );
+        }, 500)
+        return () => clearTimeout(launchRequest);
       }
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const handleSelectContact = (result: IChatContact) => {
-    console.log('result', result);
     setSearchContacts('');
     push(PATH_DASHBOARD.chat.view(result.firstname));
   };
@@ -129,12 +128,6 @@ export default function ChatNav({ conversations, activeConversationId }: Props) 
           <IconButton onClick={handleToggleNav}>
             <Iconify icon={openNav ? 'eva:arrow-ios-back-fill' : 'eva:arrow-ios-forward-fill'} />
           </IconButton>
-
-          {!isCollapse && (
-            <IconButton component={NextLink} href={PATH_DASHBOARD.chat.new}>
-              <Iconify icon="eva:edit-fill" />
-            </IconButton>
-          )}
         </Stack>
 
         {!isCollapse && (

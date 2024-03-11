@@ -21,9 +21,7 @@ import Video from '../../../components/ChapterDisplayer';
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => (
-  <CircleAccessGuard>
-    <DashboardLayout>{page}</DashboardLayout>
-  </CircleAccessGuard>
+<DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
 );
 // ----------------------------------------------------------------------
 
