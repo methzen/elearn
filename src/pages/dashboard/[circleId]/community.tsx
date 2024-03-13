@@ -259,21 +259,46 @@ interface Post {
   mutate: () => void;
 }
 
+interface By {
+  _id: string;
+  photoURL: string;
+  firstname: string;
+  lastname: string;
+};
+
 function PostCard({ post, mutate }: Post) {
   const { user } = useAuthContext();
 
-  const userHasLikedTheirPost = post?.personLikes?.filter((like) => like.id === user?.id);
+  const userHasLikedTheirPost = post?.personLikes?.filter((like) => like._id === user?.id);
   const [isLiked, setLiked] = useState(userHasLikedTheirPost?.length >= 1);
   const [likes, setLikes] = useState(post?.personLikes?.length);
   const [onComment, setOnComment] = useState(true);
   const [onReply, setOnReply] = useState(!onComment);
   const [expanded, setExpanded] = useState(false);
 
+  let personWhoContributed : By[] = post.personLikes
+
   let commentCount = post.commentCount;
 
   post.comments.forEach((comments) => {
     commentCount += comments?.comments ? comments?.comments?.length : 0;
   });
+
+
+  post.comments.forEach((comments) => {
+    if(!personWhoContributed.find((element:By) => element._id ===comments.by._id)){
+      personWhoContributed.push(comments.by)
+    }
+    let secondOrderComments = comments.comments
+    if(secondOrderComments && secondOrderComments.length > 1){
+      secondOrderComments.forEach( nex_comments =>{
+        if(!personWhoContributed.find((element:By) => element._id ===nex_comments.by._id)){
+          personWhoContributed.push(nex_comments.by)
+        }
+      })
+    }
+  });
+
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -378,9 +403,9 @@ function PostCard({ post, mutate }: Post) {
             />
           )}
           <CustomAvatarGroup>
-            {post?.personLikes?.map((person) => (
+            {personWhoContributed?.map((person) => (
               <CustomAvatar
-                key={person.id}
+                key={person._id}
                 alt={person.firstname}
                 src={person.photoURL}
                 name={`${person.firstname} ${person.lastname}`}

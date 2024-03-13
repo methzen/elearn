@@ -117,7 +117,7 @@ export type IUserProfilePost = {
   title: string;
   content: string;
   personLikes: {
-    id: string;
+    _id: string;
     photoURL: string;
     firstname: string;
     lastname: string;
