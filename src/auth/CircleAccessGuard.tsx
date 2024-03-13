@@ -54,7 +54,6 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
     [myRole]
   );
 
-  console.log('myRole', myRole, memoizedValue)
   if (access === null) {
     return <LoadingScreen />;
   }

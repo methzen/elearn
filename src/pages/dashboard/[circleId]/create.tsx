@@ -22,12 +22,11 @@ import {
 } from '../../../redux/slices/course';
 import { Chapter, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
-import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 CreatePage.getLayout = (page: React.ReactElement) => (
-<DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
+<DashboardLayout>{page}</DashboardLayout>
 );
 // ----------------------------------------------------------------------
 

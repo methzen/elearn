@@ -12,7 +12,7 @@ import Iconify from '../../../components/iconify';
 import { CourseSection } from '../../../sections/AddCoursSection';
 import { Chapter, Course, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
-import CircleAccessGuard, { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
+import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 import { useQuery } from '@tanstack/react-query';
 import { apiSetCurrentChapter, getCourseByGroupIdForLecture } from 'src/api/getCourseByGroupId';
 import LoadingScreen from 'src/components/loading-screen';
@@ -21,7 +21,7 @@ import Video from '../../../components/ChapterDisplayer';
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => (
-<DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
+<DashboardLayout>{page}</DashboardLayout>
 );
 // ----------------------------------------------------------------------
 

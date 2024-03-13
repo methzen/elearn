@@ -53,7 +53,6 @@ import likeAPost from '../../../api/likeAPost';
 import unlikeAPost from '../../../api/unlikeAPost';
 import commentAPost, { commentDataArg } from '../../../api/commentAPost';
 import CourseCardAside from '../../../components/CourseCardAside';
-import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import ReplyButton from 'src/sections/ReplayButton';
 import ExpandCommentButton from 'src/sections/seeComments';
 import DisplayReplies from 'src/sections/displayReplies';
@@ -62,7 +61,7 @@ import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 Community.getLayout = (page: React.ReactElement) => (
-    <DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
+    <DashboardLayout>{page}</DashboardLayout>
 );
 
 const getAllPosts = (url: string) => getAllPostsByPage(url);
@@ -391,7 +390,7 @@ function PostCard({ post, mutate }: Post) {
 
           <Box sx={{ flexGrow: 1 }} />
         </Stack>
-        <ExpandCommentButton functionality={handleExpandClick} expanded={expanded} />
+        {hasComments && <ExpandCommentButton functionality={handleExpandClick} expanded={expanded} />}
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>

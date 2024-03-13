@@ -13,6 +13,7 @@ import Header from './header';
 import NavMini from './nav/NavMini';
 import NavVertical from './nav/NavVertical';
 import NavHorizontal from './nav/NavHorizontal';
+import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 
 // ----------------------------------------------------------------------
 
@@ -91,5 +92,5 @@ export default function DashboardLayout({ children }: Props) {
     );
   };
 
-  return <AuthGuard> {renderContent()} </AuthGuard>;
+  return <AuthGuard> <CircleAccessGuard>{renderContent()}</CircleAccessGuard> </AuthGuard>;
 }
