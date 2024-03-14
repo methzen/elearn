@@ -290,7 +290,7 @@ function PostCard({ post, mutate }: Post) {
       personWhoContributed.push(comments.by)
     }
     let secondOrderComments = comments.comments
-    if(secondOrderComments && secondOrderComments.length > 1){
+    if(secondOrderComments && secondOrderComments.length > 0){
       secondOrderComments.forEach( nex_comments =>{
         if(!personWhoContributed.find((element:By) => element._id ===nex_comments.by._id)){
           personWhoContributed.push(nex_comments.by)

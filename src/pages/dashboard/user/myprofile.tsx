@@ -15,11 +15,11 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../../components/settings';
 // sections
 import { Profile, ProfileCover, ProfileCircles } from '../../../sections/profile';
-import { AccountBilling, AccountChangePassword } from '../../../sections/account';
+import { AccountBilling, AccountChangePassword, AccountSocialLinks } from '../../../sections/account';
 // sections
 import UserNewEditForm from '../../../sections/UserNewEditForm';
 import getUserData from 'src/api/getUserData';
-import { IUserAccountGeneral } from 'src/@types/user';
+import { IUserAccountGeneral, IUserSocialLink } from 'src/@types/user';
 // ----------------------------------------------------------------------
 
 MyProfilePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
@@ -46,6 +46,13 @@ export default function MyProfilePage() {
     }
   }, [currentUser, logout, user?.id]);
 
+  const socialLinks: IUserSocialLink = {
+    facebookLink :  "",
+    linkedinLink: "",
+    twitterLink: "",
+    instagramLink: "",
+    youtubeLink: ""
+  }
   const TABS = [
     {
       value: 'Circles',
@@ -64,6 +71,12 @@ export default function MyProfilePage() {
       label: 'Edit',
       icon: <Iconify icon="ic:round-account-box" />,
       component: <UserNewEditForm isEdit currentUser={currentUser && currentUser} />,
+    },
+    {
+      value: "Socials",
+      label: 'Socials',
+      icon: <Iconify icon="eva:share-fill" />,
+      component: <AccountSocialLinks socialLinks={socialLinks} />
     },
     {
       value: 'change_password',

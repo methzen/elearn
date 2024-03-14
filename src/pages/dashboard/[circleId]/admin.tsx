@@ -3,18 +3,15 @@ import Head from 'next/head';
 // layouts
 import DashboardLayout from '../../../layouts/dashboard';
 // components
-
 import { useEffect, useState } from 'react';
 // @mui
 import { Divider, Container, Card, Tabs, Tab } from '@mui/material';
-
 // sections
 import { useRouter } from 'next/router';
 import { Box } from '@mui/system';
 import EditCircle from 'src/sections/group/EditCircle';
 import getGroupDataForAdmin from 'src/api/getGroupDataForAdmin';
 import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
-import CircleAccessGuard from 'src/auth/CircleAccessGuard';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import UserListPage from 'src/sections/group/groupUsers';
 import updateGroup from 'src/api/updateGroup';
@@ -23,7 +20,7 @@ import { useSnackbar } from '../../../components/snackbar';
 // ----------------------------------------------------------------------
 
 Admin.getLayout = (page: React.ReactElement) => (
-<DashboardLayout><CircleAccessGuard>{page}</CircleAccessGuard></DashboardLayout>
+<DashboardLayout>{page}</DashboardLayout>
 );
 
 export default function Admin() {

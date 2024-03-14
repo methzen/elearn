@@ -54,7 +54,7 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
     [myRole]
   );
 
-  if (access === null) {
+  if (circleId && access === null) {
     return <LoadingScreen />;
   }
 

@@ -1,6 +1,7 @@
 // form
 import { useForm } from 'react-hook-form';
 // @mui
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import { Stack, Card, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // @types
@@ -9,6 +10,7 @@ import { IUserSocialLink } from '../../@types/user';
 import Iconify from '../../components/iconify';
 import { useSnackbar } from '../../components/snackbar';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
+import updateSocials from 'src/api/updateSocials';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +31,10 @@ const SOCIAL_LINKS = [
     value: 'twitterLink',
     icon: <Iconify icon="eva:twitter-fill" width={24} />,
   },
+  {
+    value: 'youtubeLink',
+    icon: <YouTubeIcon width={24} />,
+  },
 ] as const;
 
 // ----------------------------------------------------------------------
@@ -47,6 +53,7 @@ export default function AccountSocialLinks({ socialLinks }: Props) {
     instagramLink: socialLinks.instagramLink,
     linkedinLink: socialLinks.linkedinLink,
     twitterLink: socialLinks.twitterLink,
+    youtubeLink: socialLinks.youtubeLink,
   };
 
   const methods = useForm({
@@ -60,11 +67,12 @@ export default function AccountSocialLinks({ socialLinks }: Props) {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const newData = await updateSocials(data);
       enqueueSnackbar('Update success!');
-      console.log('DATA', data);
+      console.log('newData', newData);
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('Update failed!', {variant : "error"});
     }
   };
 

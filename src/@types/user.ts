@@ -5,6 +5,7 @@ export type IUserSocialLink = {
   instagramLink: string;
   linkedinLink: string;
   twitterLink: string;
+  youtubeLink: string;
 };
 
 export type IUserProfileContribution = {
