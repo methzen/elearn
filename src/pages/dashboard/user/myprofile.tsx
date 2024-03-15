@@ -74,7 +74,7 @@ export default function MyProfilePage() {
     },
     {
       value: "Socials",
-      label: 'Socials',
+      label: 'Social Links',
       icon: <Iconify icon="eva:share-fill" />,
       component: <AccountSocialLinks socialLinks={socialLinks} />
     },

@@ -67,9 +67,8 @@ export default function AccountSocialLinks({ socialLinks }: Props) {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      const newData = await updateSocials(data);
+      await updateSocials(data);
       enqueueSnackbar('Update success!');
-      console.log('newData', newData);
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Update failed!', {variant : "error"});
