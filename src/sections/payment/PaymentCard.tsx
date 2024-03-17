@@ -7,12 +7,22 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 interface PaymentCardProps {
+  large?: boolean;
+  ButtonText: string;
+  Title: string;
   handleSubmit: (e: any) => void;
   errorMessage: string;
   isLoading: boolean;
 }
 
-export default function PaymentCard({ handleSubmit, errorMessage, isLoading }: PaymentCardProps) {
+export default function PaymentCard({
+  handleSubmit,
+  errorMessage,
+  isLoading,
+  Title,
+  ButtonText,
+  large,
+}: PaymentCardProps) {
   const theme = useTheme();
   const css_style = {
     style: {
@@ -33,11 +43,11 @@ export default function PaymentCard({ handleSubmit, errorMessage, isLoading }: P
       },
     },
   };
-
+  const width = large ? { width: 500 } : {};
   return (
-    <div>
-      <Stack spacing={5}>
-        <Typography variant="h6">Enter your credit card info</Typography>
+    <Stack sx={{ ...width }}>
+      <Stack spacing={2}>
+        <Typography variant="h6">{Title}</Typography>
       </Stack>
       <form onSubmit={handleSubmit}>
         <Stack spacing={5} mt={5}>
@@ -51,6 +61,11 @@ export default function PaymentCard({ handleSubmit, errorMessage, isLoading }: P
           >
             <CardElement options={{ ...css_style }} />
           </div>
+          {errorMessage && (
+            <Typography align="justify" sx={{ color: 'red' }}>
+              {errorMessage}
+            </Typography>
+          )}
           <LoadingButton
             disabled={isLoading}
             fullWidth
@@ -67,19 +82,18 @@ export default function PaymentCard({ handleSubmit, errorMessage, isLoading }: P
               },
             }}
           >
-            Subscribe
+            {ButtonText}
           </LoadingButton>
-          {errorMessage && <div>{errorMessage}</div>}
         </Stack>
         <Stack alignItems="center" spacing={2} sx={{ mt: 2 }}>
           <Stack direction="row" alignItems="center" spacing={1}>
             <Iconify icon="eva:shield-fill" sx={{ color: 'primary.main' }} />
             <Typography variant="subtitle2">
-              Secure credit card payment powered by Stripe
+              Secure credit card collection powered by Stripe
             </Typography>
           </Stack>
         </Stack>
       </form>
-    </div>
+    </Stack>
   );
 }

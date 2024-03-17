@@ -48,11 +48,7 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
     }
   }, [circleId, push]);
 
-  const memoizedValue = useMemo(
-    () =>
-      (myRole as RoleContextProps),
-    [myRole]
-  );
+  const memoizedValue = useMemo(() => myRole as RoleContextProps, [myRole]);
 
   if (circleId && access === null) {
     return <LoadingScreen />;

@@ -40,9 +40,9 @@ export default function ChatHeaderCompose({
   sx,
   ...other
 }: Props) {
-  const { push } = useRouter()
+  const { push } = useRouter();
   const [searchRecipients, setSearchRecipients] = useState('');
-  const [currentContacts, setCurrentContacts] = useState<IChatParticipant[]>([])
+  const [currentContacts, setCurrentContacts] = useState<IChatParticipant[]>([]);
   const isDesktop = useResponsive('up', 'sm');
 
   const handleAddRecipients = (selectedRecipients: IChatParticipant[]) => {
@@ -51,45 +51,44 @@ export default function ChatHeaderCompose({
   };
 
   const handleCreateConversation = async () => {
-    try{
+    try {
       const response = await createConversation({
-        with : recipients.map(r=> r._id)
+        with: recipients.map((r) => r._id),
       });
       if (!response) {
         return console.error('Could not create conversation');
       }
-      push(PATH_DASHBOARD.chat.view(response._id))
-    }catch(error){
-      console.error(error)
+      push(PATH_DASHBOARD.chat.view(response._id));
+    } catch (error) {
+      console.error(error);
     }
-  }
+  };
 
-  const handleSearchParticipant = (query: string) =>{
-    setSearchRecipients(query)
+  const handleSearchParticipant = (query: string) => {
+    setSearchRecipients(query);
 
     if (query && query.length >= 2) {
-      setCurrentContacts([])
+      setCurrentContacts([]);
       let launchRequest = setTimeout(() => {
-        searchParticipant(query).then(
-          response => {
+        searchParticipant(query)
+          .then((response) => {
             // const total = [...currentContacts, ...response.data]
             // setCurrentContacts([...new Set(total)])
-            setCurrentContacts(response.data)}
-        ).catch(
-          error => {
-            console.log('Error', error.message)
+            setCurrentContacts(response.data);
+          })
+          .catch((error) => {
+            console.log('Error', error.message);
             // setSearchResults([]);
-          }
-        );
-      }, 500)
+          });
+      }, 500);
       return () => clearTimeout(launchRequest);
     }
-  }
+  };
 
   return (
     <Stack
       spacing={2}
-      direction={isDesktop ? "row" : "column"}
+      direction={isDesktop ? 'row' : 'column'}
       alignItems="center"
       sx={{
         py: 2,
@@ -103,10 +102,10 @@ export default function ChatHeaderCompose({
       </Typography>
 
       <Autocomplete
-        sx={{ minWidth: isDesktop? 540 : "100%" }}
+        sx={{ minWidth: isDesktop ? 540 : '100%' }}
         multiple
         popupIcon={null}
-        noOptionsText={<SearchNotFound query={searchRecipients} lengthCondition={2}/>}
+        noOptionsText={<SearchNotFound query={searchRecipients} lengthCondition={2} />}
         onChange={(event, value) => handleAddRecipients(value)}
         onInputChange={(event, value) => handleSearchParticipant(value)}
         options={[...contacts, ...currentContacts]}
@@ -119,16 +118,16 @@ export default function ChatHeaderCompose({
           />
         )}
         renderOption={(props, recipient, { inputValue, selected }) => {
-          const { firstname, lastname,  photoURL } = recipient;
-          console.log('inputValue', inputValue)
-          const name = `${firstname+" "+lastname}`
+          const { firstname, lastname, photoURL } = recipient;
+          console.log('inputValue', inputValue);
+          const name = `${firstname + ' ' + lastname}`;
           const matches = match(name, inputValue);
           // const parts = parse(name, matches);
 
           const firstnameParts = parse(`${firstname}`, match(firstname, inputValue));
           const lastnameParts = parse(lastname, match(lastname, inputValue));
-          console.log('parts', firstnameParts, lastnameParts)
-          const parts = [...firstnameParts]
+          console.log('parts', firstnameParts, lastnameParts);
+          const parts = [...firstnameParts];
           return (
             <Box
               component="li"
@@ -173,7 +172,7 @@ export default function ChatHeaderCompose({
                   <Iconify icon="eva:checkmark-fill" />
                 </Box>
               </Box>
-              
+
               {firstnameParts.map((part, index) => (
                 <Typography
                   key={index}
@@ -202,29 +201,29 @@ export default function ChatHeaderCompose({
               {...getTagProps({ index })}
               key={recipient._id}
               size="small"
-              label={recipient.firstname + " " + recipient.lastname}
+              label={recipient.firstname + ' ' + recipient.lastname}
               avatar={<Avatar alt={recipient.firstname} src={recipient.photoURL} />}
             />
           ))
         }
       />
       <Button
-          fullWidth
-          color="inherit"
-          variant="contained"
-          startIcon={<Iconify icon="eva:edit-fill" />}
-          onClick={handleCreateConversation}
-          sx={{
-            width: 120,
+        fullWidth
+        color="inherit"
+        variant="contained"
+        startIcon={<Iconify icon="eva:edit-fill" />}
+        onClick={handleCreateConversation}
+        sx={{
+          width: 120,
+          bgcolor: 'text.primary',
+          color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+          '&:hover': {
             bgcolor: 'text.primary',
             color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
-            '&:hover': {
-              bgcolor: 'text.primary',
-              color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
-            },
-          }}
-        >
-          create
+          },
+        }}
+      >
+        create
       </Button>
     </Stack>
   );

@@ -10,7 +10,6 @@ export async function searchContact(query: string) {
   return response;
 }
 
-
 export async function searchParticipant(query: string) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios({

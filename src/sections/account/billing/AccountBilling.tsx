@@ -5,51 +5,65 @@ import AccountBillingPaymentMethod from './AccountBillingPaymentMethod';
 import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory';
 import { useEffect, useState } from 'react';
 import {
-  cancelSubscription,
+  updateSubscription,
   getCustomerInvoices,
   getCustomerPaymentMethods,
   getSubscription,
 } from 'src/api/stripe';
 import { CustomerStripeInvoice, StripePaymentMethod, StripeSubscription } from 'src/@types/stripe';
-
+import { useSnackbar } from '../../../components/snackbar';
 // ----------------------------------------------------------------------
 
 export default function AccountBilling() {
+  const { enqueueSnackbar } = useSnackbar();
   const [subscriptions, setSubscriptions] = useState<StripeSubscription[]>([]);
   const [hasMorsSubs, setHasMoreSubs] = useState(false);
   const [invoices, setInvoices] = useState<CustomerStripeInvoice[]>([]);
   const [hasMoreInvoice, setHasMoreInvoice] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
+  const getData = async () => {
+    const { has_more, data } = await getSubscription();
+    if (data) {
+      setSubscriptions(data);
+      setHasMoreSubs(!!has_more);
+    }
+    const response = await getCustomerInvoices();
+    if (response) {
+      setInvoices(response.data);
+      setHasMoreInvoice(!!response.has_more);
+    }
+    const res = await getCustomerPaymentMethods();
+    if (res) {
+      setPaymentMethods(res.data);
+    }
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      const { has_more, data } = await getSubscription();
-      if (data) {
-        setSubscriptions(data);
-        setHasMoreSubs(!!has_more);
-      }
-      const response = await getCustomerInvoices();
-      if (response) {
-        setInvoices(response.data);
-        setHasMoreInvoice(!!response.has_more);
-      }
-      const res = await getCustomerPaymentMethods();
-      if (res) {
-        setPaymentMethods(res.data);
-      }
-    };
     getData();
   }, []);
 
   const handleCancel = async (id: string) => {
-    const { has_more, data } = await cancelSubscription(id);
-    if (data) {
-      setSubscriptions(data);
+    try {
+      const { has_more, data } = await updateSubscription(id, 'cancel');
+      if (data) {
+        setSubscriptions(data);
+      }
+      enqueueSnackbar('Success!');
+    } catch (err) {
+      enqueueSnackbar('Failed!', { variant: 'error' });
     }
   };
 
   const handleReactivate = async (id: string) => {
-    console.log('usr want to reactivate susbcription');
+    try {
+      const { has_more, data } = await updateSubscription(id, 'reactivate');
+      if (data) {
+        setSubscriptions(data);
+      }
+      enqueueSnackbar('Success!');
+    } catch (error) {
+      enqueueSnackbar('Failed!', { variant: 'error' });
+    }
   };
 
   const getMoreInvoices = async () => {
@@ -67,13 +81,11 @@ export default function AccountBilling() {
             >
               Subscriptions
             </Typography>
-
             <Stack spacing={3} divider={<Divider sx={{ borderStyle: 'dashed' }} />}>
               {subscriptions.length >= 1 &&
                 subscriptions.map((subscription) => (
                   <Stack key={subscription.id} spacing={1}>
                     <Typography variant="subtitle1">{subscription.description}</Typography>
-
                     <Typography variant="body2">
                       <Box component="span" sx={{ color: 'text.secondary', mr: 0.5 }}>
                         Status:
@@ -93,25 +105,22 @@ export default function AccountBilling() {
 
                     <Stack direction="row" spacing={1}>
                       <Button
-                        color={subscription.status === 'canceled' ? 'success' : 'error'}
+                        color={subscription.cancel_at_period_end ? 'success' : 'error'}
                         size="small"
                         onClick={() =>
-                          subscription.status === 'canceled'
+                          subscription.cancel_at_period_end
                             ? handleReactivate(subscription.id)
                             : handleCancel(subscription.id)
                         }
                       >
-                        {subscription.status === 'canceled'
-                          ? 'Reactivate subscription'
-                          : 'Cancel subscription'}
+                        {subscription.cancel_at_period_end ? 'Reactivate' : 'Cancel'}
                       </Button>
                     </Stack>
                   </Stack>
                 ))}
             </Stack>
           </Card>
-
-          <AccountBillingPaymentMethod paymentMethods={paymentMethods} />
+          <AccountBillingPaymentMethod paymentMethods={paymentMethods} mutate={getData} />
         </Stack>
       </Grid>
 

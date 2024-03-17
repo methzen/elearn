@@ -30,7 +30,7 @@ PaymentPage.getLayout = (page: React.ReactElement) => <SimpleLayout>{page}</Simp
 export default function PaymentPage() {
   const { query, push } = useRouter();
   const isDesktop = useResponsive('up', 'md');
-  const { user } = useAuthContext();
+  const { user, initialize } = useAuthContext();
   const [paymentPlans, setPaymentPlans] = useState<InnerCirclePlan[]>();
   const [susbcriptionName, setSubscriptionName] = useState('');
   const [selectedPrice, setSelectedPrice] = useState<Price | null>(null);
@@ -39,7 +39,8 @@ export default function PaymentPage() {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [stripePaymentIntent, setStripePaymentIntent] = useState<any>();
+  let stripePaymentMethod = '';
+  const [processOk, setProcessOk] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -79,12 +80,15 @@ export default function PaymentPage() {
   }, [query, paymentPlans]);
 
   useEffect(() => {
-    if (stripePaymentIntent && selectedPrice) {
+    if (processOk && selectedPrice) {
       if (user) {
         push(PATH_DASHBOARD.circles);
       }
     }
-  }, [stripePaymentIntent, push, selectedPrice, user]);
+    if (user && user.subscription?.is_active) {
+      push(PATH_DASHBOARD.circles);
+    }
+  }, [processOk, push, selectedPrice, user]);
 
   const handleChange = () => {
     const currentPrice = selectedPrice;
@@ -100,7 +104,6 @@ export default function PaymentPage() {
     company: user?.company || '',
   };
 
-  console.log('inputData', inputData);
   const handleChangeMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value;
     const selectedP = paymentPlans?.find((p) => p.subscription === value) as InnerCirclePlan;
@@ -135,25 +138,62 @@ export default function PaymentPage() {
         trial
       );
       const cardElement = elements.getElement(CardElement);
-      // Use card Element to tokenize payment details
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret as string, {
-        setup_future_usage: 'off_session',
-        receipt_email: user?.email,
-        payment_method: {
+      if (!subscriptionId) {
+        setIsLoading(false);
+        setErrorMessage('Subscription has failed.');
+        return;
+      }
+      if (subscriptionId && clientSecret === 'in_trial') {
+        // save the user payment method
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+          type: 'card',
           card: cardElement as StripeCardElement,
           billing_details: {
             name: user?.displayName,
+            email: user?.email,
           },
-        },
-      });
-      if (error) {
-        throw new Error(error.message);
+        });
+        if (error) {
+          setIsLoading(false);
+          setErrorMessage(error.message as string);
+          return;
+        }
+        stripePaymentMethod = paymentMethod.id;
+      } else {
+        // Use card Element to tokenize payment details
+        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret as string, {
+          setup_future_usage: 'off_session',
+          receipt_email: user?.email,
+          payment_method: {
+            card: cardElement as StripeCardElement,
+            billing_details: {
+              name: user?.displayName,
+              email: user?.email,
+            },
+          },
+        });
+        if (error) {
+          setIsLoading(false);
+          setErrorMessage(error.message as string);
+          return;
+        }
+        if (paymentIntent.status !== 'succeeded') {
+          setIsLoading(false);
+          setErrorMessage(
+            `${
+              paymentIntent.last_payment_error
+                ? paymentIntent.last_payment_error
+                : 'Something went wrong.'
+            }`
+          );
+          return;
+        }
       }
-      if (subscriptionId && paymentIntent) {
-        await updateCoachSubscription(subscriptionId);
-        setStripePaymentIntent(paymentIntent);
-        setIsLoading(false);
-      }
+
+      await updateCoachSubscription(subscriptionId, stripePaymentMethod);
+      setIsLoading(false);
+      setProcessOk(true);
+      initialize();
     } catch (error) {
       setIsLoading(false);
       setErrorMessage(error.message);
@@ -218,6 +258,8 @@ export default function PaymentPage() {
               {!user && <AuthSignupForm inputData={inputData} viewOnly={!!user} />}
               {user && (
                 <PaymentCard
+                  ButtonText="Subscribe"
+                  Title="Enter your credit card info"
                   handleSubmit={handleStripeSubmit}
                   errorMessage={errorMessage}
                   isLoading={isLoading}

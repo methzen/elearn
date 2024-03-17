@@ -19,9 +19,7 @@ import { useSnackbar } from '../../../components/snackbar';
 
 // ----------------------------------------------------------------------
 
-Admin.getLayout = (page: React.ReactElement) => (
-<DashboardLayout>{page}</DashboardLayout>
-);
+Admin.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default function Admin() {
   const { enqueueSnackbar } = useSnackbar();

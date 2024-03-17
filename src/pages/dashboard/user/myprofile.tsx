@@ -15,7 +15,11 @@ import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../../components/settings';
 // sections
 import { Profile, ProfileCover, ProfileCircles } from '../../../sections/profile';
-import { AccountBilling, AccountChangePassword, AccountSocialLinks } from '../../../sections/account';
+import {
+  AccountBilling,
+  AccountChangePassword,
+  AccountSocialLinks,
+} from '../../../sections/account';
 // sections
 import UserNewEditForm from '../../../sections/UserNewEditForm';
 import getUserData from 'src/api/getUserData';
@@ -47,12 +51,12 @@ export default function MyProfilePage() {
   }, [currentUser, logout, user?.id]);
 
   const socialLinks: IUserSocialLink = {
-    facebookLink :  "",
-    linkedinLink: "",
-    twitterLink: "",
-    instagramLink: "",
-    youtubeLink: ""
-  }
+    facebookLink: '',
+    linkedinLink: '',
+    twitterLink: '',
+    instagramLink: '',
+    youtubeLink: '',
+  };
   const TABS = [
     {
       value: 'Circles',
@@ -73,10 +77,10 @@ export default function MyProfilePage() {
       component: <UserNewEditForm isEdit currentUser={currentUser && currentUser} />,
     },
     {
-      value: "Socials",
+      value: 'Socials',
       label: 'Social Links',
       icon: <Iconify icon="eva:share-fill" />,
-      component: <AccountSocialLinks socialLinks={socialLinks} />
+      component: <AccountSocialLinks socialLinks={socialLinks} />,
     },
     {
       value: 'change_password',

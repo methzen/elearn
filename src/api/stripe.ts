@@ -29,10 +29,10 @@ export async function createGroupSubscription(priceId: string, groupId: string) 
   return response.data;
 }
 
-export async function cancelSubscription(subscriptionId: string) {
+export async function updateSubscription(subscriptionId: string, action: 'cancel' | 'reactivate') {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.post(
-    `/cancel-subscription`,
+    `/users/subscription/${action}`,
     {
       subscriptionId,
     },
@@ -79,6 +79,23 @@ export async function getCustomerPaymentMethods() {
   return response.data;
 }
 
+export async function attachPaymentMethods(paymentMethodId: string) {
+  const token = localStorage.getItem('x-auth-token');
+  const response = await axios.post(
+    '/users/payment/method/attach',
+    {
+      paymentMethodId,
+    },
+    {
+      headers: {
+        'x-auth-token': token,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  return response.data;
+}
+
 export async function subscribeCoach(subscriptionName: string, price: string, trial: boolean) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.post(
@@ -98,12 +115,16 @@ export async function subscribeCoach(subscriptionName: string, price: string, tr
   return response.data;
 }
 
-export async function updateCoachSubscription(subscriptionId: string) {
+export async function updateCoachSubscription(
+  subscriptionId: string,
+  stripePaymentMethod: string | undefined
+) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.put(
     `/users/coach/update/subscription`,
     {
       subscriptionId,
+      paymentMethodId: stripePaymentMethod,
     },
     {
       headers: {

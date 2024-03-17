@@ -20,9 +20,7 @@ import { PATH_DASHBOARD } from 'src/routes/paths';
 import Video from '../../../components/ChapterDisplayer';
 // ----------------------------------------------------------------------
 
-Library.getLayout = (page: React.ReactElement) => (
-<DashboardLayout>{page}</DashboardLayout>
-);
+Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 // ----------------------------------------------------------------------
 
 export default function Library() {

@@ -60,9 +60,7 @@ import LoadingScreen from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
-Community.getLayout = (page: React.ReactElement) => (
-    <DashboardLayout>{page}</DashboardLayout>
-);
+Community.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 
 const getAllPosts = (url: string) => getAllPostsByPage(url);
 
@@ -264,7 +262,7 @@ interface By {
   photoURL: string;
   firstname: string;
   lastname: string;
-};
+}
 
 function PostCard({ post, mutate }: Post) {
   const { user } = useAuthContext();
@@ -276,7 +274,7 @@ function PostCard({ post, mutate }: Post) {
   const [onReply, setOnReply] = useState(!onComment);
   const [expanded, setExpanded] = useState(false);
 
-  let personWhoContributed : By[] = post.personLikes
+  let personWhoContributed: By[] = post.personLikes;
 
   let commentCount = post.commentCount;
 
@@ -284,21 +282,19 @@ function PostCard({ post, mutate }: Post) {
     commentCount += comments?.comments ? comments?.comments?.length : 0;
   });
 
-
   post.comments.forEach((comments) => {
-    if(!personWhoContributed.find((element:By) => element._id ===comments.by._id)){
-      personWhoContributed.push(comments.by)
+    if (!personWhoContributed.find((element: By) => element._id === comments.by._id)) {
+      personWhoContributed.push(comments.by);
     }
-    let secondOrderComments = comments.comments
-    if(secondOrderComments && secondOrderComments.length > 0){
-      secondOrderComments.forEach( nex_comments =>{
-        if(!personWhoContributed.find((element:By) => element._id ===nex_comments.by._id)){
-          personWhoContributed.push(nex_comments.by)
+    let secondOrderComments = comments.comments;
+    if (secondOrderComments && secondOrderComments.length > 0) {
+      secondOrderComments.forEach((nex_comments) => {
+        if (!personWhoContributed.find((element: By) => element._id === nex_comments.by._id)) {
+          personWhoContributed.push(nex_comments.by);
         }
-      })
+      });
     }
   });
-
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -415,7 +411,9 @@ function PostCard({ post, mutate }: Post) {
 
           <Box sx={{ flexGrow: 1 }} />
         </Stack>
-        {hasComments && <ExpandCommentButton functionality={handleExpandClick} expanded={expanded} />}
+        {hasComments && (
+          <ExpandCommentButton functionality={handleExpandClick} expanded={expanded} />
+        )}
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>

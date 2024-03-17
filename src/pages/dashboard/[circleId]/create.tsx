@@ -25,9 +25,7 @@ import { useAuthContext } from 'src/auth/useAuthContext';
 import LoadingScreen from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
-CreatePage.getLayout = (page: React.ReactElement) => (
-<DashboardLayout>{page}</DashboardLayout>
-);
+CreatePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
 // ----------------------------------------------------------------------
 
 const enum LibraryPageType {

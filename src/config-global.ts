@@ -1,9 +1,9 @@
 // API
 // ----------------------------------------------------------------------
 
-export const HOST_API_KEY = process.env.HOST_API_KEY || 'http://localhost:5000';
+export const HOST_API_KEY = process.env.HOST_API_KEY || 'http://localhost:5001';
 export const STRP_PK = process.env.STRIPE_PUBLIC_KEY;
-export const CLIENT_TOKEN = ""
+export const CLIENT_TOKEN = '';
 
 // LAYOUT
 // ----------------------------------------------------------------------

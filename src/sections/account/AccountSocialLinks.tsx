@@ -71,7 +71,7 @@ export default function AccountSocialLinks({ socialLinks }: Props) {
       enqueueSnackbar('Update success!');
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Update failed!', {variant : "error"});
+      enqueueSnackbar('Update failed!', { variant: 'error' });
     }
   };
 

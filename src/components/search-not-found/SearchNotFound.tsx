@@ -4,11 +4,11 @@ import { Paper, PaperProps, Typography } from '@mui/material';
 
 interface Props extends PaperProps {
   query?: string;
-  lengthCondition ?: number 
+  lengthCondition?: number;
 }
 
 export default function SearchNotFound({ query, lengthCondition, sx, ...other }: Props) {
-  const criteria = lengthCondition ? !!(query && query.length >= lengthCondition) : !!query
+  const criteria = lengthCondition ? !!(query && query.length >= lengthCondition) : !!query;
   return criteria ? (
     <Paper
       sx={{
@@ -29,7 +29,7 @@ export default function SearchNotFound({ query, lengthCondition, sx, ...other }:
     </Paper>
   ) : (
     <Typography variant="body2" sx={sx}>
-      {lengthCondition? `${"Please enter more characters"}`: `${"Please enter keywords"}`}
+      {lengthCondition ? `${'Please enter more characters'}` : `${'Please enter keywords'}`}
     </Typography>
   );
 }

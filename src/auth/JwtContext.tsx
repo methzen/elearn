@@ -254,12 +254,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user: state.user,
       isVerified: state.isVerified,
       method: 'jwt',
+      initialize,
       login,
       register,
       logout,
       verify,
     }),
-    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register, verify]
+    [
+      state.isAuthenticated,
+      state.isInitialized,
+      state.user,
+      initialize,
+      login,
+      logout,
+      register,
+      verify,
+    ]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

@@ -39,4 +39,5 @@ export type JWTContextType = {
   ) => Promise<void>;
   verify: (code: string) => Promise<void>;
   logout: () => void;
+  initialize: () => void;
 };

@@ -50,7 +50,6 @@ export default function ChatMessageInput({
     }
   };
 
-
   return (
     <>
       <InputBase
@@ -67,7 +66,7 @@ export default function ChatMessageInput({
         }
         endAdornment={
           <Stack direction="row" spacing={1} sx={{ flexShrink: 0, mr: 1.5 }}>
-            <IconButton size="small" onClick={()=>console.log('send by click')} color='primary'>
+            <IconButton size="small" onClick={() => console.log('send by click')} color="primary">
               <SendIcon />
             </IconButton>
 

@@ -1,87 +1,88 @@
 import { useState } from 'react';
 // @mui
 import {
-  Stack,
   Button,
   Dialog,
-  TextField,
-  IconButton,
   DialogTitle,
   DialogProps,
   DialogActions,
   DialogContent,
-  InputAdornment,
 } from '@mui/material';
 // components
-import Iconify from '../../components/iconify';
-import MenuPopover from '../../components/menu-popover';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import { StripeCardElement } from '@stripe/stripe-js';
+import PaymentCard from './PaymentCard';
+import { attachPaymentMethods } from 'src/api/stripe';
 
 // ----------------------------------------------------------------------
 
 interface Props extends DialogProps {
   onClose: VoidFunction;
+  mutate?: () => void;
 }
 
-export default function PaymentNewCardDialog({ onClose, ...other }: Props) {
-  const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
+export default function PaymentNewCardDialog({ onClose, mutate, ...other }: Props) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
-    setOpenPopover(event.currentTarget);
-  };
+  const { user } = useAuthContext();
 
-  const handleClosePopover = () => {
-    setOpenPopover(null);
+  const handleStripeSubmit = async (e: any) => {
+    e.preventDefault();
+    setIsLoading(true);
+    if (!stripe || !elements) {
+      return;
+    }
+    try {
+      const cardElement = elements.getElement(CardElement);
+      // save the user payment method
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement as StripeCardElement,
+        billing_details: {
+          name: user?.displayName,
+          email: user?.email,
+        },
+      });
+      if (error) {
+        setIsLoading(false);
+        setErrorMessage(error.message as string);
+        return;
+      }
+      await attachPaymentMethods(paymentMethod.id);
+      setIsLoading(false);
+      mutate && mutate();
+      onClose();
+    } catch (error) {
+      setIsLoading(false);
+      setErrorMessage(error.message);
+      return;
+    }
   };
 
   return (
     <>
-      <Dialog maxWidth="xs" onClose={onClose} {...other}>
+      <Dialog onClose={onClose} {...other}>
         <DialogTitle> Add new card </DialogTitle>
-
         <DialogContent sx={{ overflow: 'unset' }}>
-          <Stack spacing={3}>
-            <TextField fullWidth label="Name on card" />
-
-            <TextField fullWidth label="Card number" />
-
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField label="MM/YY" />
-
-              <TextField
-                label="CVV"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton size="small" edge="end" onClick={handleOpenPopover}>
-                        <Iconify icon="eva:info-fill" />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Stack>
-          </Stack>
+          <PaymentCard
+            large={true}
+            ButtonText="Add New Card"
+            Title=""
+            handleSubmit={handleStripeSubmit}
+            errorMessage={errorMessage}
+            isLoading={isLoading}
+          />
         </DialogContent>
-
         <DialogActions>
           <Button color="inherit" variant="outlined" onClick={onClose}>
             Cancel
           </Button>
-
-          <Button variant="contained" onClick={onClose}>
-            Add
-          </Button>
         </DialogActions>
       </Dialog>
-
-      <MenuPopover
-        open={openPopover}
-        onClose={handleClosePopover}
-        arrow="bottom-center"
-        sx={{ maxWidth: 200, typography: 'body2', textAlign: 'center' }}
-      >
-        Three-digit number on the back of your VISA card
-      </MenuPopover>
     </>
   );
 }

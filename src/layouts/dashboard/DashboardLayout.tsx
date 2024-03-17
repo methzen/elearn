@@ -92,5 +92,9 @@ export default function DashboardLayout({ children }: Props) {
     );
   };
 
-  return <AuthGuard> <CircleAccessGuard>{renderContent()}</CircleAccessGuard> </AuthGuard>;
+  return (
+    <AuthGuard>
+      <CircleAccessGuard>{renderContent()}</CircleAccessGuard>{' '}
+    </AuthGuard>
+  );
 }

@@ -29,11 +29,11 @@ export default function PageTwo() {
   );
   const [userHasSubscription, setUserHasSub] = useState(false);
 
-  useEffect(()=>{
-    if(!!user?.subscription?.is_active){
-      setUserHasSub(true)
+  useEffect(() => {
+    if (!!user?.subscription?.is_active) {
+      setUserHasSub(true);
     }
-  }, [user])
+  }, [user]);
 
   const handleCreateCircle = () => {
     if (userHasSubscription) {

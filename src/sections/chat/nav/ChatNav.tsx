@@ -91,22 +91,20 @@ export default function ChatNav({ conversations, activeConversationId }: Props) 
   };
 
   const handleChangeSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = event.target;
-      setSearchContacts(value);
+    const { value } = event.target;
+    setSearchContacts(value);
 
-      if (value && value.length >=2) {
-        let launchRequest = setTimeout(()=>{
-          searchContact(value).then(
-            response => setSearchResults(response.data)
-          ).catch(
-            error =>{
-              console.log('Error', error.message)
-              setSearchResults([]);
-            }
-          );
-        }, 500)
-        return () => clearTimeout(launchRequest);
-      }
+    if (value && value.length >= 2) {
+      let launchRequest = setTimeout(() => {
+        searchContact(value)
+          .then((response) => setSearchResults(response.data))
+          .catch((error) => {
+            console.log('Error', error.message);
+            setSearchResults([]);
+          });
+      }, 500);
+      return () => clearTimeout(launchRequest);
+    }
   };
 
   const handleSelectContact = (result: IChatContact) => {

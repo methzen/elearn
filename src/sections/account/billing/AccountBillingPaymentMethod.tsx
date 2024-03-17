@@ -13,9 +13,10 @@ import { StripePaymentMethod } from 'src/@types/stripe';
 
 type Props = {
   paymentMethods: StripePaymentMethod[];
+  mutate?: () => void;
 };
 
-export default function AccountBillingPaymentMethod({ paymentMethods }: Props) {
+export default function AccountBillingPaymentMethod({ paymentMethods, mutate }: Props) {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -49,7 +50,7 @@ export default function AccountBillingPaymentMethod({ paymentMethods }: Props) {
           spacing={2}
           direction={{
             xs: 'column',
-            md: 'row',
+            md: 'column',
           }}
         >
           {paymentMethods.map((method) => (
@@ -88,7 +89,7 @@ export default function AccountBillingPaymentMethod({ paymentMethods }: Props) {
         </Stack>
       </Card>
 
-      <PaymentNewCardDialog open={open} onClose={handleClose} />
+      <PaymentNewCardDialog open={open} onClose={handleClose} mutate={mutate} />
     </>
   );
 }
