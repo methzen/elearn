@@ -5,18 +5,16 @@ import getAllGroupsByPage from 'src/api/getAllGroupsByPage';
 import CourseCard, { Circle } from 'src/components/CourseCard';
 // ----------------------------------------------------------------------
 
-export default function ProfileCircles() {
-  const [data, setData] = useState<Circle[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      const { items } = await getAllGroupsByPage(`/groups/get/all?page=${1}` as string);
-      if (items) {
-        setData([...items]);
-      }
-    };
-    getData();
-  }, []);
+export default function ProfileCircles({ circles }: { circles?: Circle[] }) {
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     const { items } = await getAllGroupsByPage(`/groups/get/all?page=${1}` as string);
+  //     if (items) {
+  //       setData([...items]);
+  //     }
+  //   };
+  //   getData();
+  // }, []);
 
   return (
     <Box
@@ -28,7 +26,7 @@ export default function ProfileCircles() {
         md: 'repeat(3, 1fr)',
       }}
     >
-      {data && data?.map((course: any) => <CourseCard key={course.id} {...course} />)}
+      {circles && circles?.map((course: any) => <CourseCard key={course.id} {...course} />)}
     </Box>
   );
 }

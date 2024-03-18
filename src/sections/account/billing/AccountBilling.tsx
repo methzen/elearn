@@ -3,51 +3,30 @@ import { Box, Grid, Card, Button, Typography, Stack, Divider } from '@mui/materi
 //
 import AccountBillingPaymentMethod from './AccountBillingPaymentMethod';
 import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory';
-import { useEffect, useState } from 'react';
-import {
-  updateSubscription,
-  getCustomerInvoices,
-  getCustomerPaymentMethods,
-  getSubscription,
-} from 'src/api/stripe';
+import { useState } from 'react';
+import { updateSubscription } from 'src/api/stripe';
 import { CustomerStripeInvoice, StripePaymentMethod, StripeSubscription } from 'src/@types/stripe';
 import { useSnackbar } from '../../../components/snackbar';
+import { ProfileData } from 'src/@types/user';
 // ----------------------------------------------------------------------
 
-export default function AccountBilling() {
+export default function AccountBilling({
+  ProfileData,
+  mutate,
+}: {
+  ProfileData: ProfileData;
+  mutate: () => void;
+}) {
   const { enqueueSnackbar } = useSnackbar();
-  const [subscriptions, setSubscriptions] = useState<StripeSubscription[]>([]);
-  const [hasMorsSubs, setHasMoreSubs] = useState(false);
-  const [invoices, setInvoices] = useState<CustomerStripeInvoice[]>([]);
-  const [hasMoreInvoice, setHasMoreInvoice] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
-  const getData = async () => {
-    const { has_more, data } = await getSubscription();
-    if (data) {
-      setSubscriptions(data);
-      setHasMoreSubs(!!has_more);
-    }
-    const response = await getCustomerInvoices();
-    if (response) {
-      setInvoices(response.data);
-      setHasMoreInvoice(!!response.has_more);
-    }
-    const res = await getCustomerPaymentMethods();
-    if (res) {
-      setPaymentMethods(res.data);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
+  const [subscriptions] = useState<StripeSubscription[]>(ProfileData.subscriptions.data);
+  const [invoices] = useState<CustomerStripeInvoice[]>(ProfileData.invoices.data);
+  const [hasMoreInvoice] = useState(ProfileData.invoices.has_more);
+  const [paymentMethods] = useState<StripePaymentMethod[]>(ProfileData.paymentMethods.data);
 
   const handleCancel = async (id: string) => {
     try {
-      const { has_more, data } = await updateSubscription(id, 'cancel');
-      if (data) {
-        setSubscriptions(data);
-      }
+      await updateSubscription(id, 'cancel');
+      mutate();
       enqueueSnackbar('Success!');
     } catch (err) {
       enqueueSnackbar('Failed!', { variant: 'error' });
@@ -56,10 +35,8 @@ export default function AccountBilling() {
 
   const handleReactivate = async (id: string) => {
     try {
-      const { has_more, data } = await updateSubscription(id, 'reactivate');
-      if (data) {
-        setSubscriptions(data);
-      }
+      await updateSubscription(id, 'reactivate');
+      mutate();
       enqueueSnackbar('Success!');
     } catch (error) {
       enqueueSnackbar('Failed!', { variant: 'error' });
@@ -98,9 +75,8 @@ export default function AccountBilling() {
                         Price:
                       </Box>
                       {subscription.currency === 'usd' && '$'}
-                      {subscription.items.data[0].plan.amount / 100}
-                      {subscription.currency === 'eur' && '€'} /
-                      {subscription.items.data[0].plan.interval}
+                      {subscription.amount / 100}
+                      {subscription.currency === 'eur' && '€'} /{subscription.interval}
                     </Typography>
 
                     <Stack direction="row" spacing={1}>
@@ -120,7 +96,7 @@ export default function AccountBilling() {
                 ))}
             </Stack>
           </Card>
-          <AccountBillingPaymentMethod paymentMethods={paymentMethods} mutate={getData} />
+          <AccountBillingPaymentMethod paymentMethods={paymentMethods} mutate={mutate} />
         </Stack>
       </Grid>
 

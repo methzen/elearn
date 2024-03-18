@@ -26,9 +26,10 @@ interface FormValuesProps extends Omit<IUserAccountGeneral, 'photoURL'> {
 type Props = {
   isEdit?: boolean;
   currentUser: IUserAccountGeneral | null;
+  mutate?: () => void;
 };
 
-export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
+export default function UserNewEditForm({ isEdit = true, currentUser, mutate }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [fileData, setFileData] = useState<any>(null);
@@ -93,6 +94,7 @@ export default function UserNewEditForm({ isEdit = true, currentUser }: Props) {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       await updateUserData(data, fileData);
+      mutate && mutate();
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
     } catch (error) {
       console.error(error);

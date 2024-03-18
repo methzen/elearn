@@ -1,7 +1,7 @@
 // @mui
 import { Stack, Link, Button, Typography } from '@mui/material';
 // utils
-import { fDate, fTimestamp, fToNow } from '../../../utils/formatTime';
+import { fDate } from '../../../utils/formatTime';
 import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Iconify from '../../../components/iconify';
@@ -31,7 +31,7 @@ export default function AccountBillingInvoiceHistory({
           <Stack key={invoice.id} direction="row" justifyContent="space-between" sx={{ width: 1 }}>
             <Typography variant="body2" sx={{ minWidth: 120 }}>
               {/* multiplied by 1000 so that the argument is in milliseconds, not seconds */}
-              {fDate(invoice.status_transitions.paid_at * 1000)}
+              {fDate(invoice.paid_at * 1000)}
             </Typography>
 
             <Typography variant="body2">{fCurrency(invoice.amount_paid / 100)}</Typography>

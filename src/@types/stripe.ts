@@ -47,6 +47,8 @@ export interface StripePlan {
 }
 
 export interface StripeSubscription {
+  amount: number;
+  interval: string;
   id: string;
   object: string;
   application: any;
@@ -126,6 +128,8 @@ export interface StripeSubscription {
 
 export interface CustomerStripeInvoice {
   id: string;
+  paid_at: number;
+  hosted_invoice_ur: string;
   account_country: string;
   account_name: string;
   account_tax_ids: null | string;
@@ -291,6 +295,11 @@ export interface StripeCard {
 }
 export interface StripePaymentMethod {
   id: string;
+  brand: string;
+  last4: string;
+  exp_month: number;
+  exp_year: number;
+
   billing_details: {
     address: {
       city: any;

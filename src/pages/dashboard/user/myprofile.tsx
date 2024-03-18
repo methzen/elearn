@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // next
 import Head from 'next/head';
 // @mui
+import useSWR from 'swr';
 import { Tab, Card, Tabs, Container, Box } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
@@ -22,8 +23,10 @@ import {
 } from '../../../sections/account';
 // sections
 import UserNewEditForm from '../../../sections/UserNewEditForm';
-import getUserData from 'src/api/getUserData';
-import { IUserAccountGeneral, IUserSocialLink } from 'src/@types/user';
+import { getUserProfileData } from 'src/api/getUserData';
+import { IUserSocialLink, ProfileData } from 'src/@types/user';
+import LoadingScreen from 'src/components/loading-screen';
+
 // ----------------------------------------------------------------------
 
 MyProfilePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
@@ -32,127 +35,118 @@ MyProfilePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}<
 
 export default function MyProfilePage() {
   const { themeStretch } = useSettingsContext();
-  const { user, logout } = useAuthContext();
+  const { user } = useAuthContext();
   const [currentTab, setCurrentTab] = useState('Circles');
-  const [currentUser, setCurrentUser] = useState<IUserAccountGeneral | null>(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      const response = await getUserData(user?.id as string);
-      if (response) {
-        setCurrentUser({ ...response, id: user?.id });
-      } else {
-        logout();
-      }
-    };
-    if (!currentUser) {
-      getData();
-    }
-  }, [currentUser, logout, user?.id]);
+  const { data, isLoading, error, mutate } = useSWR<ProfileData>(
+    `/users/profile/data?id=${user?.id}`,
+    getUserProfileData
+  );
+
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <div> Une erreur est survenue!</div>;
+
+  const userData = data?.user;
+  const groups = data?.groups;
 
   const socialLinks: IUserSocialLink = {
-    facebookLink: '',
-    linkedinLink: '',
-    twitterLink: '',
-    instagramLink: '',
-    youtubeLink: '',
+    facebookLink: userData?.socialLinks?.facebookLink || '',
+    linkedinLink: userData?.socialLinks?.linkedinLink || '',
+    twitterLink: userData?.socialLinks?.twitterLink || '',
+    instagramLink: userData?.socialLinks?.instagramLink || '',
+    youtubeLink: userData?.socialLinks?.youtubeLink || '',
   };
   const TABS = [
     {
       value: 'Circles',
       label: 'Circles',
       icon: <Iconify icon="ic:round-perm-media" />,
-      component: <ProfileCircles />,
+      component: <ProfileCircles circles={groups} />,
     },
     {
       value: 'Profile',
       label: 'Profile',
       icon: <Iconify icon="ic:round-account-box" />,
-      component: <Profile info={currentUser} />,
+      component: userData && <Profile info={userData} />,
     },
     {
       value: 'Edit',
       label: 'Edit',
       icon: <Iconify icon="ic:round-account-box" />,
-      component: <UserNewEditForm isEdit currentUser={currentUser && currentUser} />,
+      component: userData && <UserNewEditForm isEdit currentUser={userData} mutate={mutate} />,
     },
     {
       value: 'Socials',
       label: 'Social Links',
       icon: <Iconify icon="eva:share-fill" />,
-      component: <AccountSocialLinks socialLinks={socialLinks} />,
+      component: <AccountSocialLinks socialLinks={socialLinks} mutate={mutate} />,
     },
     {
       value: 'change_password',
       label: 'Change password',
       icon: <Iconify icon="ic:round-vpn-key" />,
-      component: <AccountChangePassword user={currentUser} />,
+      component: userData && <AccountChangePassword user={userData} />,
     },
     {
       value: 'billing',
       label: 'Billing',
       icon: <Iconify icon="ic:round-receipt" />,
-      component: <AccountBilling />,
+      component: data && <AccountBilling ProfileData={data} mutate={mutate} />,
     },
   ];
-
-  const loading = <div> loading...</div>;
 
   return (
     <>
       <Head>
         <title> Profile | Inner Circle</title>
       </Head>
-      {!currentUser ? (
-        loading
-      ) : (
-        <Container maxWidth={themeStretch ? false : 'lg'}>
-          <CustomBreadcrumbs
-            heading="Profile"
-            links={[
-              { name: 'Dashboard', href: PATH_DASHBOARD.root },
-              { name: 'User', href: PATH_DASHBOARD.user.myprofile },
-              { name: currentUser ? `${currentUser.firstname} ${currentUser.lastname}` : '' },
-            ]}
-          />
-          <Card
+
+      <Container maxWidth={themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading="Profile"
+          links={[
+            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'User', href: PATH_DASHBOARD.user.myprofile },
+            { name: userData ? `${userData.firstname} ${userData.lastname}` : '' },
+          ]}
+        />
+        <Card
+          sx={{
+            mb: 3,
+            height: 280,
+            position: 'relative',
+          }}
+        >
+          {userData && <ProfileCover {...userData} />}
+
+          <Tabs
+            value={currentTab}
+            onChange={(event, newValue) => setCurrentTab(newValue)}
             sx={{
-              mb: 3,
-              height: 280,
-              position: 'relative',
+              width: 1,
+              bottom: 0,
+              zIndex: 9,
+              position: 'absolute',
+              bgcolor: 'background.paper',
+              '& .MuiTabs-flexContainer': {
+                pr: { md: 3 },
+                justifyContent: {
+                  sm: 'center',
+                  md: 'flex-end',
+                },
+              },
             }}
           >
-            <ProfileCover {...currentUser} />
+            {TABS.map((tab) => (
+              <Tab key={tab.value} value={tab.value} icon={tab.icon} label={tab.label} />
+            ))}
+          </Tabs>
+        </Card>
 
-            <Tabs
-              value={currentTab}
-              onChange={(event, newValue) => setCurrentTab(newValue)}
-              sx={{
-                width: 1,
-                bottom: 0,
-                zIndex: 9,
-                position: 'absolute',
-                bgcolor: 'background.paper',
-                '& .MuiTabs-flexContainer': {
-                  pr: { md: 3 },
-                  justifyContent: {
-                    sm: 'center',
-                    md: 'flex-end',
-                  },
-                },
-              }}
-            >
-              {TABS.map((tab) => (
-                <Tab key={tab.value} value={tab.value} icon={tab.icon} label={tab.label} />
-              ))}
-            </Tabs>
-          </Card>
-
-          {TABS.map(
-            (tab) => tab.value === currentTab && <Box key={tab.value}> {tab.component} </Box>
-          )}
-        </Container>
-      )}
+        {TABS.map(
+          (tab) => tab.value === currentTab && <Box key={tab.value}> {tab.component} </Box>
+        )}
+      </Container>
     </>
   );
 }

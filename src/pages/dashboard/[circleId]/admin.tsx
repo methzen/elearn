@@ -85,7 +85,6 @@ export default function Admin() {
       <Head>
         <title>Admin Circle</title>
       </Head>
-
       <Container sx={{ my: 10 }}>
         <Card sx={{ mt: 2 }}>
           <Tabs

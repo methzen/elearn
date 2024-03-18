@@ -9,3 +9,13 @@ export default async function getUserData(id: string) {
   });
   return response.data;
 }
+
+export async function getUserProfileData(url: string) {
+  const token = localStorage.getItem('x-auth-token');
+  const response = await axios({
+    url: url,
+    headers: { 'x-auth-token': token },
+    withCredentials: true,
+  });
+  return response.data;
+}

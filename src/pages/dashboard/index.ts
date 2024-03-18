@@ -11,11 +11,12 @@ export default function Index() {
 
   useEffect(() => {
     if (router.pathname === '/dashboard' && user) {
-      if (user?.isVerified) {
-        router.push(PATH_DASHBOARD.circles);
-      } else {
-        router.push(PATH_AUTH.verify);
-      }
+      router.push(PATH_DASHBOARD.circles);
+      // if (user?.isVerified) {
+      //   router.push(PATH_DASHBOARD.circles);
+      // } else {
+      //   router.push(PATH_AUTH.verify);
+      // }
     }
   }, [user, router]);
 

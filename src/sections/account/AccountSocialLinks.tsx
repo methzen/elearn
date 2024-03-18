@@ -43,9 +43,10 @@ type FormValuesProps = IUserSocialLink;
 
 type Props = {
   socialLinks: IUserSocialLink;
+  mutate: () => void;
 };
 
-export default function AccountSocialLinks({ socialLinks }: Props) {
+export default function AccountSocialLinks({ socialLinks, mutate }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const defaultValues = {
@@ -68,6 +69,7 @@ export default function AccountSocialLinks({ socialLinks }: Props) {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       await updateSocials(data);
+      mutate();
       enqueueSnackbar('Update success!');
     } catch (error) {
       console.error(error);

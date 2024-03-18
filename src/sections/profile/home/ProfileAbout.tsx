@@ -20,7 +20,7 @@ const StyledIcon = styled(Iconify)(({ theme }) => ({
 
 export default function ProfileAbout({ about, country, email, job, company }: IUserProfileAbout) {
   return (
-    <Card>
+    <Card sx={{ mt: 3 }}>
       <CardHeader title="About" />
 
       <Stack spacing={2} sx={{ p: 3 }}>
@@ -49,10 +49,8 @@ export default function ProfileAbout({ about, country, email, job, company }: IU
         {job && (
           <Stack direction="row">
             <StyledIcon icon="ic:round-business-center" />
-
             <Typography variant="body2">
-              {job}
-
+              {job}{' '}
               {company && (
                 <Link component="span" variant="subtitle2" color="text.primary">
                   at &nbsp; {company}

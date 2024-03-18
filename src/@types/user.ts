@@ -1,5 +1,8 @@
 // ----------------------------------------------------------------------
 
+import { Circle } from 'src/components/CourseCard';
+import { CustomerStripeInvoice, StripePaymentMethod, StripeSubscription } from './stripe';
+
 export type IUserSocialLink = {
   facebookLink: string;
   instagramLink: string;
@@ -164,6 +167,7 @@ export type IUserAccountGeneral = {
   groups?: string[];
   contribution?: number | null;
   showPrivateUserData?: boolean;
+  socialLinks?: IUserSocialLink;
 };
 
 export type IUserAccountBillingCreditCard = {
@@ -205,3 +209,11 @@ export type IUserAccountNotificationSettings = {
   applicationProduct: boolean;
   applicationBlog: boolean;
 };
+
+export interface ProfileData {
+  user: IUserAccountGeneral;
+  groups: Circle[];
+  subscriptions: { data: StripeSubscription[]; object: string; has_more: boolean; url: string };
+  paymentMethods: { data: StripePaymentMethod[]; object: string; has_more: boolean; url: string };
+  invoices: { data: CustomerStripeInvoice[]; object: string; has_more: boolean; url: string };
+}

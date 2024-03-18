@@ -18,15 +18,12 @@ type Props = {
 
 export default function AccountBillingPaymentMethod({ paymentMethods, mutate }: Props) {
   const [open, setOpen] = useState(false);
-
   const handleOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
-
   return (
     <>
       <Card sx={{ p: 3 }}>
@@ -66,14 +63,14 @@ export default function AccountBillingPaymentMethod({ paymentMethods, mutate }: 
               <Image
                 alt="icon"
                 src={
-                  method.card.brand.toLowerCase() === 'mastercard'
+                  method.brand.toLowerCase() === 'mastercard'
                     ? '/assets/icons/payments/ic_mastercard.svg'
                     : '/assets/icons/payments/ic_visa.svg'
                 }
                 sx={{ mb: 1, maxWidth: 36 }}
               />
 
-              <Typography variant="subtitle2">{`**** **** **** ${method.card.last4}`}</Typography>
+              <Typography variant="subtitle2">{`**** **** **** ${method.last4}`}</Typography>
 
               <IconButton
                 sx={{
