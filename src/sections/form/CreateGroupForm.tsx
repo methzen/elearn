@@ -135,7 +135,7 @@ export default function CreateAgroup({
       {openModal && (
         <OnboardConnectDialog
           open={openModal}
-          cancelPost={() => setOpenModal(false)}
+          cancelPost={() => {setOpenModal(false); setValue('isPaying', false, { shouldValidate: true })}}
           setUpStripe={() => push(stripeLink)}
         />
       )}
