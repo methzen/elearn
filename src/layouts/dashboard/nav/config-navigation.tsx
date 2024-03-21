@@ -36,7 +36,6 @@ const ICONS = {
 };
 
 const GroupNav = (id: string, isAdmin: boolean, groupName: string, pathnameCreate = false) => {
-  console.log('groupName', groupName);
   const defaultItems: NavListProps[] = [
     {
       title: 'My Circles',

@@ -3,13 +3,16 @@ import { alpha, styled } from '@mui/material/styles';
 import { Box, Card, Avatar, Divider, Typography, Stack, IconButton } from '@mui/material';
 // utils
 import { fShortenNumber } from '../../utils/formatNumber';
-// _mock
-import { _socials } from '../../_mock/arrays';
 // components
 import Image from '../../components/image';
 import Iconify from '../../components/iconify';
 import SvgColor from '../../components/svg-color';
 import { GroupAboutProps } from 'src/auth/CircleGuard';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +34,44 @@ type Props = {
 
 export default function AboutCard({ group }: Props) {
   const { name, imageUrl, description, author, members } = group;
+
+  const _socials = [
+    {
+      value: 'facebookLink',
+      name: 'FaceBook',
+      icon: <FacebookIcon/>,
+      color: '#1877F2',
+      path: author.socialLinks.facebookLink,
+    },
+    {
+      value: 'instagramLink',
+      name: 'Instagram',
+      icon: <InstagramIcon/>,
+      color: '#E02D69',
+      path: author.socialLinks.instagramLink,
+    },
+    {
+      value: 'linkedinLink',
+      name: 'Linkedin',
+      icon: <LinkedInIcon/>,
+      color: '#007EBB',
+      path: author.socialLinks.linkedinLink,
+    },
+    {
+      value: 'twitterLink',
+      name: 'Twitter',
+      icon: <TwitterIcon/>,
+      color: '#00AAEC',
+      path: author.socialLinks.twitterLink,
+    },
+    {
+      value: 'youtubeLink',
+      name: 'Youtube',
+      icon: <YouTubeIcon/>,
+      color: '#f00',
+      path: author.socialLinks.youtubeLink,
+    },
+  ];
 
   return (
     <Card sx={{ textAlign: 'center' }}>
@@ -80,7 +121,11 @@ export default function AboutCard({ group }: Props) {
 
       <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mt: 1, mb: 3 }}>
         {_socials.map((social) => (
+         social.path?
           <IconButton
+            href={social.path}
+            target='_blank'
+            rel="noreferrer"
             key={social.name}
             sx={{
               color: social.color,
@@ -89,8 +134,8 @@ export default function AboutCard({ group }: Props) {
               },
             }}
           >
-            <Iconify icon={social.icon} />
-          </IconButton>
+            {social.icon}
+          </IconButton> : null
         ))}
       </Stack>
 

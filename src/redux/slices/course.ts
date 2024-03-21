@@ -195,11 +195,11 @@ export function CreateACourse(data: CreateCourseData) {
   };
 }
 
-export function getCourse(groupId: string) {
+export function getCourse(urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const response = await getCourseByGroupId(groupId);
+      const response = await getCourseByGroupId(urlName);
       if (response.groupHasNoCourse) {
         dispatch(endLoading());
         return;

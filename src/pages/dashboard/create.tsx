@@ -32,7 +32,7 @@ export default function create() {
       const response = await createGroup(data);
       enqueueSnackbar('Circle has been created successfully.');
       setIsLoading(false);
-      push(PATH_DASHBOARD.group.community(response.data.id));
+      push(PATH_DASHBOARD.group.community(response.data.urlName));
     } catch (error) {
       console.error(error);
       enqueueSnackbar(error.message || 'failed to create circle', { variant: 'error' });

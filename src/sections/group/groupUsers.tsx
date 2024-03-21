@@ -192,7 +192,7 @@ export default function UserListPage() {
               New User
         </Button> */}
 
-      <Card>
+      <Card sx={{ marginTop: 2 }}>
         <Tabs
           value={
             typeof filterStatus === 'string' ? 'all' : filterStatus === true ? 'banned' : 'active'

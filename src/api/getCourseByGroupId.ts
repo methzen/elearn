@@ -1,8 +1,8 @@
 import axios from 'src/utils/axios';
 
-export async function getCourseByGroupId(groupId: string) {
+export async function getCourseByGroupId(urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.get(`/groups/course/get?groupId=${groupId}`, {
+  const response = await axios.get(`/groups/course/get?urlName=${urlName}`, {
     headers: {
       'x-auth-token': token,
     },
@@ -10,9 +10,9 @@ export async function getCourseByGroupId(groupId: string) {
   return response.data;
 }
 
-export async function getCourseByGroupIdForLecture(groupId: string) {
+export async function getCourseByGroupIdForLecture(urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.get(`/groups/course/student/get?groupId=${groupId}`, {
+  const response = await axios.get(`/groups/course/student/get?urlName=${urlName}`, {
     headers: {
       'x-auth-token': token,
     },

@@ -13,13 +13,14 @@ export type Circle = {
   imageUrl: string;
   description: string;
   ownerShipLevel: string;
+  urlName: string;
 };
 
-export default function CourseCard({ id, name, imageUrl, description, ownerShipLevel }: Circle) {
+export default function CourseCard({ id, name, urlName, imageUrl, description, ownerShipLevel }: Circle) {
   const { push } = useRouter();
 
   const getInsideGroup = () => {
-    push(`/dashboard/${id}/community`);
+    push(`/dashboard/${urlName}/community`);
   };
 
   return (

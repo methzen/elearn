@@ -30,6 +30,9 @@ export default function Library() {
     push,
     query: { circleId },
   } = useRouter();
+
+  if (!circleId) return <LoadingScreen />;
+
   const context = useContext(CircleAccessRoleContext);
   const isAdmin = context?.role === RoleType.admin;
   const [currentChapter, setCurrentChapter] = useState<{ sectionId: string; chapterId: string }>({
@@ -47,6 +50,8 @@ export default function Library() {
       setCurrentChapter(data.viewCurrentChapter);
     }
   }, [data]);
+
+  if (isLoading) return <LoadingScreen />;
 
   const handleSetCurrentChapter = async (sectionId: string, chapterId: string) => {
     setCurrentChapter({ sectionId, chapterId });
@@ -70,7 +75,6 @@ export default function Library() {
     }
     return cuChapter;
   };
-  if (!circleId || isLoading) return <LoadingScreen />;
 
   const linkName = !!data
     ? 'What will you learn today ?'

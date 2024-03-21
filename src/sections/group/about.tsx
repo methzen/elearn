@@ -140,7 +140,7 @@ function About() {
     if (isAuthenticated && user) {
       if (group.by === user.id) {
         // user is the owner of this group get them in the group admin page
-        push(PATH_DASHBOARD.group.admin(group.id));
+        push(PATH_DASHBOARD.group.admin(group.urlName));
       }
       setCanCheckOut(true);
     } else {
@@ -199,7 +199,7 @@ function About() {
 
   useEffect(() => {
     if (stripePaymentIntent && selectedPrice) {
-      push(PATH_DASHBOARD.group.community(selectedPrice.group));
+      push(PATH_DASHBOARD.group.community(group.urlName));
     }
   }, [stripePaymentIntent, push, selectedPrice]);
 

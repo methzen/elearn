@@ -76,7 +76,7 @@ export default function Community() {
 
   const [page, setPage] = useState<number>(1);
   const { data, isLoading, mutate } = useSWR(
-    `/posts/get-all-posts?page=${page}&groupId=${circleId}`,
+    `/posts/get-all-posts?page=${page}&urlName=${circleId}`,
     getAllPosts
   );
 
@@ -85,7 +85,7 @@ export default function Community() {
       return;
     }
     try {
-      const response = await submitNewPost(content, circleId as string);
+      const response = await submitNewPost(content, data.group.id as string);
       enqueueSnackbar(response.data);
       mutate();
     } catch (ResponseError) {
@@ -108,7 +108,7 @@ export default function Community() {
     }
   };
 
-  if (isLoading) return <LoadingScreen />;
+  if (!circleId || isLoading) return <LoadingScreen />;
   const posts: IUserProfilePost[] = data?.posts;
 
   return (

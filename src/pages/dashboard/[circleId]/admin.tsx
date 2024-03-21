@@ -54,7 +54,6 @@ export default function Admin() {
       setIsLoading(false);
       enqueueSnackbar('The circle has been updated successfully.');
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
       enqueueSnackbar('Could not update circle', { variant: 'error' });
     }

@@ -7,6 +7,7 @@ import LoadingScreen from '../components/loading-screen';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import getGroupCheckoutInfo from 'src/api/getGroupCheckoutInfo';
 import { Price } from 'src/@types/stripe';
+import { IUserSocialLink } from 'src/@types/user';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ type contextProps = {
 export type GroupAboutProps = {
   id: string;
   name: string;
+  urlName: string
   by: string;
   description: string;
   imageUrl: string;
@@ -32,13 +34,7 @@ export type GroupAboutProps = {
     id: string;
     imageUrl: string;
     role: string;
-    socials: {
-      facebook: string;
-      linkedIn: string;
-      youtube: string;
-      twitter: string;
-      website: string;
-    };
+    socialLinks: IUserSocialLink;
   };
   members: {
     online: number;
