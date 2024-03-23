@@ -39,35 +39,35 @@ export default function AboutCard({ group }: Props) {
     {
       value: 'facebookLink',
       name: 'FaceBook',
-      icon: <FacebookIcon/>,
+      icon: <FacebookIcon />,
       color: '#1877F2',
       path: author.socialLinks.facebookLink,
     },
     {
       value: 'instagramLink',
       name: 'Instagram',
-      icon: <InstagramIcon/>,
+      icon: <InstagramIcon />,
       color: '#E02D69',
       path: author.socialLinks.instagramLink,
     },
     {
       value: 'linkedinLink',
       name: 'Linkedin',
-      icon: <LinkedInIcon/>,
+      icon: <LinkedInIcon />,
       color: '#007EBB',
       path: author.socialLinks.linkedinLink,
     },
     {
       value: 'twitterLink',
       name: 'Twitter',
-      icon: <TwitterIcon/>,
+      icon: <TwitterIcon />,
       color: '#00AAEC',
       path: author.socialLinks.twitterLink,
     },
     {
       value: 'youtubeLink',
       name: 'Youtube',
-      icon: <YouTubeIcon/>,
+      icon: <YouTubeIcon />,
       color: '#f00',
       path: author.socialLinks.youtubeLink,
     },
@@ -120,23 +120,24 @@ export default function AboutCard({ group }: Props) {
       </Typography>
 
       <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mt: 1, mb: 3 }}>
-        {_socials.map((social) => (
-         social.path?
-          <IconButton
-            href={social.path}
-            target='_blank'
-            rel="noreferrer"
-            key={social.name}
-            sx={{
-              color: social.color,
-              '&:hover': {
-                bgcolor: alpha(social.color, 0.08),
-              },
-            }}
-          >
-            {social.icon}
-          </IconButton> : null
-        ))}
+        {_socials.map((social) =>
+          social.path ? (
+            <IconButton
+              href={social.path}
+              target="_blank"
+              rel="noreferrer"
+              key={social.name}
+              sx={{
+                color: social.color,
+                '&:hover': {
+                  bgcolor: alpha(social.color, 0.08),
+                },
+              }}
+            >
+              {social.icon}
+            </IconButton>
+          ) : null
+        )}
       </Stack>
 
       <Box sx={{ p: 3 }}>

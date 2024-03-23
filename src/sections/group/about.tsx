@@ -244,8 +244,8 @@ function About() {
             </Button>
           ) : selectedPrice ? (
             <PaymentCard
-              Title='Add your payment card'
-              ButtonText='Subscribe'
+              Title="Add your payment card"
+              ButtonText="Subscribe"
               handleSubmit={handleStripeSubmit}
               errorMessage={errorMessage}
               isLoading={isLoading}

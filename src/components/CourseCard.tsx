@@ -16,7 +16,14 @@ export type Circle = {
   urlName: string;
 };
 
-export default function CourseCard({ id, name, urlName, imageUrl, description, ownerShipLevel }: Circle) {
+export default function CourseCard({
+  id,
+  name,
+  urlName,
+  imageUrl,
+  description,
+  ownerShipLevel,
+}: Circle) {
   const { push } = useRouter();
 
   const getInsideGroup = () => {

@@ -14,11 +14,10 @@ import Iconify from '../../components/iconify';
 
 const LINKS = [
   {
-    headline: 'Minimal',
+    headline: 'Coomuniti',
     children: [
       { name: 'About us', href: PATH_PAGE.about },
       { name: 'Contact us', href: PATH_PAGE.contact },
-      { name: 'FAQs', href: PATH_PAGE.faqs },
     ],
   },
   {
@@ -31,8 +30,8 @@ const LINKS = [
   {
     headline: 'Contact',
     children: [
-      { name: 'support@minimals.cc', href: '#' },
-      { name: 'Los Angeles, 359  Hidden Valley Road', href: '#' },
+      { name: 'support@vcp.com', href: '#' },
+      { name: 'Villejuif, France', href: '#' },
     ],
   },
 ];
@@ -132,7 +131,7 @@ export default function Footer() {
             textAlign: { xs: 'center', md: 'left' },
           }}
         >
-          © 2021. All rights reserved
+          © 2024. All rights reserved
         </Typography>
       </Container>
     </Box>

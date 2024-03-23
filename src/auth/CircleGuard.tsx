@@ -22,7 +22,7 @@ type contextProps = {
 export type GroupAboutProps = {
   id: string;
   name: string;
-  urlName: string
+  urlName: string;
   by: string;
   description: string;
   imageUrl: string;

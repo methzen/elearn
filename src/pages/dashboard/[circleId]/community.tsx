@@ -265,6 +265,9 @@ interface By {
 }
 
 function PostCard({ post, mutate }: Post) {
+  const {
+    query: { circleId },
+  } = useRouter();
   const { user } = useAuthContext();
 
   const userHasLikedTheirPost = post?.personLikes?.filter((like) => like._id === user?.id);
@@ -305,14 +308,14 @@ function PostCard({ post, mutate }: Post) {
   const handleLike = async () => {
     setLiked(true);
     setLikes((prevLikes) => prevLikes + 1);
-    await likeAPost({ postId: post.id });
+    await likeAPost({ postId: post.id, urlName: circleId as string });
     mutate();
   };
 
   const handleUnlike = async () => {
     setLiked(false);
     setLikes((prevLikes) => prevLikes - 1);
-    await unlikeAPost({ postId: post.id });
+    await unlikeAPost({ postId: post.id, urlName: circleId as string });
     mutate();
   };
 
@@ -497,12 +500,6 @@ function CommentComponent({
               </Typography>
             </Stack>
             {user?.id === comment.by._id ? null : (
-              // <Stack direction="row" spacing={1}>
-              //   <EditButton
-              //     functionality={() => console.log('edit')}
-              //     editingComm={false}
-              //   />
-              // </Stack>
               <ReplyButton
                 functionality={() => {
                   setCommentReply(true);
@@ -561,6 +558,10 @@ function WriteCommentComponent({
   type: 'comment' | 'reply';
   functionality: () => void;
 }) {
+  const {
+    query: { circleId },
+  } = useRouter();
+
   const sendComment = useContext(CommentContext);
   const [message, setMessage] = useState('');
   const [minRows, setMinRows] = useState(1);
@@ -579,6 +580,7 @@ function WriteCommentComponent({
       parentId,
       type,
       text: message,
+      urlName: circleId as string,
     });
     setMessage('');
     setMinRows(1);

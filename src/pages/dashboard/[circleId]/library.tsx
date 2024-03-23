@@ -1,5 +1,6 @@
 // next
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
@@ -17,7 +18,7 @@ import { useQuery } from '@tanstack/react-query';
 import { apiSetCurrentChapter, getCourseByGroupIdForLecture } from 'src/api/getCourseByGroupId';
 import LoadingScreen from 'src/components/loading-screen';
 import { PATH_DASHBOARD } from 'src/routes/paths';
-import Video from '../../../components/ChapterDisplayer';
+const Video = dynamic(() => import('../../../components/ChapterDisplayer'), { ssr: false });
 // ----------------------------------------------------------------------
 
 Library.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;

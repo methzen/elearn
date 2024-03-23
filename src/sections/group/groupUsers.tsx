@@ -76,7 +76,7 @@ export default function UserListPage() {
     query: { circleId },
   } = useRouter();
 
-  const [tableData, setTableData] = useState(_userGroupMember);
+  const [tableData, setTableData] = useState<UserGroupMember[]>([]);
 
   const [filterName, setFilterName] = useState('');
 
@@ -183,15 +183,6 @@ export default function UserListPage() {
 
   return (
     <>
-      {/* <Button
-              component={NextLink}
-              href={PATH_DASHBOARD.user.myprofile}
-              variant="contained"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              New User
-        </Button> */}
-
       <Card sx={{ marginTop: 2 }}>
         <Tabs
           value={
