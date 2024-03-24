@@ -42,11 +42,11 @@ const GroupNav = (id: string, isAdmin: boolean, groupName: string, pathnameCreat
       path: PATH_DASHBOARD.circles,
       icon: <GroupsIcon />,
     },
-    {
-      title: 'chat',
-      path: PATH_DASHBOARD.chat.root,
-      icon: ICONS.chat,
-    },
+    // {
+    //   title: 'chat',
+    //   path: PATH_DASHBOARD.chat.root,
+    //   icon: ICONS.chat,
+    // },
     {
       title: 'My Account',
       path: PATH_DASHBOARD.user.myprofile,

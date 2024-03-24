@@ -81,7 +81,7 @@ export default function Community() {
   );
 
   const sendPost = async (content: PostContent) => {
-    if (!content.title || !content.message) {
+    if (!content.message) {
       return;
     }
     try {
