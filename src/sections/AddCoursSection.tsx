@@ -31,9 +31,10 @@ import Label from 'src/components/label/Label';
 interface ChangeNameProps {
   section: Section;
   edit?: boolean;
+  urlName: string;
 }
 
-const SectionUpdate = ({ section, edit }: ChangeNameProps) => {
+const SectionUpdate = ({ section, edit, urlName }: ChangeNameProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [thisSection, setThisSection] = useState<Section>(section);
   const dispatch = useDispatch();
@@ -49,18 +50,24 @@ const SectionUpdate = ({ section, edit }: ChangeNameProps) => {
   const saveChangeName = () => {
     setOpenModal(false);
     dispatch(
-      apiUpdateSection({
-        name: thisSection.name as string,
-        sectionId: thisSection._id,
-      })
+      apiUpdateSection(
+        {
+          name: thisSection.name as string,
+          sectionId: thisSection._id,
+        },
+        urlName
+      )
     );
   };
   const AllowSectionUpdate = () => {
     dispatch(
-      apiUpdateSection({
-        isValidated: false,
-        sectionId: thisSection._id,
-      })
+      apiUpdateSection(
+        {
+          isValidated: false,
+          sectionId: thisSection._id,
+        },
+        urlName
+      )
     );
   };
 
@@ -90,12 +97,14 @@ interface CourseSectionProps extends CardProps {
   setCurrent: (sectionId: string, chapterId: string) => void;
   current: { sectionId: string; chapterId: string };
   readOnly?: boolean;
+  urlName: string;
 }
 
 export function CourseSection({
   section,
   setCurrent,
   current,
+  urlName,
   readOnly = true,
   ...other
 }: CourseSectionProps) {
@@ -128,11 +137,20 @@ export function CourseSection({
 
   const handleAddChapter = () => {
     setAddChapterModal(false);
-    dispatch(apiAddChapter({ name: addedChapterName, sectionId: section._id } as chapterData));
+    dispatch(
+      apiAddChapter({ name: addedChapterName, sectionId: section._id } as chapterData, urlName)
+    );
   };
 
   if (readMode) {
-    return <SectionReader setCurrent={setCurrent} current={current} section={section} />;
+    return (
+      <SectionReader
+        urlName={urlName}
+        setCurrent={setCurrent}
+        current={current}
+        section={section}
+      />
+    );
   }
 
   return (
@@ -147,7 +165,7 @@ export function CourseSection({
               validated{' '}
             </Label>
           ) : (
-            <SectionUpdate section={section} />
+            <SectionUpdate section={section} urlName={urlName} />
           )
         }
         sx={{
@@ -180,6 +198,7 @@ export function CourseSection({
         <CardContent>
           {chapterList.map((chapter, index) => (
             <Chapter
+              urlName={urlName}
               key={index}
               chapter={chapter}
               courseId={section.course as string}
@@ -196,7 +215,7 @@ export function CourseSection({
           )}
           <Stack direction="row" justifyContent="space-between">
             {section.isValidated ? (
-              <SectionUpdate section={section} edit />
+              <SectionUpdate section={section} edit urlName={urlName} />
             ) : (
               <>
                 <Button
@@ -204,7 +223,9 @@ export function CourseSection({
                   variant="contained"
                   startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
                   onClick={() =>
-                    dispatch(apiUpdateSection({ sectionId: section._id, isValidated: true }))
+                    dispatch(
+                      apiUpdateSection({ sectionId: section._id, isValidated: true }, urlName)
+                    )
                   }
                 >
                   Save
@@ -214,7 +235,9 @@ export function CourseSection({
                   variant="contained"
                   startIcon={<Iconify icon="eva:close-circle-fill" />}
                   onClick={() =>
-                    dispatch(apiDeleteSection(section.course as string, section._id as string))
+                    dispatch(
+                      apiDeleteSection(section.course as string, section._id as string, urlName)
+                    )
                   }
                 >
                   Delete

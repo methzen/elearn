@@ -186,7 +186,7 @@ export default function CreatePage() {
   };
 
   const addAsection = () => {
-    dispatch(apiCreateASection(courseStore._id as string));
+    dispatch(apiCreateASection(courseStore._id as string, circleId as string));
   };
 
   const actionHandler = () => {
@@ -220,6 +220,7 @@ export default function CreatePage() {
           <Grid item xs={12} md={5}>
             {sectionList.map((section) => (
               <CourseSection
+                urlName={circleId as string}
                 key={section.name}
                 section={section}
                 setCurrent={() => null}

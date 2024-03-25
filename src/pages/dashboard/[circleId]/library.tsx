@@ -119,6 +119,7 @@ export default function Library() {
               currentChapter &&
               data?.sections.map((section) => (
                 <CourseSection
+                  urlName={circleId as string}
                   key={section.name}
                   section={section}
                   current={currentChapter}

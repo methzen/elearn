@@ -66,9 +66,8 @@ export default function PaymentSummary({
       {...other}
     >
       <Typography variant="h6" sx={{ mb: 5 }}>
-        Price details
+        SUBSCRIPTION DETAILS
       </Typography>
-
       <Stack spacing={2.5}>
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -113,19 +112,20 @@ export default function PaymentSummary({
           </>
         )}
       </Stack>
+      {showPrice && (
+        <Stack spacing={1} sx={{ mt: 2 }}>
+          <Stack direction="row" spacing={1}>
+            <Typography variant="subtitle2">You can cancel anytime. </Typography>
+          </Stack>
 
-      <Stack spacing={1} sx={{ mt: 2 }}>
-        <Stack direction="row" spacing={1}>
-          <Typography variant="subtitle2">You can cancel anytime. </Typography>
+          {trial && (
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              You won't be charged until your free trial ends on {trialEndMonth} {trialEndDay},{' '}
+              {trialYear}.
+            </Typography>
+          )}
         </Stack>
-
-        {trial && (
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            You won't be charged until your free trial ends on {trialEndMonth} {trialEndDay},{' '}
-            {trialYear}.
-          </Typography>
-        )}
-      </Stack>
+      )}
     </Box>
   );
 }

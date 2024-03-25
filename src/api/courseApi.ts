@@ -7,10 +7,10 @@ export type attachmentData = {
   singleUpload: File | null;
 };
 
-export async function addAttachmentApi(data: attachmentData) {
+export async function addAttachmentApi(data: attachmentData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.post(
-    `/groups/course/attachment`,
+    `/groups/course/attachment?urlName=${urlName}`,
     {
       title: data.title,
       chapterId: data.chapterId,
@@ -35,9 +35,9 @@ export interface chapterData {
   chapterId?: string;
 }
 
-export async function addChapterApi(data: chapterData) {
+export async function addChapterApi(data: chapterData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.post(`/groups/course/chapter`, data, {
+  const response = await axios.post(`/groups/course/chapter?urlName=${urlName}`, data, {
     headers: {
       'x-auth-token': token,
       'Content-Type': 'application/json',
@@ -46,9 +46,9 @@ export async function addChapterApi(data: chapterData) {
   return response.data;
 }
 
-export async function deleteChapterApi(data: chapterData) {
+export async function deleteChapterApi(data: chapterData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.delete(`/groups/course/chapter`, {
+  const response = await axios.delete(`/groups/course/chapter?urlName=${urlName}`, {
     data,
     headers: {
       'x-auth-token': token,
@@ -66,9 +66,9 @@ export interface sectionData {
   sectionId?: string;
 }
 
-export async function addSectionApi(data: sectionData) {
+export async function addSectionApi(data: sectionData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.post(`/groups/course/section`, data, {
+  const response = await axios.post(`/groups/course/section?urlName=${urlName}`, data, {
     headers: {
       'x-auth-token': token,
       'Content-Type': 'application/json',
@@ -77,9 +77,9 @@ export async function addSectionApi(data: sectionData) {
   return response.data;
 }
 
-export async function updateSectionApi(data: sectionData) {
+export async function updateSectionApi(data: sectionData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.put(`/groups/course/section`, data, {
+  const response = await axios.put(`/groups/course/section?urlName=${urlName}`, data, {
     headers: {
       'x-auth-token': token,
       'Content-Type': 'application/json',
@@ -88,10 +88,10 @@ export async function updateSectionApi(data: sectionData) {
   return response.data;
 }
 
-export async function deleteSectionApi(courseId: string, sectionId: string) {
+export async function deleteSectionApi(courseId: string, sectionId: string, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.delete(
-    `/groups/course/section?courseId=${courseId}&sectionId=${sectionId}`,
+    `/groups/course/section?courseId=${courseId}&sectionId=${sectionId}&urlName=${urlName}`,
     {
       headers: {
         'x-auth-token': token,
@@ -133,9 +133,9 @@ export type contentData = {
   courseId: string;
 };
 
-export async function addTextContentApi(data: contentData) {
+export async function addTextContentApi(data: contentData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.post(`/groups/course/textcontent`, data, {
+  const response = await axios.post(`/groups/course/textcontent?urlName=${urlName}`, data, {
     headers: {
       'x-auth-token': token,
       'Content-Type': 'application/json',
@@ -162,9 +162,9 @@ export type videoData = {
   };
 };
 
-export async function addVideoContentApi(data: videoData) {
+export async function addVideoContentApi(data: videoData, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.post(`/groups/course/videocontent`, data, {
+  const response = await axios.post(`/groups/course/videocontent?urlName=${urlName}`, data, {
     headers: {
       'x-auth-token': token,
       'Content-Type': 'application/json',

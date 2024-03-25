@@ -77,6 +77,7 @@ interface ChapterProps extends PaperProps {
   courseId: string;
   isSelected: boolean;
   readMode?: boolean;
+  urlName: string;
   handleAddAttachment?: (index: number) => void;
   handleAddArticle?: (index: number) => void;
   onDelete?: (index: number) => void;
@@ -86,6 +87,7 @@ export default function ChapterComponent({
   chapter,
   courseId,
   isSelected,
+  urlName,
   readMode = true,
   sx,
   ...other
@@ -106,7 +108,7 @@ export default function ChapterComponent({
       courseId,
       data: { ...info },
     };
-    dispatch(apiAddVideoContent(vd));
+    dispatch(apiAddVideoContent(vd, urlName));
   };
 
   const handleAddArticle = (content: string) => {
@@ -117,7 +119,7 @@ export default function ChapterComponent({
       content,
       courseId,
     };
-    dispatch(apiAddTextContent(cd));
+    dispatch(apiAddTextContent(cd, urlName));
   };
 
   const handleSubmitAttachment = (data: AttachmentProps) => {
@@ -128,7 +130,7 @@ export default function ChapterComponent({
       courseId,
       singleUpload: data.singleUpload,
     };
-    dispatch(apiAddAttachment(InputData));
+    dispatch(apiAddAttachment(InputData, urlName));
   };
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -144,7 +146,14 @@ export default function ChapterComponent({
   };
 
   if (readMode)
-    return <ChapterOnReadOnly chapter={chapter} courseId={courseId} isSelected={isSelected} />;
+    return (
+      <ChapterOnReadOnly
+        urlName={urlName}
+        chapter={chapter}
+        courseId={courseId}
+        isSelected={isSelected}
+      />
+    );
   return (
     <>
       {openAddAttachmentDialog && (
@@ -288,7 +297,10 @@ export default function ChapterComponent({
           onClick={() => {
             handleClosePopover();
             dispatch(
-              apiDeleteChapter({ chapterId: chapter._id, sectionId: chapter.section as string })
+              apiDeleteChapter(
+                { chapterId: chapter._id, sectionId: chapter.section as string },
+                urlName
+              )
             );
           }}
           sx={{ color: 'error.main' }}

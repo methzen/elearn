@@ -215,11 +215,11 @@ export function getCourse(urlName: string) {
   };
 }
 
-export function apiCreateASection(courseId: string) {
+export function apiCreateASection(courseId: string, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addSectionApi({ courseId } as sectionData);
+      const data = await addSectionApi({ courseId } as sectionData, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -229,11 +229,11 @@ export function apiCreateASection(courseId: string) {
   };
 }
 
-export function apiUpdateSection(inputData: sectionData) {
+export function apiUpdateSection(inputData: sectionData, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await updateSectionApi(inputData);
+      const data = await updateSectionApi(inputData, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -243,11 +243,11 @@ export function apiUpdateSection(inputData: sectionData) {
   };
 }
 
-export function apiDeleteSection(courseId: string, sectionId: string) {
+export function apiDeleteSection(courseId: string, sectionId: string, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await deleteSectionApi(courseId, sectionId);
+      const data = await deleteSectionApi(courseId, sectionId, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -275,11 +275,11 @@ export function apiEditOrSaveCourse(inputData: {
   };
 }
 
-export function apiAddChapter(chapData: chapterData) {
+export function apiAddChapter(chapData: chapterData, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addChapterApi(chapData);
+      const data = await addChapterApi(chapData, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -289,11 +289,11 @@ export function apiAddChapter(chapData: chapterData) {
   };
 }
 
-export function apiDeleteChapter(chapData: chapterData) {
+export function apiDeleteChapter(chapData: chapterData, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await deleteChapterApi(chapData);
+      const data = await deleteChapterApi(chapData, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -303,11 +303,11 @@ export function apiDeleteChapter(chapData: chapterData) {
   };
 }
 
-export function apiAddAttachment(aD: attachmentData) {
+export function apiAddAttachment(aD: attachmentData, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addAttachmentApi(aD);
+      const data = await addAttachmentApi(aD, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -317,11 +317,11 @@ export function apiAddAttachment(aD: attachmentData) {
   };
 }
 
-export function apiAddTextContent(cd: contentData) {
+export function apiAddTextContent(cd: contentData, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addTextContentApi(cd);
+      const data = await addTextContentApi(cd, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
@@ -331,11 +331,11 @@ export function apiAddTextContent(cd: contentData) {
   };
 }
 
-export function apiAddVideoContent(vd: videoData) {
+export function apiAddVideoContent(vd: videoData, urlName: string) {
   return async (dispatch: Dispatch) => {
     dispatch(startLoading());
     try {
-      const data = await addVideoContentApi(vd);
+      const data = await addVideoContentApi(vd, urlName);
       dispatch(updateState(data));
       dispatch(endLoading());
     } catch (error) {
