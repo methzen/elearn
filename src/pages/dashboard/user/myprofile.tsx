@@ -39,7 +39,7 @@ export default function MyProfilePage() {
   const [currentTab, setCurrentTab] = useState('Circles');
 
   const { data, isLoading, error, mutate } = useSWR<ProfileData>(
-    `/users/profile/data?id=${user?.id}`,
+    `/users/profile/data?id=${user?._id}`,
     getUserProfileData
   );
 

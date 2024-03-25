@@ -9,5 +9,5 @@ export default async function checkGroupAccess(urlName: string) {
       'x-auth-token': token,
     },
   });
-  return response.data as { role: Role; access: boolean; name: string };
+  return response.data as { role: Role; access: boolean; name: string; hasCourse: boolean };
 }

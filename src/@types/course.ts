@@ -1,12 +1,12 @@
 export type Base = {
-  id?: string;
+  _id?: string;
   name: string | null;
   createdAt?: Date | null;
   description?: string | null;
 };
 
 export interface Attachment {
-  id?: string;
+  _id?: string;
   title: string;
   fileUrl: string;
   type: string;
@@ -49,7 +49,7 @@ export interface Section extends Base {
   course?: string;
 }
 
-type ownershipLevel = 'admin' | 'member' | 'moderator';
+type role = 'admin' | 'member' | 'moderator';
 
 export enum CourseOwnerShip {
   admin = 'admin',

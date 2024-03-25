@@ -85,12 +85,12 @@ export default function Community() {
       return;
     }
     try {
-      const response = await submitNewPost(content, data.group.id as string);
+      const response = await submitNewPost(content, circleId as string);
       enqueueSnackbar(response.data);
       mutate();
     } catch (ResponseError) {
       console.error(ResponseError);
-      enqueueSnackbar(ResponseError.message);
+      enqueueSnackbar(ResponseError.message, { variant: 'error' });
     }
   };
 
@@ -125,7 +125,7 @@ export default function Community() {
               {posts && (
                 <Stack spacing={3}>
                   {posts.map((post) => (
-                    <PostCard key={post.id} post={post} mutate={mutate} />
+                    <PostCard key={post._id} post={post} mutate={mutate} />
                   ))}
                 </Stack>
               )}
@@ -270,7 +270,7 @@ function PostCard({ post, mutate }: Post) {
   } = useRouter();
   const { user } = useAuthContext();
 
-  const userHasLikedTheirPost = post?.personLikes?.filter((like) => like._id === user?.id);
+  const userHasLikedTheirPost = post?.personLikes?.filter((like) => like._id === user?._id);
   const [isLiked, setLiked] = useState(userHasLikedTheirPost?.length >= 1);
   const [likes, setLikes] = useState(post?.personLikes?.length);
   const [onComment, setOnComment] = useState(true);
@@ -308,14 +308,14 @@ function PostCard({ post, mutate }: Post) {
   const handleLike = async () => {
     setLiked(true);
     setLikes((prevLikes) => prevLikes + 1);
-    await likeAPost({ postId: post.id, urlName: circleId as string });
+    await likeAPost({ postId: post._id, urlName: circleId as string });
     mutate();
   };
 
   const handleUnlike = async () => {
     setLiked(false);
     setLikes((prevLikes) => prevLikes - 1);
-    await unlikeAPost({ postId: post.id, urlName: circleId as string });
+    await unlikeAPost({ postId: post._id, urlName: circleId as string });
     mutate();
   };
 
@@ -362,7 +362,7 @@ function PostCard({ post, mutate }: Post) {
         >
           {post.title}
         </Typography>
-        <Markdown key={post.id} children={post.content} />
+        <Markdown key={post._id} children={post.content} />
       </CardContent>
       <CardActions disableSpacing>
         <Stack
@@ -440,7 +440,7 @@ function PostCard({ post, mutate }: Post) {
       {onComment && (
         <WriteCommentComponent
           user={user}
-          parentId={post.id}
+          parentId={post._id}
           type="comment"
           functionality={() => null}
         />
@@ -499,7 +499,7 @@ function CommentComponent({
                 {fDate(comment.createdAt)}
               </Typography>
             </Stack>
-            {user?.id === comment.by._id ? null : (
+            {user?._id === comment.by._id ? null : (
               <ReplyButton
                 functionality={() => {
                   setCommentReply(true);

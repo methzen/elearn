@@ -1,11 +1,11 @@
 import axios from 'src/utils/axios';
 
-export default async function submitNewPost(content: any, groupId: string) {
+export default async function submitNewPost(content: any, urlName: string) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.post(
-    `/posts/submit-new-post?groupId=${groupId}`,
+    `/posts/submit-new-post?urlName=${urlName}`,
     {
-      groupId,
+      urlName,
       text: content.message,
       title: content.title,
     },

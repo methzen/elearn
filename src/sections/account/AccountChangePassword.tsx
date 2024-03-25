@@ -49,7 +49,7 @@ export default function AccountChangePassword(props: any) {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
-      await changePassword(user.id, data.oldPassword, data.newPassword);
+      await changePassword(user._id, data.oldPassword, data.newPassword);
       reset();
       enqueueSnackbar('Password changed successfully!');
     } catch (error) {

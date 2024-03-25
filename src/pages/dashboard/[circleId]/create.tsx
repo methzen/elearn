@@ -1,6 +1,6 @@
 // next
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Container, Grid, Button } from '@mui/material';
 // layouts
@@ -23,6 +23,7 @@ import {
 import { Chapter, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import LoadingScreen from 'src/components/loading-screen';
+import { PATH_DASHBOARD } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
 CreatePage.getLayout = (page: React.ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
@@ -113,11 +114,13 @@ export default function CreatePage() {
   const { user } = useAuthContext();
   const { themeStretch } = useSettingsContext();
   const {
+    push,
     query: { circleId },
   } = useRouter();
+
   const courseStore = useSelector((state) => state.course);
+  const hasCourse = courseStore.creatorId && courseStore.creatorId.length > 1;
   const [pageType, setPageType] = useState(LibraryPageType.EDITING_COURSE);
-  const [hasCourse, setHasCourse] = useState<boolean | undefined>();
   const [sectionList, setSectionList] = useState<Section[]>([]);
   const [currentChapter, setCurrentChapter] = useState<Chapter>();
   const [isLastSectionValidated, setIsLastSectionValidated] = useState(false);
@@ -126,10 +129,9 @@ export default function CreatePage() {
     if (circleId) dispatch(getCourse(circleId as string));
   }, [circleId, dispatch]);
 
+  console.log('courseStore', courseStore);
   useEffect(() => {
-    setHasCourse(!!courseStore.sections);
-
-    if (!courseStore) {
+    if (!hasCourse) {
       setPageType(LibraryPageType.NO_COURSE);
     } else {
       setPageType(
@@ -137,7 +139,7 @@ export default function CreatePage() {
       );
     }
 
-    if (courseStore) {
+    if (hasCourse) {
       setSectionList(courseStore?.sections);
       const indexOfLastSection = courseStore.sections.length - 1;
       const lastSection = courseStore.sections[indexOfLastSection];
@@ -148,16 +150,16 @@ export default function CreatePage() {
     }
     if (courseStore.currentChapter && courseStore.currentChapter) {
       setCurrentChapter(undefined);
-      const currentSec = courseStore.sections.find((sec) => sec.id === courseStore.currentSection);
+      const currentSec = courseStore.sections.find((sec) => sec._id === courseStore.currentSection);
       const currentChap = currentSec?.chapters.find(
-        (chap) => chap.id === courseStore.currentChapter
+        (chap) => chap._id === courseStore.currentChapter
       );
       setCurrentChapter(currentChap);
     }
   }, [courseStore]);
 
   const createCourse = () => {
-    dispatch(CreateACourse({ groupId: circleId } as CreateCourseData));
+    dispatch(CreateACourse({ urlName: circleId } as CreateCourseData));
   };
 
   const saveCourse = () => {
@@ -166,24 +168,25 @@ export default function CreatePage() {
     dispatch(
       apiEditOrSaveCourse({
         groupId: courseStore.groupId as string,
-        courseId: courseStore.id as string,
+        courseId: courseStore._id as string,
         forSave: true,
       })
     );
+    push(PATH_DASHBOARD.group.library(circleId as string));
   };
 
   const editCourse = () => {
     dispatch(
       apiEditOrSaveCourse({
         groupId: courseStore.groupId as string,
-        courseId: courseStore.id as string,
+        courseId: courseStore._id as string,
         forSave: false,
       })
     );
   };
 
   const addAsection = () => {
-    dispatch(apiCreateASection(courseStore.id as string));
+    dispatch(apiCreateASection(courseStore._id as string));
   };
 
   const actionHandler = () => {
@@ -220,7 +223,7 @@ export default function CreatePage() {
                 key={section.name}
                 section={section}
                 setCurrent={() => null}
-                current={{ sectionId: '', chapterId: currentChapter?.id as string }}
+                current={{ sectionId: '', chapterId: currentChapter?._id as string }}
                 readOnly={false}
               />
             ))}
@@ -230,7 +233,7 @@ export default function CreatePage() {
                   <SectionPanel title="Add a section" onOpen={addAsection} sx={{ mt: 5 }} />
                 )}
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={7}>
             {currentChapter && <Video chapter={currentChapter as Chapter} />}
           </Grid>
         </Grid>

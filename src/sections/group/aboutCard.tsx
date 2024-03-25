@@ -5,7 +5,6 @@ import { Box, Card, Avatar, Divider, Typography, Stack, IconButton } from '@mui/
 import { fShortenNumber } from '../../utils/formatNumber';
 // components
 import Image from '../../components/image';
-import Iconify from '../../components/iconify';
 import SvgColor from '../../components/svg-color';
 import { GroupAboutProps } from 'src/auth/CircleGuard';
 import YouTubeIcon from '@mui/icons-material/YouTube';
@@ -13,6 +12,9 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import SellIcon from '@mui/icons-material/Sell';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 // ----------------------------------------------------------------------
 
@@ -33,45 +35,48 @@ type Props = {
 };
 
 export default function AboutCard({ group }: Props) {
-  const { name, imageUrl, description, author, members } = group;
+  const { name, imageUrl, description, author, members, contributions, isPaying, isPrivate } =
+    group;
 
-  const _socials = [
-    {
-      value: 'facebookLink',
-      name: 'FaceBook',
-      icon: <FacebookIcon />,
-      color: '#1877F2',
-      path: author.socialLinks.facebookLink,
-    },
-    {
-      value: 'instagramLink',
-      name: 'Instagram',
-      icon: <InstagramIcon />,
-      color: '#E02D69',
-      path: author.socialLinks.instagramLink,
-    },
-    {
-      value: 'linkedinLink',
-      name: 'Linkedin',
-      icon: <LinkedInIcon />,
-      color: '#007EBB',
-      path: author.socialLinks.linkedinLink,
-    },
-    {
-      value: 'twitterLink',
-      name: 'Twitter',
-      icon: <TwitterIcon />,
-      color: '#00AAEC',
-      path: author.socialLinks.twitterLink,
-    },
-    {
-      value: 'youtubeLink',
-      name: 'Youtube',
-      icon: <YouTubeIcon />,
-      color: '#f00',
-      path: author.socialLinks.youtubeLink,
-    },
-  ];
+  const _socials = !author.socialLinks
+    ? []
+    : [
+        {
+          value: 'facebookLink',
+          name: 'FaceBook',
+          icon: <FacebookIcon />,
+          color: '#1877F2',
+          path: author.socialLinks.facebookLink,
+        },
+        {
+          value: 'instagramLink',
+          name: 'Instagram',
+          icon: <InstagramIcon />,
+          color: '#E02D69',
+          path: author.socialLinks.instagramLink,
+        },
+        {
+          value: 'linkedinLink',
+          name: 'Linkedin',
+          icon: <LinkedInIcon />,
+          color: '#007EBB',
+          path: author.socialLinks.linkedinLink,
+        },
+        {
+          value: 'twitterLink',
+          name: 'Twitter',
+          icon: <TwitterIcon />,
+          color: '#00AAEC',
+          path: author.socialLinks.twitterLink,
+        },
+        {
+          value: 'youtubeLink',
+          name: 'Youtube',
+          icon: <YouTubeIcon />,
+          color: '#f00',
+          path: author.socialLinks.youtubeLink,
+        },
+      ];
 
   return (
     <Card sx={{ textAlign: 'center' }}>
@@ -158,16 +163,54 @@ export default function AboutCard({ group }: Props) {
         </div>
 
         <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.75, color: 'text.disabled' }}>
-            Members online
-          </Typography>
-          <Typography variant="subtitle1">{fShortenNumber(34430)}</Typography>
+          {contributions ? (
+            <>
+              <Typography
+                variant="caption"
+                component="div"
+                sx={{ mb: 0.75, color: 'text.disabled' }}
+              >
+                Contributions
+              </Typography>
+              <Typography variant="subtitle1">{fShortenNumber(contributions)}</Typography>
+            </>
+          ) : null}
         </div>
         <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.75, color: 'text.disabled' }}>
-            Total Post
-          </Typography>
-          <Typography variant="subtitle1">{fShortenNumber(54300)}</Typography>
+          {isPaying ? (
+            <>
+              <Typography
+                variant="caption"
+                component="div"
+                sx={{ mb: 0.75, color: 'text.disabled' }}
+              >
+                membership
+              </Typography>
+              <SellIcon />
+            </>
+          ) : isPrivate ? (
+            <>
+              <Typography
+                variant="caption"
+                component="div"
+                sx={{ mb: 0.75, color: 'text.disabled' }}
+              >
+                Private group
+              </Typography>
+              <LockIcon />
+            </>
+          ) : (
+            <>
+              <Typography
+                variant="caption"
+                component="div"
+                sx={{ mb: 0.75, color: 'text.disabled' }}
+              >
+                Free group
+              </Typography>
+              <LockOpenIcon />
+            </>
+          )}
         </div>
       </Box>
     </Card>

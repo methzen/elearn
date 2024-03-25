@@ -15,6 +15,7 @@ type CircleAccessProps = {
 export interface RoleContextProps {
   role: Role;
   name: string;
+  hasCourse: boolean;
 }
 
 export enum RoleType {
@@ -41,7 +42,7 @@ export default function CircleAccessGuard({ children }: CircleAccessProps) {
         return push(PATH_DASHBOARD.root);
       }
       setAccess(response.access);
-      return setMyRole({ role: response.role, name: response.name });
+      return setMyRole({ role: response.role, name: response.name, hasCourse: response.hasCourse });
     };
     if (circleId) {
       getAccess();

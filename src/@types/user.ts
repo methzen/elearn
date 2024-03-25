@@ -33,12 +33,12 @@ export type IUserProfileAbout = {
 
 export type IUserProfile = IUserProfileContribution &
   IUserProfileAbout & {
-    id: string;
+    _id: string;
     socialLinks: IUserSocialLink;
   };
 
 export type IUserProfileFollower = {
-  id: string;
+  _id: string;
   avatarUrl: string;
   name: string;
   country: string;
@@ -46,23 +46,23 @@ export type IUserProfileFollower = {
 };
 
 export type IUserProfileGallery = {
-  id: string;
+  _id: string;
   title: string;
   postAt: Date | string | number;
   imageUrl: string;
 };
 
 export type IUserProfileFriend = {
-  id: string;
+  _id: string;
   avatarUrl: string;
   name: string;
   role: string;
 };
 
 // export type IUserProfilePost = {
-//   id: string;
+//   _id: string;
 //   by: {
-//     id: string;
+//     _id: string;
 //     avatarUrl: string;
 //     name: string;
 //   };
@@ -79,9 +79,9 @@ export type IUserProfileFriend = {
 //     avatarUrl: string;
 //   }[];
 //   comments: {
-//     id: string;
+//     _id: string;
 //     author: {
-//       id: string;
+//       _id: string;
 //       avatarUrl: string;
 //       name: string;
 //     };
@@ -103,7 +103,7 @@ export type IUserComment = {
 };
 
 export type IUserProfilePost = {
-  id: string;
+  _id: string;
   by: {
     _id: string;
     photoURL: string;
@@ -131,7 +131,7 @@ export type IUserProfilePost = {
 // ----------------------------------------------------------------------
 
 export type IUserCard = {
-  id: string;
+  _id: string;
   avatarUrl: string;
   cover: string;
   name: string;
@@ -144,7 +144,7 @@ export type IUserCard = {
 // ----------------------------------------------------------------------
 
 export type IUserAccountGeneral = {
-  id: string;
+  _id: string;
   photoURL: string;
   cover?: string;
   firstname: string;
@@ -171,19 +171,19 @@ export type IUserAccountGeneral = {
 };
 
 export type IUserAccountBillingCreditCard = {
-  id: string;
+  _id: string;
   cardNumber: string;
   cardType: string;
 };
 
 export type IUserAccountBillingInvoice = {
-  id: string;
+  _id: string;
   createdAt: Date | string | number;
   price: number;
 };
 
 export type IUserAccountBillingAddress = {
-  id: string;
+  _id: string;
   name: string;
   phone: string;
   country: string;

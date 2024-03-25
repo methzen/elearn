@@ -1,21 +1,8 @@
-import { useEffect, useState } from 'react';
-// @mui
 import { Box } from '@mui/material';
-import getAllGroupsByPage from 'src/api/getAllGroupsByPage';
 import CourseCard, { Circle } from 'src/components/CourseCard';
 // ----------------------------------------------------------------------
 
 export default function ProfileCircles({ circles }: { circles?: Circle[] }) {
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const { items } = await getAllGroupsByPage(`/groups/get/all?page=${1}` as string);
-  //     if (items) {
-  //       setData([...items]);
-  //     }
-  //   };
-  //   getData();
-  // }, []);
-
   return (
     <Box
       gap={3}
@@ -26,7 +13,7 @@ export default function ProfileCircles({ circles }: { circles?: Circle[] }) {
         md: 'repeat(3, 1fr)',
       }}
     >
-      {circles && circles?.map((course: any) => <CourseCard key={course.id} {...course} />)}
+      {circles && circles?.map((course: any) => <CourseCard key={course._id} {...course} />)}
     </Box>
   );
 }

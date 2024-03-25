@@ -176,13 +176,13 @@ export async function addVideoContentApi(data: videoData) {
 export interface CreateCourseData {
   name?: string;
   description?: string;
-  groupId: string;
+  urlName: string;
   avatarUrl?: string;
 }
 
 export async function createACourse(data: CreateCourseData) {
   const token = localStorage.getItem('x-auth-token');
-  const response = await axios.post(`/groups/create/course`, data, {
+  const response = await axios.post(`/groups/create/course?urlName=${data.urlName}`, data, {
     headers: {
       'x-auth-token': token,
       'Content-Type': 'application/json',

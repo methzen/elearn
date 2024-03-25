@@ -40,9 +40,11 @@ const PAYMENT_OPTION = [
 ];
 
 export type CircleFormProps = {
-  id: string;
+  _id: string;
   name: string;
+  groupUrl: string;
   description: string;
+  contributions: number;
   imageUrl: File | string | null;
   isPaying: boolean;
   community: boolean;
@@ -55,7 +57,7 @@ export type CircleFormProps = {
 interface CreateForm {
   isEdit?: boolean;
   FormSchema?: CircleFormProps;
-  submitData: (data: CircleFormProps) => void;
+  submitData: (data: Partial<CircleFormProps>) => void;
   isLoading?: boolean;
 }
 
@@ -85,7 +87,7 @@ export default function CreateAgroup({
     [FormSchema]
   );
 
-  const methods = useForm<CircleFormProps>({
+  const methods = useForm<Partial<CircleFormProps>>({
     resolver: yupResolver(courseDataSchema),
     defaultValues,
   });

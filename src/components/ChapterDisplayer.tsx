@@ -71,9 +71,9 @@ export default function ChapterDisplayer({ chapter }: ChapterDisplayProps) {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           {chapter?.attachments.map((Attachment) => (
-            <AttachmentDisplayer key={Attachment.id} file={Attachment} />
+            <AttachmentDisplayer key={Attachment._id} file={Attachment} />
           ))}
-          {chapter?.content && <Markdown key={chapter.id} children={chapter.content} />}
+          {chapter?.content && <Markdown key={chapter._id} children={chapter.content} />}
         </CardContent>
       </Collapse>
     </Card>

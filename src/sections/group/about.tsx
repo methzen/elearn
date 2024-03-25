@@ -138,7 +138,7 @@ function About() {
 
   const handleJoin = () => {
     if (isAuthenticated && user) {
-      if (group.by === user.id) {
+      if (group.by === user._id) {
         // user is the owner of this group get them in the group admin page
         push(PATH_DASHBOARD.group.admin(group.urlName));
       }
@@ -240,7 +240,7 @@ function About() {
                 },
               }}
             >
-              {isAuthenticated && user?.id === group.by ? 'GET IN' : 'JOIN CIRCLE'}
+              {isAuthenticated && user?._id === group.by ? 'GET IN' : 'JOIN CIRCLE'}
             </Button>
           ) : selectedPrice ? (
             <PaymentCard

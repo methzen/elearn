@@ -35,7 +35,7 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { firstname, lastname, photoURL, email, isBanned, ownerShipLevel } = row;
+  const { firstname, lastname, photoURL, email, isBanned, role } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -74,7 +74,7 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell align="left">{email}</TableCell>
-        <TableCell align="left">{ownerShipLevel}</TableCell>
+        <TableCell align="left">{role}</TableCell>
         <TableCell align="left">
           <Label
             variant="soft"

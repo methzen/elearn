@@ -102,7 +102,7 @@ export default function ChapterComponent({
   const handleAddVideo = (info: any) => {
     const vd: videoData = {
       title: '',
-      chapterId: chapter.id as string,
+      chapterId: chapter._id as string,
       courseId,
       data: { ...info },
     };
@@ -113,7 +113,7 @@ export default function ChapterComponent({
     setDisplayChapterContentText(false);
     setOpenContentTextDialog(false);
     const cd: contentData = {
-      chapterId: chapter.id as string,
+      chapterId: chapter._id as string,
       content,
       courseId,
     };
@@ -124,7 +124,7 @@ export default function ChapterComponent({
     setOpenAddAttachmentDialog(false);
     const InputData: attachmentData = {
       title: data.name,
-      chapterId: chapter.id as string,
+      chapterId: chapter._id as string,
       courseId,
       singleUpload: data.singleUpload,
     };
@@ -175,7 +175,7 @@ export default function ChapterComponent({
       >
         <Stack
           onClick={() =>
-            dispatch(setCurrentChapter({ chapterId: chapter.id, sectionId: chapter.section }))
+            dispatch(setCurrentChapter({ chapterId: chapter._id, sectionId: chapter.section }))
           }
           direction="row"
           sx={{
@@ -288,7 +288,7 @@ export default function ChapterComponent({
           onClick={() => {
             handleClosePopover();
             dispatch(
-              apiDeleteChapter({ chapterId: chapter.id, sectionId: chapter.section as string })
+              apiDeleteChapter({ chapterId: chapter._id, sectionId: chapter.section as string })
             );
           }}
           sx={{ color: 'error.main' }}
@@ -459,7 +459,7 @@ function ChapterOnReadOnly({ chapter, courseId, isSelected, sx, ...other }: Chap
     >
       <Stack
         onClick={() =>
-          dispatch(setCurrentChapter({ chapterId: chapter.id, sectionId: chapter.section }))
+          dispatch(setCurrentChapter({ chapterId: chapter._id, sectionId: chapter.section }))
         }
         direction="row"
         sx={{

@@ -12,18 +12,11 @@ export type Circle = {
   id: string;
   imageUrl: string;
   description: string;
-  ownerShipLevel: string;
+  role: string;
   urlName: string;
 };
 
-export default function CourseCard({
-  id,
-  name,
-  urlName,
-  imageUrl,
-  description,
-  ownerShipLevel,
-}: Circle) {
+export default function CourseCard({ id, name, urlName, imageUrl, description, role }: Circle) {
   const { push } = useRouter();
 
   const getInsideGroup = () => {
@@ -53,7 +46,7 @@ export default function CourseCard({
         }}
       >
         {/* <Button size="small" onClick={getInsideGroup}>Join </Button> */}
-        <span style={{ color: '#BFBFBF', fontSize: 14, marginRight: 15 }}> {ownerShipLevel}</span>
+        <span style={{ color: '#BFBFBF', fontSize: 14, marginRight: 15 }}> {role}</span>
       </CardActions>
     </Card>
   );

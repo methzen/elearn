@@ -11,7 +11,7 @@ export type IChatAttachment = {
 };
 
 export type IChatTextMessage = {
-  _id: string;
+  id: string;
   content: string;
   contentType: 'text';
   attachments: IChatAttachment[];
@@ -20,7 +20,7 @@ export type IChatTextMessage = {
 };
 
 export type IChatImageMessage = {
-  _id: string;
+  id: string;
   content: string;
   contentType: 'image';
   attachments: IChatAttachment[];
@@ -33,7 +33,7 @@ export type IChatMessage = IChatTextMessage | IChatImageMessage;
 // ----------------------------------------------------------------------
 
 export type IChatContact = {
-  _id: string;
+  id: string;
   firstname: string;
   lastname: string;
   about: string;
@@ -47,7 +47,7 @@ export type IChatContact = {
 };
 
 export type IChatParticipant = {
-  _id: string;
+  id: string;
   firstname: string;
   lastname: string;
   photoURL?: string;
@@ -60,7 +60,7 @@ export type IChatParticipant = {
 };
 
 export type IChatConversation = {
-  _id: string;
+  id: string;
   participants: IChatParticipant[];
   type: string;
   unreadCount: number;

@@ -27,7 +27,9 @@ export type GroupAboutProps = {
   description: string;
   imageUrl: string;
   isPaying: boolean;
+  isPrivate: boolean;
   community: boolean;
+  contributions: number;
   plans: Price[];
   author: {
     name: string;

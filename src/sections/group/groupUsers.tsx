@@ -143,7 +143,7 @@ export default function UserListPage() {
   };
 
   const handleDeleteRow = (id: string) => {
-    const deleteRow = tableData.filter((row) => row.id !== id);
+    const deleteRow = tableData.filter((row) => row._id !== id);
     setSelected([]);
     setTableData(deleteRow);
 
@@ -155,7 +155,7 @@ export default function UserListPage() {
   };
 
   const handleDeleteRows = (selectedRows: string[]) => {
-    const deleteRows = tableData.filter((row) => !selectedRows.includes(row.id as string));
+    const deleteRows = tableData.filter((row) => !selectedRows.includes(row._id as string));
     setSelected([]);
     setTableData(deleteRows);
 
@@ -219,7 +219,7 @@ export default function UserListPage() {
             onSelectAllRows={(checked) =>
               onSelectAllRows(
                 checked,
-                tableData.map((row) => row.id)
+                tableData.map((row) => row._id)
               )
             }
             action={
@@ -243,7 +243,7 @@ export default function UserListPage() {
                 onSelectAllRows={(checked) =>
                   onSelectAllRows(
                     checked,
-                    tableData.map((row) => row.id)
+                    tableData.map((row) => row._id)
                   )
                 }
               />
@@ -253,11 +253,11 @@ export default function UserListPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
+                      key={row._id}
                       row={row}
-                      selected={selected.includes(row.id)}
-                      onSelectRow={() => onSelectRow(row.id)}
-                      onDeleteRow={() => handleDeleteRow(row.id)}
+                      selected={selected.includes(row._id)}
+                      onSelectRow={() => onSelectRow(row._id)}
+                      onDeleteRow={() => handleDeleteRow(row._id)}
                       onEditRow={() => handleEditRow(row.firstname)}
                     />
                   ))}
@@ -347,7 +347,7 @@ function applyFilter({
   }
 
   if (filterRole !== 'all') {
-    inputData = inputData.filter((user) => user.ownerShipLevel === filterRole);
+    inputData = inputData.filter((user) => user.role === filterRole);
   }
 
   return inputData;

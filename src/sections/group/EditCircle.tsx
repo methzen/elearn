@@ -10,15 +10,16 @@ import CourseCardAside from 'src/components/CourseCardAside';
 type Props = {
   isEdit?: boolean;
   currentCircle: CircleFormProps;
-  update: (data: CircleFormProps) => void;
+  update: (data: Partial<CircleFormProps>) => void;
   isLoading: boolean;
 };
 
 export default function EditCircle({ isEdit = true, currentCircle, update, isLoading }: Props) {
   const data = {
-    imageUrl: currentCircle.imageUrl as string,
-    description: currentCircle.description,
     name: currentCircle.name,
+    imageUrl: currentCircle.imageUrl as string,
+    contributions: currentCircle.contributions,
+    groupUrl: currentCircle.groupUrl,
   };
 
   return (
@@ -29,7 +30,7 @@ export default function EditCircle({ isEdit = true, currentCircle, update, isLoa
             {...{
               isEdit: true,
               FormSchema: currentCircle,
-              submitData: (data) => update({ ...data, id: currentCircle.id }),
+              submitData: (data) => update({ ...data, _id: currentCircle._id }),
               isLoading: isLoading,
             }}
           />

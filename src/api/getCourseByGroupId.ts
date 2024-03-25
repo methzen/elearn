@@ -10,7 +10,7 @@ export async function getCourseByGroupId(urlName: string) {
   return response.data;
 }
 
-export async function getCourseByGroupIdForLecture(urlName: string) {
+export async function getCourseByGroupUrlNameForLecture(urlName: string) {
   const token = localStorage.getItem('x-auth-token');
   const response = await axios.get(`/groups/course/student/get?urlName=${urlName}`, {
     headers: {

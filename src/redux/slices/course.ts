@@ -29,9 +29,11 @@ interface CourseStore extends Course {
   editable?: boolean;
   currentSection?: string;
   currentChapter?: string;
+  hasCourse: boolean;
 }
 
 const initialState: CourseStore = {
+  hasCourse: false,
   name: null,
   description: null,
   createdAt: null,
@@ -62,7 +64,7 @@ const slice = createSlice({
       state.groupId = action.payload.groupId;
       state.creatorId = action.payload.creatorId;
       state.sections = action.payload.sections;
-      state.id = action.payload.id;
+      state._id = action.payload._id;
       state.editable = action.payload.editable;
       return state;
     },
@@ -88,7 +90,7 @@ const slice = createSlice({
 
     addSection(state, action) {
       const section = {
-        id: action.payload.id,
+        _id: action.payload._id,
         name: action.payload.name,
         isValidated: action.payload.isValidated,
         chapters: action.payload.chapters,
@@ -97,7 +99,7 @@ const slice = createSlice({
     },
 
     updateSection(state: CourseStore, action: { type: any; payload: Section }) {
-      const stateSection = state.sections.find((section) => section.id === action.payload.id);
+      const stateSection = state.sections.find((section) => section._id === action.payload._id);
       const index = state.sections.indexOf(stateSection!);
       state.sections[index] = action.payload;
     },
@@ -114,9 +116,9 @@ const slice = createSlice({
 
     addAttachment(state, action) {
       const attachment: Attachment = action.payload;
-      const section = state.sections.find((s) => s.id === attachment.sectionId) as Section;
+      const section = state.sections.find((s) => s._id === attachment.sectionId) as Section;
       section.chapters.map((chap) => {
-        if (chap.id === attachment.chapter) {
+        if (chap._id === attachment.chapter) {
           chap.attachments.push(attachment);
           return chap;
         }
@@ -126,9 +128,9 @@ const slice = createSlice({
 
     addVideo(state, action) {
       const video: Video = action.payload;
-      const section = state.sections.find((s) => s.id === video.sectionId) as Section;
+      const section = state.sections.find((s) => s._id === video.sectionId) as Section;
       section.chapters.map((chap) => {
-        if (chap.id === video.chapterId) {
+        if (chap._id === video.chapterId) {
           chap.video = video;
           return chap;
         }
@@ -138,9 +140,9 @@ const slice = createSlice({
 
     addContent(state, action) {
       const chapter = action.payload;
-      const section = state.sections.find((s) => s.id === chapter.sectionId) as Section;
+      const section = state.sections.find((s) => s._id === chapter.sectionId) as Section;
       section.chapters.map((chap) => {
-        if (chap.id === chapter.id) {
+        if (chap._id === chapter._id) {
           chap.content = chapter.content;
           return chap;
         }
@@ -150,12 +152,12 @@ const slice = createSlice({
 
     updateChapter(state, action) {
       const section: Section = state.sections[action.payload.index];
-      const chapter: Chapter = section.chapters[action.payload.chapter.id];
+      const chapter: Chapter = section.chapters[action.payload.chapter._id];
       const newChapter = {
         ...chapter,
         ...action.payload.chapter,
       };
-      section.chapters[action.payload.chapter.id] = newChapter;
+      section.chapters[action.payload.chapter._id] = newChapter;
       state.sections[action.payload.index] = section;
     },
   },

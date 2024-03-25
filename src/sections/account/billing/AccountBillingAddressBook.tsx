@@ -26,7 +26,7 @@ export default function AccountBillingAddressBook({ addressBook }: Props) {
 
       <Stack spacing={3} divider={<Divider sx={{ borderStyle: 'dashed' }} />}>
         {addressBook.map((address) => (
-          <Stack key={address.id} spacing={1}>
+          <Stack key={address._id} spacing={1}>
             <Typography variant="subtitle1">{address.name}</Typography>
 
             <Typography variant="body2">

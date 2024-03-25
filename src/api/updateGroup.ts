@@ -2,9 +2,9 @@ import { CircleFormProps } from 'src/sections/form/CreateGroupForm';
 import _ from 'lodash';
 import axios from './axios';
 
-export default async function updateGroup(data: CircleFormProps) {
+export default async function updateGroup(data: Partial<CircleFormProps>) {
   const token = localStorage.getItem('x-auth-token');
-  const groupId = data.id;
+  const groupId = data._id;
   const response = await axios.put(
     `/groups/update/group?groupId=${groupId}`,
     {

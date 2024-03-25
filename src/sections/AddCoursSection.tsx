@@ -51,7 +51,7 @@ const SectionUpdate = ({ section, edit }: ChangeNameProps) => {
     dispatch(
       apiUpdateSection({
         name: thisSection.name as string,
-        sectionId: thisSection.id,
+        sectionId: thisSection._id,
       })
     );
   };
@@ -59,7 +59,7 @@ const SectionUpdate = ({ section, edit }: ChangeNameProps) => {
     dispatch(
       apiUpdateSection({
         isValidated: false,
-        sectionId: thisSection.id,
+        sectionId: thisSection._id,
       })
     );
   };
@@ -128,7 +128,7 @@ export function CourseSection({
 
   const handleAddChapter = () => {
     setAddChapterModal(false);
-    dispatch(apiAddChapter({ name: addedChapterName, sectionId: section.id } as chapterData));
+    dispatch(apiAddChapter({ name: addedChapterName, sectionId: section._id } as chapterData));
   };
 
   if (readMode) {
@@ -183,7 +183,7 @@ export function CourseSection({
               key={index}
               chapter={chapter}
               courseId={section.course as string}
-              isSelected={current.chapterId === chapter.id}
+              isSelected={current.chapterId === chapter._id}
               readMode={readMode}
             />
           ))}
@@ -204,7 +204,7 @@ export function CourseSection({
                   variant="contained"
                   startIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
                   onClick={() =>
-                    dispatch(apiUpdateSection({ sectionId: section.id, isValidated: true }))
+                    dispatch(apiUpdateSection({ sectionId: section._id, isValidated: true }))
                   }
                 >
                   Save
@@ -214,7 +214,7 @@ export function CourseSection({
                   variant="contained"
                   startIcon={<Iconify icon="eva:close-circle-fill" />}
                   onClick={() =>
-                    dispatch(apiDeleteSection(section.course as string, section.id as string))
+                    dispatch(apiDeleteSection(section.course as string, section._id as string))
                   }
                 >
                   Delete
@@ -233,7 +233,7 @@ export function SectionReader({ section, current, setCurrent }: CourseSectionPro
 
   useEffect(() => {
     if (section && current) {
-      setOpen(section.id === current.sectionId);
+      setOpen(section._id === current.sectionId);
     }
   }, [section, current]);
 
@@ -260,9 +260,9 @@ export function SectionReader({ section, current, setCurrent }: CourseSectionPro
           {section.chapters?.map((chapter) => (
             <ListItemButton
               sx={{ pl: 4 }}
-              key={chapter.id}
-              selected={current.chapterId === chapter.id}
-              onClick={(event) => setCurrent(section.id as string, chapter.id as string)}
+              key={chapter._id}
+              selected={current.chapterId === chapter._id}
+              onClick={(event) => setCurrent(section._id as string, chapter._id as string)}
             >
               <ListItemText
                 primary={chapter.name}

@@ -15,7 +15,10 @@ import { Chapter, Course, Section } from '../../../@types/course';
 import { useAuthContext } from 'src/auth/useAuthContext';
 import { CircleAccessRoleContext, RoleType } from 'src/auth/CircleAccessGuard';
 import { useQuery } from '@tanstack/react-query';
-import { apiSetCurrentChapter, getCourseByGroupIdForLecture } from 'src/api/getCourseByGroupId';
+import {
+  apiSetCurrentChapter,
+  getCourseByGroupUrlNameForLecture,
+} from 'src/api/getCourseByGroupId';
 import LoadingScreen from 'src/components/loading-screen';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 const Video = dynamic(() => import('../../../components/ChapterDisplayer'), { ssr: false });
@@ -36,6 +39,7 @@ export default function Library() {
 
   const context = useContext(CircleAccessRoleContext);
   const isAdmin = context?.role === RoleType.admin;
+
   const [currentChapter, setCurrentChapter] = useState<{ sectionId: string; chapterId: string }>({
     sectionId: '',
     chapterId: '',
@@ -43,11 +47,11 @@ export default function Library() {
 
   const { data, error, isLoading } = useQuery<Course, string>({
     queryKey: ['course'],
-    queryFn: () => getCourseByGroupIdForLecture(circleId as string),
+    queryFn: () => getCourseByGroupUrlNameForLecture(circleId as string),
   });
 
   useEffect(() => {
-    if (data) {
+    if (!!data) {
       setCurrentChapter(data.viewCurrentChapter);
     }
   }, [data]);
@@ -60,7 +64,7 @@ export default function Library() {
       chapterId,
       sectionId,
       groupId: data?.groupId as string,
-      courseId: data?.id as string,
+      courseId: data?._id as string,
     });
   };
 
@@ -68,10 +72,10 @@ export default function Library() {
     let cuChapter;
     if (data?.sections.length && currentChapter.chapterId) {
       const currentSection = data.sections.find(
-        (section) => section.id === currentChapter.sectionId
+        (section) => section._id === currentChapter.sectionId
       ) as Section;
       cuChapter = currentSection?.chapters.find(
-        (chapter) => chapter.id === currentChapter.chapterId
+        (chapter) => chapter._id === currentChapter.chapterId
       ) as Chapter;
     }
     return cuChapter;
@@ -113,7 +117,7 @@ export default function Library() {
           <Grid item xs={12} md={5}>
             {data &&
               currentChapter &&
-              data.sections.map((section) => (
+              data?.sections.map((section) => (
                 <CourseSection
                   key={section.name}
                   section={section}

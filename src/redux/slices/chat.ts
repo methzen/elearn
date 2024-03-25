@@ -36,7 +36,7 @@ const slice = createSlice({
     getContactsSuccess(state, action) {
       const contacts = action.payload;
 
-      state.contacts.byId = keyBy(contacts, '_id');
+      state.contacts.byId = keyBy(contacts, 'id');
       state.contacts.allIds = Object.keys(state.contacts.byId);
     },
 
@@ -44,7 +44,7 @@ const slice = createSlice({
     getConversationsSuccess(state, action) {
       const conversations = action.payload;
 
-      state.conversations.byId = keyBy(conversations, '_id');
+      state.conversations.byId = keyBy(conversations, 'id');
       state.conversations.allIds = Object.keys(state.conversations.byId);
     },
 
@@ -53,10 +53,10 @@ const slice = createSlice({
       const conversation = action.payload;
 
       if (conversation) {
-        state.conversations.byId[conversation._id] = conversation;
-        state.activeConversationId = conversation._id;
-        if (!state.conversations.allIds.includes(conversation._id)) {
-          state.conversations.allIds.push(conversation._id);
+        state.conversations.byId[conversation.id] = conversation;
+        state.activeConversationId = conversation.id;
+        if (!state.conversations.allIds.includes(conversation.id)) {
+          state.conversations.allIds.push(conversation.id);
         }
       } else {
         state.activeConversationId = null;
@@ -70,7 +70,7 @@ const slice = createSlice({
         conversation;
 
       const newMessage = {
-        _id: messageId,
+        id: messageId,
         content: content,
         contentType,
         attachments,

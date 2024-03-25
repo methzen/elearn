@@ -47,7 +47,7 @@ export default function Admin() {
     }
   }, [circleId, push, isLoading]);
 
-  const handleUpdate = async (data: CircleFormProps) => {
+  const handleUpdate = async (data: Partial<CircleFormProps>) => {
     setIsLoading(true);
     try {
       await updateGroup(data);
