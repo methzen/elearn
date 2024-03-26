@@ -57,6 +57,7 @@ import ReplyButton from 'src/sections/ReplayButton';
 import ExpandCommentButton from 'src/sections/seeComments';
 import DisplayReplies from 'src/sections/displayReplies';
 import LoadingScreen from 'src/components/loading-screen';
+import CustomizedDialogs from 'src/components/modal/modal';
 
 // ----------------------------------------------------------------------
 
@@ -276,8 +277,20 @@ function PostCard({ post, mutate }: Post) {
   const [onComment, setOnComment] = useState(true);
   const [onReply, setOnReply] = useState(!onComment);
   const [expanded, setExpanded] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false)
+  const [userToDisplay, setUserToDisplay] = useState("")
 
   let personWhoContributed: By[] = post.personLikes;
+
+  const handleSeeProfile=(customerId: string)=>{
+    setProfileDialogOpen(true)
+    setUserToDisplay(customerId)
+  }
+
+  const handleCloseProfile=()=>{
+    setProfileDialogOpen(false)
+    setUserToDisplay("")
+  }
 
   let commentCount = post.commentCount;
 
@@ -335,10 +348,12 @@ function PostCard({ post, mutate }: Post) {
             src={post.by?.photoURL}
             alt={`${post.by?.firstname} ${post.by?.lastname}`}
             name={`${post.by?.firstname} ${post.by?.lastname}`}
+            onClick={()=>handleSeeProfile(post.by._id)}
+            sx={{cursor: "pointer"}}
           />
         }
         title={
-          <Link color="inherit" variant="subtitle2">
+          <Link color="inherit" variant="subtitle2" onClick={()=>handleSeeProfile(post.by._id)} sx={{cursor: "pointer"}}>
             {`${post.by?.firstname} ${post.by?.lastname}`}
           </Link>
         }
@@ -354,6 +369,7 @@ function PostCard({ post, mutate }: Post) {
         }
       />
       <CardContent>
+        {profileDialogOpen && <CustomizedDialogs open={profileDialogOpen} handleClose={handleCloseProfile} userId={userToDisplay}/>}
         <Typography
           sx={{
             fontWeight: 'bold',

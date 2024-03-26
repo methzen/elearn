@@ -9,18 +9,27 @@ import { useRouter } from 'next/router';
 
 export type Circle = {
   name: string;
-  id: string;
   imageUrl: string;
   description: string;
+  groupUrl: string;
   role: string;
   urlName: string;
 };
 
-export default function CourseCard({ id, name, urlName, imageUrl, description, role }: Circle) {
+interface courseCardProps {
+  circle : Circle;
+  myProfile?: boolean;
+}
+export default function CourseCard({ circle, myProfile}: courseCardProps) {
+  const {name, urlName, imageUrl, description, role, groupUrl} = circle
   const { push } = useRouter();
 
   const getInsideGroup = () => {
-    push(`/dashboard/${urlName}/community`);
+    if(!myProfile){
+      push(groupUrl);
+    }else{
+      push(`/dashboard/${urlName}/community`);
+    }
   };
 
   return (
@@ -45,7 +54,6 @@ export default function CourseCard({ id, name, urlName, imageUrl, description, r
           justifyContent: 'space-between',
         }}
       >
-        {/* <Button size="small" onClick={getInsideGroup}>Join </Button> */}
         <span style={{ color: '#BFBFBF', fontSize: 14, marginRight: 15 }}> {role}</span>
       </CardActions>
     </Card>

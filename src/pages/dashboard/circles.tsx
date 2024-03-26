@@ -85,7 +85,7 @@ export default function PageTwo() {
           }}
         >
           {data?.items?.map((course: any) => (
-            <CourseCard key={course._id} {...course} />
+            <CourseCard key={course._id} circle={course} myProfile={true} />
           ))}
         </Box>
       </Container>

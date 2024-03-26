@@ -13,7 +13,7 @@ type Props = {
 export default function ThemeSettings({ children }: Props) {
   const { pathname } = useRouter()
   if(!pathname.includes("dashboard")){
-    return children
+    return <>{children}</>
   }
 
   return (

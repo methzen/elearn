@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import CourseCard, { Circle } from 'src/components/CourseCard';
 // ----------------------------------------------------------------------
 
-export default function ProfileCircles({ circles }: { circles?: Circle[] }) {
+export default function ProfileCircles({ circles, myProfile}: { circles?: Circle[], myProfile?:boolean }) {
   return (
     <Box
       gap={3}
@@ -13,7 +13,7 @@ export default function ProfileCircles({ circles }: { circles?: Circle[] }) {
         md: 'repeat(3, 1fr)',
       }}
     >
-      {circles && circles?.map((course: any) => <CourseCard key={course._id} {...course} />)}
+      {circles && circles?.map((course: any) => <CourseCard key={course._id} circle={course} myProfile={myProfile}/>)}
     </Box>
   );
 }
